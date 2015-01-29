@@ -34,6 +34,7 @@
 
 Thread::Thread (const char *threadName)
 {
+	cptr = 0;
     name = threadName;
     stackTop = NULL;
     stack = NULL;
@@ -196,20 +197,23 @@ Thread::Finish ()
 void
 Thread::Yield ()
 {
-    Thread *nextThread;
-    IntStatus oldLevel = interrupt->SetLevel (IntOff);
+	if ( cptr == 1 ){
+		Thread *nextThread;
+		IntStatus oldLevel = interrupt->SetLevel (IntOff);
 
-    ASSERT (this == currentThread);
+		ASSERT (this == currentThread);
 
-    DEBUG ('t', "Yielding thread \"%s\"\n", getName ());
+		DEBUG ('t', "Yielding thread \"%s\"\n", getName ());
 
-    nextThread = scheduler->FindNextToRun ();
-    if (nextThread != NULL)
-      {
-	  scheduler->ReadyToRun (this);
-	  scheduler->Run (nextThread);
-      }
-    (void) interrupt->SetLevel (oldLevel);
+		nextThread = scheduler->FindNextToRun ();
+		if (nextThread != NULL)
+		  {
+		  scheduler->ReadyToRun (this);
+		  scheduler->Run (nextThread);
+		  }
+		(void) interrupt->SetLevel (oldLevel);
+	}
+	cptr = (cptr+1)%2;
 }
 
 //----------------------------------------------------------------------

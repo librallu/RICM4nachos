@@ -48,4 +48,9 @@ ThreadTest ()
 
     t->Fork (SimpleThread, 1);
     SimpleThread (0);
+	
+	t = new Thread("forked thread v2");
+	t->Fork(SimpleThread,2);
+	SimpleThread(1);
+
 }
