@@ -211,7 +211,6 @@ Thread::Yield ()
       }
     (void) interrupt->SetLevel (oldLevel);
 }
-}
 
 //----------------------------------------------------------------------
 // Thread::Sleep
