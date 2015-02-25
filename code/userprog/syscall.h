@@ -33,6 +33,8 @@
 #define SC_PutString	12
 #define SC_GetChar		13
 #define SC_GetString	14
+#define SC_GetInt		15
+#define SC_PutInt		16
 
 #ifdef IN_USER_MODE
 
@@ -152,7 +154,17 @@ char GetChar();
 /**
  * system call to get string
  */
-char* GetString();
+char* GetString(char* s, unsigned int size);
+
+/**
+ * system call for GetInt
+ */
+int GetInt();
+
+/**
+ * system call for PutInt
+ */
+void PutInt(int i);
 
 #endif // IN_USER_MODE
 

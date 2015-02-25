@@ -40,16 +40,37 @@ void SynchConsole::SynchPutString(const char s[]) {
 
 }
 
-void SynchConsole::SynchGetString(char *s, int n) {
-	char c = SynchGetChar();
-	int i = 0;
-	while ( c != EOF && c != '\n' && i < n ){
-		s[i] = c;
-		i++;
+
+void SynchConsole::SynchGetString(char*s, int n){
+	int i; 
+	char c;
+	for ( i = 0 ; i < n-1 ; i++ ){
 		c = SynchGetChar();
+		if ( c == EOF )
+			break;
+		s[i] = c;
+		if ( c == '\n' ) {
+			i++;
+			break;
+		}	
 	}
 	s[i] = '\0';
 }
+
+
+void SynchConsole::SynchPutInt(int n){
+	char buff[MAX_STRING_SIZE];
+	snprintf(buff,MAX_STRING_SIZE, "%d",n);
+	SynchPutString(buff);
+}
+
+void SynchConsole::SynchGetInt(int *n){
+	char buff[MAX_STRING_SIZE];
+	SynchGetString(buff,MAX_STRING_SIZE);
+	*n=0;
+	ASSERT(sscanf(buff,"%d",n) != EOF );
+}
+
 
 #endif // CHANGED
 

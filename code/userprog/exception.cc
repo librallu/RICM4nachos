@@ -51,6 +51,12 @@ void copyStringFromMachine(int from, char *to, unsigned size){
 	to[size-1] = '\0';
 }
 
+void copyStringToMachine(char* from, int to, unsigned size){
+	unsigned int i;
+	for ( i = 0 ; i < size ; i++ ){
+		machine->WriteMem(to+i,1,(int)from[i]);
+	}
+}
 
 //----------------------------------------------------------------------
 // ExceptionHandler
@@ -81,7 +87,8 @@ ExceptionHandler (ExceptionType which)
 	#ifdef CHANGED
 	int from;
 	unsigned int size;
-	char bufString[256];
+	int tmpInt;
+	char bufString[MAX_STRING_SIZE];
 	#endif
     int type = machine->ReadRegister (2);
 
@@ -106,6 +113,15 @@ ExceptionHandler (ExceptionType which)
 				machine->WriteRegister(2,(int)synchconsole->SynchGetChar());
 				break;
 				#endif
+			case SC_GetString:
+				#ifdef CHANGED
+				from = machine->ReadRegister(4);
+				size = machine->ReadRegister(5);
+				synchconsole->SynchGetString(bufString, size);
+				copyStringToMachine(bufString,from,size);
+				DEBUG('a', "getstring used by user program.\n");
+				break;
+				#endif
 			case SC_PutString:
 				#ifdef CHANGED
 				from = machine->ReadRegister(4);
@@ -113,6 +129,18 @@ ExceptionHandler (ExceptionType which)
 				copyStringFromMachine(from,bufString,size);
 				synchconsole->SynchPutString(bufString);
 				DEBUG('a', "PutString used by user program.\n");
+				break;
+				#endif
+			case SC_GetInt:
+				#ifdef CHANGED
+				synchconsole->SynchGetInt(&tmpInt);
+				machine->WriteRegister(2,tmpInt);
+				break;
+				#endif
+			case SC_PutInt:
+				#ifdef CHANGED
+				tmpInt = machine->ReadRegister(4);
+				synchconsole->SynchPutInt(tmpInt);
 				break;
 				#endif
 			default:
