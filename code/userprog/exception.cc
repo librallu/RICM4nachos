@@ -100,6 +100,12 @@ ExceptionHandler (ExceptionType which)
 				synchconsole->SynchPutChar((char)machine->ReadRegister(4));
 				break;
 				#endif
+			case SC_GetChar:
+				#ifdef CHANGED
+				DEBUG('a', "getchar used by user program.\n");
+				machine->WriteRegister(2,(int)synchconsole->SynchGetChar());
+				break;
+				#endif
 			case SC_PutString:
 				#ifdef CHANGED
 				from = machine->ReadRegister(4);

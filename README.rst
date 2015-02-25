@@ -379,3 +379,23 @@ If we remove the Halt call, we have the following error message :
 
 We see when we are looking at the source code of Halt that Exit is not
 implemented in the exception handler. We have just to add it.
+
+
+SynchGetChar
+============
+
+we have the following execution :
+
+.. code-block :: c
+
+    a
+    caractere:a
+    Machine halting!
+
+    Ticks: total 67287879, idle 67287691, system 140, user 48
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 2, writes 12
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...

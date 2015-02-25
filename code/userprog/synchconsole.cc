@@ -27,9 +27,8 @@ void SynchConsole::SynchPutChar(const char ch) {
 }
 
 char SynchConsole::SynchGetChar() {
-	char ch = console->GetChar();
 	readAvail->P();
-	return ch;
+	return console->GetChar();
 }
 
 void SynchConsole::SynchPutString(const char s[]) {
@@ -44,7 +43,7 @@ void SynchConsole::SynchPutString(const char s[]) {
 void SynchConsole::SynchGetString(char *s, int n) {
 	char c = SynchGetChar();
 	int i = 0;
-	while ( c != EOF ){
+	while ( c != EOF && c != '\n' && i < n ){
 		s[i] = c;
 		i++;
 		c = SynchGetChar();
