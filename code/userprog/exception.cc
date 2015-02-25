@@ -23,6 +23,8 @@
 
 #include "copyright.h"
 #include "system.h"
+#include "console.h"
+#include "synchconsole.h"
 #include "syscall.h"
 
 //----------------------------------------------------------------------
@@ -69,16 +71,28 @@ ExceptionHandler (ExceptionType which)
 {
     int type = machine->ReadRegister (2);
 
-    if ((which == SyscallException) && (type == SC_Halt))
-      {
-	  DEBUG ('a', "Shutdown, initiated by user program.\n");
-	  interrupt->Halt ();
-      }
-    else
-      {
-	  printf ("Unexpected user mode exception %d %d\n", which, type);
-	  ASSERT (FALSE);
-      }
+	if ( which == SyscallException ){
+		switch (type){
+			case SC_Halt:
+				DEBUG ('a', "Shutdown, initiated by user program.\n");
+				interrupt->Halt ();
+				break;
+			#ifdef CHANGED
+			case SC_PutChar:
+				DEBUG('a', "Putchar used by user program.\n");
+				synchconsole->SynchPutChar((char)machine->ReadRegister(4));
+				break;
+			case SC_PutString:
+				DEBUG('a', "PutString used by user program.\n");
+				// TODO Copy mips string to linux string and make a call to SynchPutString
+				break;
+			#endif
+			default:
+	  			printf ("Unexpected user mode exception %d %d\n", which, type);
+	  			ASSERT (FALSE);
+				break;
+		}
+	}
 
     // LB: Do not forget to increment the pc before returning!
     UpdatePC ();

@@ -16,7 +16,7 @@
 //              -o <other machine id>
 //              -z
 //
-//    -d causes certain debugging messages to be printed (cf. utility.h)
+//    -d causes certain debugging messag);es to be printed (cf. utility.h)
 //    -rs causes Yield to occur at random (but repeatable) spots
 //    -z prints the copyright message
 //
@@ -53,12 +53,11 @@
 #include "utility.h"
 #include "system.h"
 
-
 // External functions used by this file
 
 extern void ThreadTest (void), Copy (const char *unixFile, const char *nachosFile);
 extern void Print (char *file), PerformanceTest (void);
-extern void StartProcess (char *file), ConsoleTest (char *in, char *out);
+extern void StartProcess (char *file), ConsoleTest (char *in, char *out), SynchConsoleTest(char *in, char *out);
 extern void MailTest (int networkID);
 
 //----------------------------------------------------------------------
@@ -94,6 +93,10 @@ main (int argc, char **argv)
 	  if (!strcmp (*argv, "-z"))	// print copyright
 	      printf ("%s", copyright);
 #ifdef USER_PROGRAM
+#ifdef CHANGED
+	if (!strcmp(*argv, "-sc"))
+		SynchConsoleTest(NULL, NULL);
+#endif
 	  if (!strcmp (*argv, "-x"))
 	    {			// run a user program
 		ASSERT (argc > 1);

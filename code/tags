@@ -1,0 +1,435 @@
+A	test/matmult.c	16
+A	test/sort.c	12
+Abort	machine/sysdep.cc	/^Abort()$/
+AddrSpace::AddrSpace	userprog/addrspace.cc	/^AddrSpace::AddrSpace (OpenFile * executable)$/
+AddrSpace::InitRegisters	userprog/addrspace.cc	/^AddrSpace::InitRegisters ()$/
+AddrSpace::RestoreState	userprog/addrspace.cc	/^AddrSpace::RestoreState ()$/
+AddrSpace::SaveState	userprog/addrspace.cc	/^AddrSpace::SaveState ()$/
+AddrSpace::~AddrSpace	userprog/addrspace.cc	/^AddrSpace::~AddrSpace ()$/
+AllocBoundedArray	machine/sysdep.cc	/^AllocBoundedArray(int size)$/
+AssignNameToSocket	machine/sysdep.cc	/^AssignNameToSocket(const char *socketName, int soc/
+B	test/matmult.c	17
+BitMap::BitMap	userprog/bitmap.cc	/^BitMap::BitMap (int nitems)$/
+BitMap::Clear	userprog/bitmap.cc	/^BitMap::Clear (int which)$/
+BitMap::FetchFrom	userprog/bitmap.cc	/^BitMap::FetchFrom (OpenFile * file)$/
+BitMap::Find	userprog/bitmap.cc	/^BitMap::Find ()$/
+BitMap::Mark	userprog/bitmap.cc	/^BitMap::Mark (int which)$/
+BitMap::NumClear	userprog/bitmap.cc	/^BitMap::NumClear ()$/
+BitMap::Print	userprog/bitmap.cc	/^BitMap::Print ()$/
+BitMap::Test	userprog/bitmap.cc	/^BitMap::Test (int which)$/
+BitMap::WriteBack	userprog/bitmap.cc	/^BitMap::WriteBack (OpenFile * file)$/
+BitMap::~BitMap	userprog/bitmap.cc	/^BitMap::~BitMap ()$/
+C	test/matmult.c	18
+CallOnUserAbort	machine/sysdep.cc	/^CallOnUserAbort(VoidNoArgFunctionPtr func)$/
+CheckEndian	machine/machine.cc	/^void CheckEndian()$/
+Cleanup	threads/system.cc	/^Cleanup ()$/
+Close	machine/sysdep.cc	/^Close(int fd)$/
+CloseSocket	machine/sysdep.cc	/^CloseSocket(int sockID)$/
+Condition::Broadcast	threads/synch.cc	/^Condition::Broadcast (Lock * conditionLock)$/
+Condition::Condition	threads/synch.cc	/^Condition::Condition (const char *debugName)$/
+Condition::Signal	threads/synch.cc	/^Condition::Signal (Lock * conditionLock)$/
+Condition::Wait	threads/synch.cc	/^Condition::Wait (Lock * conditionLock)$/
+Condition::~Condition	threads/synch.cc	/^Condition::~Condition ()$/
+Console::CheckCharAvail	machine/console.cc	/^Console::CheckCharAvail()$/
+Console::Console	machine/console.cc	/^Console::Console(char *readFile, char *writeFile, /
+Console::GetChar	machine/console.cc	/^Console::GetChar()$/
+Console::PutChar	machine/console.cc	/^Console::PutChar(char ch)$/
+Console::WriteDone	machine/console.cc	/^Console::WriteDone()$/
+Console::~Console	machine/console.cc	/^Console::~Console()$/
+ConsoleReadPoll	machine/console.cc	/^static void ConsoleReadPoll(int c) $/
+ConsoleTest	userprog/progtest.cc	/^ConsoleTest (char *in, char *out)$/
+ConsoleWriteDone	machine/console.cc	/^static void ConsoleWriteDone(int c)$/
+ContentSize	filesys/fstest.cc	113
+Contents	filesys/fstest.cc	112
+Copy	filesys/fstest.cc	/^Copy(const char *from, const char *to)$/
+DEBUG	threads/utility.cc	/^DEBUG (char flag, const char *format, ...)$/
+DeAssignNameToSocket	machine/sysdep.cc	/^DeAssignNameToSocket(const char *socketName)$/
+DeallocBoundedArray	machine/sysdep.cc	/^DeallocBoundedArray(char *ptr, int size)$/
+DebugInit	threads/utility.cc	/^DebugInit (const char *flagList)$/
+DebugIsEnabled	threads/utility.cc	/^DebugIsEnabled (char flag)$/
+Delay	machine/sysdep.cc	/^Delay(int seconds)$/
+Dim	test/matmult.c	12
+Directory::Add	filesys/directory.cc	/^Directory::Add(const char *name, int newSector)$/
+Directory::Directory	filesys/directory.cc	/^Directory::Directory(int size)$/
+Directory::FetchFrom	filesys/directory.cc	/^Directory::FetchFrom(OpenFile *file)$/
+Directory::Find	filesys/directory.cc	/^Directory::Find(const char *name)$/
+Directory::FindIndex	filesys/directory.cc	/^Directory::FindIndex(const char *name)$/
+Directory::List	filesys/directory.cc	/^Directory::List()$/
+Directory::Print	filesys/directory.cc	/^Directory::Print()$/
+Directory::Remove	filesys/directory.cc	/^Directory::Remove(const char *name)$/
+Directory::WriteBack	filesys/directory.cc	/^Directory::WriteBack(OpenFile *file)$/
+Directory::~Directory	filesys/directory.cc	/^Directory::~Directory()$/
+DirectoryFileSize	filesys/filesys.cc	65
+DirectorySector	filesys/filesys.cc	58
+Disk::ComputeLatency	machine/disk.cc	/^Disk::ComputeLatency(int newSector, bool writing)$/
+Disk::Disk	machine/disk.cc	/^Disk::Disk(const char* name, VoidFunctionPtr callW/
+Disk::HandleInterrupt	machine/disk.cc	/^Disk::HandleInterrupt ()$/
+Disk::ModuloDiff	machine/disk.cc	/^Disk::ModuloDiff(int to, int from)$/
+Disk::ReadRequest	machine/disk.cc	/^Disk::ReadRequest(int sectorNumber, char* data)$/
+Disk::TimeToSeek	machine/disk.cc	/^Disk::TimeToSeek(int newSector, int *rotation) $/
+Disk::UpdateLast	machine/disk.cc	/^Disk::UpdateLast(int newSector)$/
+Disk::WriteRequest	machine/disk.cc	/^Disk::WriteRequest(int sectorNumber, char* data)$/
+Disk::~Disk	machine/disk.cc	/^Disk::~Disk()$/
+DiskDone	machine/disk.cc	/^static void DiskDone(int arg) { ((Disk *)arg)->Han/
+DiskRequestDone	filesys/synchdisk.cc	/^DiskRequestDone (int arg)$/
+DiskSize	machine/disk.cc	26
+ExceptionHandler	userprog/exception.cc	/^ExceptionHandler (ExceptionType which)$/
+Exit	machine/sysdep.cc	/^Exit(int exitCode)$/
+FAST	bin/execute.c	14
+FileHeader::Allocate	filesys/filehdr.cc	/^FileHeader::Allocate(BitMap *freeMap, int fileSize/
+FileHeader::ByteToSector	filesys/filehdr.cc	/^FileHeader::ByteToSector(int offset)$/
+FileHeader::Deallocate	filesys/filehdr.cc	/^FileHeader::Deallocate(BitMap *freeMap)$/
+FileHeader::FetchFrom	filesys/filehdr.cc	/^FileHeader::FetchFrom(int sector)$/
+FileHeader::FileLength	filesys/filehdr.cc	/^FileHeader::FileLength()$/
+FileHeader::Print	filesys/filehdr.cc	/^FileHeader::Print()$/
+FileHeader::WriteBack	filesys/filehdr.cc	/^FileHeader::WriteBack(int sector)$/
+FileName	filesys/fstest.cc	111
+FileRead	filesys/fstest.cc	/^FileRead()$/
+FileSize	filesys/fstest.cc	114
+FileSystem::Create	filesys/filesys.cc	/^FileSystem::Create(const char *name, int initialSi/
+FileSystem::FileSystem	filesys/filesys.cc	/^FileSystem::FileSystem(bool format)$/
+FileSystem::List	filesys/filesys.cc	/^FileSystem::List()$/
+FileSystem::Open	filesys/filesys.cc	/^FileSystem::Open(const char *name)$/
+FileSystem::Print	filesys/filesys.cc	/^FileSystem::Print()$/
+FileSystem::Remove	filesys/filesys.cc	/^FileSystem::Remove(const char *name)$/
+FileWrite	filesys/fstest.cc	/^FileWrite()$/
+FreeMapFileSize	filesys/filesys.cc	63
+FreeMapSector	filesys/filesys.cc	57
+HI	bin/execute.c	24
+IM	bin/execute.c	/^IM(i)$/
+IOCPARM_MASK	bin/system.c	89
+InitSocketName	machine/sysdep.cc	/^InitSocketName(struct sockaddr_un *uname, const ch/
+Initialize	threads/system.cc	/^Initialize (int argc, char **argv)$/
+Instruction::Decode	machine/mipssim.cc	/^Instruction::Decode()$/
+Interrupt::ChangeLevel	machine/interrupt.cc	/^Interrupt::ChangeLevel(IntStatus old, IntStatus no/
+Interrupt::CheckIfDue	machine/interrupt.cc	/^Interrupt::CheckIfDue(bool advanceClock)$/
+Interrupt::DumpState	machine/interrupt.cc	/^Interrupt::DumpState()$/
+Interrupt::Enable	machine/interrupt.cc	/^Interrupt::Enable()$/
+Interrupt::Halt	machine/interrupt.cc	/^Interrupt::Halt()$/
+Interrupt::Idle	machine/interrupt.cc	/^Interrupt::Idle()$/
+Interrupt::Interrupt	machine/interrupt.cc	/^Interrupt::Interrupt()$/
+Interrupt::OneTick	machine/interrupt.cc	/^Interrupt::OneTick()$/
+Interrupt::Schedule	machine/interrupt.cc	/^Interrupt::Schedule(VoidFunctionPtr handler, int a/
+Interrupt::SetLevel	machine/interrupt.cc	/^Interrupt::SetLevel(IntStatus now)$/
+Interrupt::YieldOnReturn	machine/interrupt.cc	/^Interrupt::YieldOnReturn()$/
+Interrupt::~Interrupt	machine/interrupt.cc	/^Interrupt::~Interrupt()$/
+InterruptEnable	threads/thread.cc	/^InterruptEnable ()$/
+LO	bin/execute.c	24
+LOADSECTION	bin/disasm.c	/^#define LOADSECTION(head) load_section(&head);$/
+LOADSECTION	bin/main.c	/^#define LOADSECTION(head)	\\$/
+List::Append	threads/list.cc	/^List::Append (void *item)$/
+List::IsEmpty	threads/list.cc	/^List::IsEmpty ()$/
+List::List	threads/list.cc	/^List::List ()$/
+List::Mapcar	threads/list.cc	/^List::Mapcar (VoidFunctionPtr func)$/
+List::Prepend	threads/list.cc	/^List::Prepend (void *item)$/
+List::Remove	threads/list.cc	/^List::Remove ()$/
+List::SortedInsert	threads/list.cc	/^List::SortedInsert (void *item, long long sortKey)/
+List::SortedRemove	threads/list.cc	/^List::SortedRemove (long long *keyPtr)$/
+List::~List	threads/list.cc	/^List::~List ()$/
+ListElement::ListElement	threads/list.cc	/^ListElement::ListElement (void *itemPtr, long long/
+Lock::Acquire	threads/synch.cc	/^Lock::Acquire ()$/
+Lock::Lock	threads/synch.cc	/^Lock::Lock (const char *debugName)$/
+Lock::Release	threads/synch.cc	/^Lock::Release ()$/
+Lock::~Lock	threads/synch.cc	/^Lock::~Lock ()$/
+Lseek	machine/sysdep.cc	/^Lseek(int fd, int offset, int whence)$/
+MAIN	threads/main.cc	49
+MAIN	threads/main.cc	51
+MAIN	bin/coff2flat.c	15
+MAIN	bin/coff2flat.c	17
+MAIN	bin/coff2noff.c	23
+MAIN	bin/coff2noff.c	25
+MAIN	bin/out.c	7
+MAIN	bin/out.c	9
+MAXDATA	bin/out.c	34
+MAXRELOCS	bin/out.c	31
+MAXSCNS	bin/out.c	43
+MAXSSPACE	bin/out.c	45
+MAXSYMS	bin/out.c	44
+Machine::Debugger	machine/machine.cc	/^void Machine::Debugger()$/
+Machine::DelayedLoad	machine/mipssim.cc	/^Machine::DelayedLoad(int nextReg, int nextValue)$/
+Machine::DumpState	machine/machine.cc	/^Machine::DumpState()$/
+Machine::Machine	machine/machine.cc	/^Machine::Machine(bool debug)$/
+Machine::OneInstruction	machine/mipssim.cc	/^Machine::OneInstruction(Instruction *instr)$/
+Machine::RaiseException	machine/machine.cc	/^Machine::RaiseException(ExceptionType which, int b/
+Machine::ReadMem	machine/translate.cc	/^Machine::ReadMem(int addr, int size, int *value)$/
+Machine::ReadRegister	machine/machine.cc	/^int Machine::ReadRegister(int num)$/
+Machine::Run	machine/mipssim.cc	/^Machine::Run()$/
+Machine::Translate	machine/translate.cc	/^Machine::Translate(int virtAddr, int* physAddr, in/
+Machine::WriteMem	machine/translate.cc	/^Machine::WriteMem(int addr, int size, int value)$/
+Machine::WriteRegister	machine/machine.cc	/^void Machine::WriteRegister(int num, int value)$/
+Machine::~Machine	machine/machine.cc	/^Machine::~Machine()$/
+MagicNumber	machine/disk.cc	23
+MagicSize	machine/disk.cc	24
+Mail::Mail	network/post.cc	/^Mail::Mail(PacketHeader pktH, MailHeader mailH, ch/
+MailBox::Get	network/post.cc	/^MailBox::Get(PacketHeader *pktHdr, MailHeader *mai/
+MailBox::MailBox	network/post.cc	/^MailBox::MailBox()$/
+MailBox::Put	network/post.cc	/^MailBox::Put(PacketHeader pktHdr, MailHeader mailH/
+MailBox::~MailBox	network/post.cc	/^MailBox::~MailBox()$/
+MailTest	network/nettest.cc	/^MailTest(int farAddr)$/
+Mcoff2flat	bin/coff2flat.c	/^main (int argc, char **argv)$/
+Mcoff2noff	bin/coff2noff.c	/^int main (int argc, char **argv)$/
+Mdisasm	bin/disasm.c	/^main(argc, argv)$/
+Mhalt	test/halt.c	/^main ()$/
+Mmain	bin/main.c	/^main(argc, argv)$/
+Mmain.cc	threads/main.cc	/^main (int argc, char **argv)$/
+Mmatmult	test/matmult.c	/^main ()$/
+Mout	bin/out.c	/^main(argc,argv)$/
+Mputchar	test/putchar.c	/^int main() {$/
+Mshell	test/shell.c	/^main ()$/
+Msort	test/sort.c	/^main ()$/
+Mult	machine/mipssim.cc	/^Mult(int a, int b, bool signedArith, int* hiPtr, i/
+NH	bin/execute.c	465
+NNN	bin/execute.c	466
+NNNN	bin/execute.c	555
+NROWS	bin/disasm.c	27
+NROWS	bin/main.c	27
+NULL	bin/d.c	11
+Network::CheckPktAvail	machine/network.cc	/^Network::CheckPktAvail()$/
+Network::Network	machine/network.cc	/^Network::Network(NetworkAddress addr, double relia/
+Network::Receive	machine/network.cc	/^Network::Receive(char* data)$/
+Network::Send	machine/network.cc	/^Network::Send(PacketHeader hdr, char* data)$/
+Network::SendDone	machine/network.cc	/^Network::SendDone()$/
+Network::~Network	machine/network.cc	/^Network::~Network()$/
+NetworkReadPoll	machine/network.cc	/^static void NetworkReadPoll(int arg)$/
+NetworkSendDone	machine/network.cc	/^static void NetworkSendDone(int arg)$/
+NumDirEntries	filesys/filesys.cc	64
+OpenFile::Length	filesys/openfile.cc	/^OpenFile::Length() $/
+OpenFile::OpenFile	filesys/openfile.cc	/^OpenFile::OpenFile(int sector)$/
+OpenFile::Read	filesys/openfile.cc	/^OpenFile::Read(char *into, int numBytes)$/
+OpenFile::ReadAt	filesys/openfile.cc	/^OpenFile::ReadAt(char *into, int numBytes, int pos/
+OpenFile::Seek	filesys/openfile.cc	/^OpenFile::Seek(int position)$/
+OpenFile::Write	filesys/openfile.cc	/^OpenFile::Write(const char *into, int numBytes)$/
+OpenFile::WriteAt	filesys/openfile.cc	/^OpenFile::WriteAt(const char *from, int numBytes, /
+OpenFile::~OpenFile	filesys/openfile.cc	/^OpenFile::~OpenFile()$/
+OpenForReadWrite	machine/sysdep.cc	/^OpenForReadWrite(const char *name, bool crashOnErr/
+OpenForWrite	machine/sysdep.cc	/^OpenForWrite(const char *name)$/
+OpenSocket	machine/sysdep.cc	/^OpenSocket()$/
+PendingInterrupt::PendingInterrupt	machine/interrupt.cc	/^PendingInterrupt::PendingInterrupt(VoidFunctionPtr/
+PerformanceTest	filesys/fstest.cc	/^PerformanceTest()$/
+PollFile	machine/sysdep.cc	/^PollFile(int fd)$/
+PollSocket	machine/sysdep.cc	/^PollSocket(int sockID)$/
+PostOffice::IncomingPacket	network/post.cc	/^PostOffice::IncomingPacket()$/
+PostOffice::PacketSent	network/post.cc	/^PostOffice::PacketSent()$/
+PostOffice::PostOffice	network/post.cc	/^PostOffice::PostOffice(NetworkAddress addr, double/
+PostOffice::PostalDelivery	network/post.cc	/^PostOffice::PostalDelivery()$/
+PostOffice::Receive	network/post.cc	/^PostOffice::Receive(int box, PacketHeader *pktHdr,/
+PostOffice::Send	network/post.cc	/^PostOffice::Send(PacketHeader pktHdr, MailHeader m/
+PostOffice::~PostOffice	network/post.cc	/^PostOffice::~PostOffice()$/
+PostalHelper	network/post.cc	/^static void PostalHelper(int arg)$/
+Print	filesys/fstest.cc	/^Print(char *name)$/
+PrintHeader	network/post.cc	/^PrintHeader(PacketHeader pktHdr, MailHeader mailHd/
+PrintPending	machine/interrupt.cc	/^PrintPending(int arg)$/
+PrintSector	machine/disk.cc	/^PrintSector (bool writing, int sector, char *data)/
+R	bin/d.c	/^#define R(i)	regstrings[i]$/
+RD	bin/execute.c	/^RD(i)$/
+RS	bin/execute.c	/^RS(i)$/
+RT	bin/execute.c	/^RT(i)$/
+Random	machine/sysdep.cc	/^Random()$/
+RandomInit	machine/sysdep.cc	/^RandomInit(unsigned seed)$/
+Read	machine/sysdep.cc	/^Read(int fd, char *buffer, int nBytes)$/
+Read	bin/coff2flat.c	/^void Read(int fd, char *buf, int nBytes)$/
+Read	bin/coff2noff.c	/^void Read(int fd, char *buf, int nBytes)$/
+ReadAvail	network/post.cc	/^static void ReadAvail(int arg)$/
+ReadAvail	userprog/progtest.cc	/^ReadAvail (int arg)$/
+ReadAvail	userprog/synchconsole.cc	/^static void ReadAvail(int arg) { readAvail->V(); }/
+ReadFromSocket	machine/sysdep.cc	/^ReadFromSocket(int sockID, char *buffer, int packe/
+ReadPartial	machine/sysdep.cc	/^ReadPartial(int fd, char *buffer, int nBytes)$/
+ReadStruct	bin/coff2flat.c	/^#define ReadStruct(f,s) 	Read(f,(char *)&s,sizeof(/
+ReadStruct	bin/coff2noff.c	/^#define ReadStruct(f,s) 	Read(f,(char *)&s,sizeof(/
+Reg	bin/execute.c	23
+Regtrace	bin/disasm.c	26
+Regtrace	bin/main.c	26
+STACK_FENCEPOST	threads/thread.cc	23
+Scheduler::FindNextToRun	threads/scheduler.cc	/^Scheduler::FindNextToRun ()$/
+Scheduler::Print	threads/scheduler.cc	/^Scheduler::Print ()$/
+Scheduler::ReadyToRun	threads/scheduler.cc	/^Scheduler::ReadyToRun (Thread * thread)$/
+Scheduler::Run	threads/scheduler.cc	/^Scheduler::Run (Thread * nextThread)$/
+Scheduler::Scheduler	threads/scheduler.cc	/^Scheduler::Scheduler ()$/
+Scheduler::~Scheduler	threads/scheduler.cc	/^Scheduler::~Scheduler ()$/
+Semaphore::P	threads/synch.cc	/^Semaphore::P ()$/
+Semaphore::Semaphore	threads/synch.cc	/^Semaphore::Semaphore (const char *debugName, int i/
+Semaphore::V	threads/synch.cc	/^Semaphore::V ()$/
+Semaphore::~Semaphore	threads/synch.cc	/^Semaphore::~Semaphore ()$/
+SendToSocket	machine/sysdep.cc	/^SendToSocket(int sockID, const char *buffer, int p/
+SetupThreadState	threads/thread.cc	/^SetupThreadState ()$/
+ShortToHost	machine/translate.cc	/^ShortToHost(unsigned short shortword) {$/
+ShortToHost	bin/coff2noff.c	/^ShortToHost(unsigned short shortword) {$/
+ShortToMachine	machine/translate.cc	/^ShortToMachine(unsigned short shortword) { return /
+SimpleThread	threads/threadtest.cc	/^SimpleThread (int which)$/
+StackSize	bin/coff2flat.c	31
+StartProcess	userprog/progtest.cc	/^void StartProcess (char *filename) {$/
+Statistics::Print	machine/stats.cc	/^Statistics::Print()$/
+Statistics::Statistics	machine/stats.cc	/^Statistics::Statistics()$/
+SwapHeader	userprog/addrspace.cc	/^SwapHeader (NoffHeader * noffH)$/
+SynchConsole::SynchConsole	userprog/synchconsole.cc	/^SynchConsole::SynchConsole(char *readFile, char *w/
+SynchConsole::SynchGetChar	userprog/synchconsole.cc	/^char SynchConsole::SynchGetChar() {$/
+SynchConsole::SynchGetString	userprog/synchconsole.cc	/^void SynchConsole::SynchGetString(char *s, int n) /
+SynchConsole::SynchPutChar	userprog/synchconsole.cc	/^void SynchConsole::SynchPutChar(const char ch) {$/
+SynchConsole::SynchPutString	userprog/synchconsole.cc	/^void SynchConsole::SynchPutString(const char s[]) /
+SynchConsole::~SynchConsole	userprog/synchconsole.cc	/^SynchConsole::~SynchConsole() {$/
+SynchConsoleTest	userprog/progtest.cc	/^void SynchConsoleTest(char *in, char *out){$/
+SynchDisk::ReadSector	filesys/synchdisk.cc	/^SynchDisk::ReadSector(int sectorNumber, char* data/
+SynchDisk::RequestDone	filesys/synchdisk.cc	/^SynchDisk::RequestDone()$/
+SynchDisk::SynchDisk	filesys/synchdisk.cc	/^SynchDisk::SynchDisk(const char* name)$/
+SynchDisk::WriteSector	filesys/synchdisk.cc	/^SynchDisk::WriteSector(int sectorNumber, char* dat/
+SynchDisk::~SynchDisk	filesys/synchdisk.cc	/^SynchDisk::~SynchDisk()$/
+SynchList::Append	threads/synchlist.cc	/^SynchList::Append (void *item)$/
+SynchList::Mapcar	threads/synchlist.cc	/^SynchList::Mapcar (VoidFunctionPtr func)$/
+SynchList::Remove	threads/synchlist.cc	/^SynchList::Remove ()$/
+SynchList::SynchList	threads/synchlist.cc	/^SynchList::SynchList ()$/
+SynchList::~SynchList	threads/synchlist.cc	/^SynchList::~SynchList ()$/
+TRACE	bin/disasm.c	26
+TRACE	bin/main.c	26
+Tell	machine/sysdep.cc	/^Tell(int fd)$/
+Thread::CheckOverflow	threads/thread.cc	/^Thread::CheckOverflow ()$/
+Thread::Finish	threads/thread.cc	/^Thread::Finish ()$/
+Thread::Fork	threads/thread.cc	/^Thread::Fork (VoidFunctionPtr func, int arg)$/
+Thread::RestoreUserState	threads/thread.cc	/^Thread::RestoreUserState ()$/
+Thread::SaveUserState	threads/thread.cc	/^Thread::SaveUserState ()$/
+Thread::Sleep	threads/thread.cc	/^Thread::Sleep ()$/
+Thread::StackAllocate	threads/thread.cc	/^Thread::StackAllocate (VoidFunctionPtr func, int a/
+Thread::Thread	threads/thread.cc	/^Thread::Thread (const char *threadName)$/
+Thread::Yield	threads/thread.cc	/^Thread::Yield ()$/
+Thread::~Thread	threads/thread.cc	/^Thread::~Thread ()$/
+ThreadFinish	threads/thread.cc	/^ThreadFinish ()$/
+ThreadPrint	threads/thread.cc	/^ThreadPrint (int arg)$/
+ThreadTest	threads/threadtest.cc	/^ThreadTest ()$/
+Timer::TimeOfNextInterrupt	machine/timer.cc	/^Timer::TimeOfNextInterrupt() $/
+Timer::Timer	machine/timer.cc	/^Timer::Timer(VoidFunctionPtr timerHandler, int cal/
+Timer::TimerExpired	machine/timer.cc	/^Timer::TimerExpired() $/
+TimerHandler	machine/timer.cc	/^static void TimerHandler(int arg)$/
+TimerInterruptHandler	threads/system.cc	/^TimerInterruptHandler (int dummy)$/
+TransferSize	filesys/fstest.cc	24
+Traptrace	bin/disasm.c	26
+Traptrace	bin/main.c	26
+TypeToReg	machine/mipssim.cc	/^TypeToReg(RegType reg, Instruction *instr)$/
+Unlink	machine/sysdep.cc	/^Unlink(const char *name)$/
+UpdatePC	userprog/exception.cc	/^UpdatePC ()$/
+WordToHost	machine/translate.cc	/^WordToHost(unsigned int word) {$/
+WordToHost	bin/coff2noff.c	/^WordToHost(unsigned int word) {$/
+WordToMachine	machine/translate.cc	/^WordToMachine(unsigned int word) { return WordToHo/
+Write	bin/coff2flat.c	/^void Write(int fd, char *buf, int nBytes)$/
+Write	bin/coff2noff.c	/^void Write(int fd, char *buf, int nBytes)$/
+WriteDone	network/post.cc	/^static void WriteDone(int arg)$/
+WriteDone	userprog/progtest.cc	/^WriteDone (int arg)$/
+WriteDone	userprog/synchconsole.cc	/^static void WriteDone(int arg) { writeDone->V(); }/
+WriteFile	machine/sysdep.cc	/^WriteFile(int fd, const char *buffer, int nBytes)$/
+addtable	bin/execute.c	502
+aouthdr	bin/out.c	48
+arch1cycles	bin/execute.c	28
+b31	bin/execute.c	/^#define  b31(z)		(((z) >>31 )&0x1)	\/* extract bit /
+bsshead	bin/disasm.c	20
+bsshead	bin/main.c	20
+cc_add	bin/execute.c	/^#define cc_add(rr, op1, op2)	\\$/
+cc_logic	bin/execute.c	/^#define cc_logic(rr)	\\$/
+cc_mulscc	bin/execute.c	/^#define cc_mulscc(rr, op1, op2)	\\$/
+cc_sub	bin/execute.c	/^#define cc_sub(rr, op1, op2)	\\$/
+checkit	machine/machine.cc	30
+checkit::charword	machine/machine.cc	31
+checkit::intword	machine/machine.cc	32
+column	bin/out.c	148
+console	userprog/progtest.cc	50
+currentThread	threads/system.cc	14
+data	bin/out.c	36
+data	bin/out.c	37
+datahead	bin/disasm.c	20
+datahead	bin/main.c	20
+dis1	bin/disasm.c	/^dis1(xpc)$/
+disasm	bin/disasm.c	/^disasm(startpc, argc, argv)$/
+dump_ascii	bin/d.c	/^dump_ascii(instruction, pc)$/
+dump_reg	bin/execute.c	/^dump_reg()$/
+enableFlags	threads/utility.cc	20
+exceptionNames	machine/machine.cc	16
+false	bin/execute.c	16
+fileSystem	threads/system.cc	23
+filehdr	bin/out.c	47
+filename	bin/disasm.c	22
+filename	bin/main.c	22
+fmt	bin/execute.c	505
+fmt2	bin/execute.c	506
+fp	bin/disasm.c	18
+fp	bin/main.c	18
+henter	bin/execute.c	/^henter(n)$/
+henters	bin/execute.c	/^void henters(n, hist)$/
+hist	bin/execute.c	557
+hists	bin/execute.c	468
+hoflo	bin/execute.c	469
+hprint	bin/execute.c	/^hprint()$/
+htotal	bin/execute.c	469
+ilog2	bin/execute.c	/^ilog2(i)$/
+intLevelNames	machine/interrupt.cc	29
+intTypeNames	machine/interrupt.cc	30
+interrupt	threads/system.cc	17
+ldptr	bin/disasm.c	19
+ldptr	bin/main.c	19
+length	bin/out.c	39
+load_program	bin/disasm.c	/^load_program(filename)$/
+load_program	bin/main.c	/^load_program(filename)$/
+load_section	bin/disasm.c	/^load_section(hd)$/
+longdis	bin/d.c	14
+m_alloc	bin/disasm.c	/^int *m_alloc(n)$/
+m_alloc	bin/main.c	/^int *m_alloc(n)$/
+machine	threads/system.cc	31
+mem	bin/disasm.c	25
+mem	bin/main.c	25
+myprintf	bin/out.c	/^myprintf(va_alist)$/
+mysetfile	bin/out.c	/^mysetfile(f)$/
+mytab	bin/out.c	/^mytab(n)$/
+noffFileName	bin/coff2noff.c	72
+normalops	bin/opstrings.c	9
+numadds	bin/execute.c	501
+numjmpls	bin/execute.c	27
+ny	bin/execute.c	/^ny()$/
+outfile	bin/out.c	149
+patable	bin/execute.c	/^patable(tab)$/
+pc	bin/disasm.c	28
+postOffice	threads/system.cc	35
+print	test/putchar.c	/^void print(char c, int n) {$/
+print_reloc	bin/out.c	/^print_reloc(vaddr,i,j)$/
+print_section	bin/out.c	/^print_section(i)$/
+printf	bin/out.c	190
+printhist	bin/execute.c	/^printhist()$/
+printstatistics	bin/execute.c	/^printstatistics()$/
+rdatahead	bin/disasm.c	20
+rdatahead	bin/main.c	20
+readAvail	userprog/progtest.cc	51
+readAvail	userprog/synchconsole.cc	7
+read_struct	bin/out.c	/^#define read_struct(f,s) (fread(&s,sizeof(s),1,f)=/
+regstrings	bin/d.c	19
+reloc	bin/out.c	38
+reloc_type	bin/out.c	229
+relocs	bin/out.c	40
+runprogram	bin/execute.c	/^runprogram(startpc, argc, argv)$/
+sbsshead	bin/disasm.c	20
+sbsshead	bin/main.c	20
+scheduler	threads/system.cc	16
+scnhdr	bin/out.c	49
+sdatahead	bin/disasm.c	20
+sdatahead	bin/main.c	20
+section	bin/out.c	50
+section_name	bin/out.c	224
+self	bin/disasm.c	23
+self	bin/main.c	23
+specialops	bin/opstrings.c	76
+sptr	bin/d.c	13
+sspace	bin/out.c	53
+stats	threads/system.cc	18
+storage_class	bin/out.c	60
+string	bin/main.c	/^char *string(s)$/
+subtable	bin/execute.c	503
+symbol_type	bin/out.c	55
+symbols	bin/out.c	52
+symhdr	bin/out.c	51
+synchDisk	threads/system.cc	27
+system_break	bin/system.c	/^system_break()$/
+system_trap	bin/system.c	/^system_trap()$/
+texthead	bin/disasm.c	20
+texthead	bin/main.c	20
+threadToBeDestroyed	threads/system.cc	15
+timer	threads/system.cc	19
+true	bin/execute.c	15
+u	bin/execute.c	/^u()				\/* unimplemented *\/$/
+u_to_int_addr	bin/system.c	/^char *u_to_int_addr(ptr)$/
+u_to_int_fd	bin/system.c	/^u_to_int_fd(fd)$/
+writeDone	userprog/progtest.cc	52
+writeDone	userprog/synchconsole.cc	8

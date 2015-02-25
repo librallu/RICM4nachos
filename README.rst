@@ -312,3 +312,16 @@ Exercise
 
 After making modifications in Yield, we see that ./nachos-threads execute
 a thread twice before switching context, which is normal.
+
+
+
+
+
+Part Two
+########
+
+For the program "putchar.c", we expect the output "abcd".
+
+
+It's an error that writing a character before be warned of its presence
+because it can pass ahead of an another request.
