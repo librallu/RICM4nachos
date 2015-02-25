@@ -26,9 +26,10 @@ void SynchConsole::SynchPutChar(const char ch) {
 	writeDone->P();
 }
 
-char SynchConsole::SynchGetChar() {
+int SynchConsole::SynchGetChar() {
 	readAvail->P();
-	return console->GetChar();
+	return (int) (console->Feof() ? EOF : console->GetChar());
+	//return console->GetChar();
 }
 
 void SynchConsole::SynchPutString(const char s[]) {

@@ -152,6 +152,6 @@ Console::PutChar(char ch)
 
 
 //
-int feof(){
+int Console::Feof(){
 	return incoming==EOF;
 }

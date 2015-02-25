@@ -14,7 +14,7 @@ class SynchConsole {
 		~SynchConsole();
 
 		void SynchPutChar(const char ch);
-		char SynchGetChar();
+		int SynchGetChar();
 
 		void SynchPutString(const char *s);
 		void SynchGetString(char *s, int n);

@@ -56,6 +56,8 @@ class Console {
     void WriteDone();	 	// internal routines to signal I/O completion
     void CheckCharAvail();
 
+	int Feof();
+
   private:
     int readFileNo;			// UNIX file emulating the keyboard 
     int writeFileNo;			// UNIX file emulating the display
