@@ -325,3 +325,57 @@ For the program "putchar.c", we expect the output "abcd".
 
 It's an error that writing a character before be warned of its presence
 because it can pass ahead of an another request.
+
+
+
+Strings
+*******
+
+We have implemented system calls for printing strings. 
+
+
+Case with a simple hello world :
+
+.. code-block :: c
+
+    hello world !
+    Machine halting!
+
+    Ticks: total 1568, idle 1400, system 150, user 18
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 0, writes 14
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+    
+    
+Case with a too long string :
+
+.. code-block :: c
+
+    01234567890123456789012345678901234567890123456789012345678901234567890
+    12345678901234567890123456789012345678901234567890123456789012345678901
+    23456789012345678901234567890123456789012345678901234567890123456789012
+    34567890123456789012345678901234567890123456789012345678901234567890123
+    456789012345678*** stack smashing detected ***: ./nachos-step2 terminated
+    Aborted
+
+
+
+Halt Problem
+============
+
+
+If we remove the Halt call, we have the following error message : 
+
+.. code-block :: c
+
+    abcd
+    Unexpected user mode exception 1 1
+    Assertion failed: line 111, file "../userprog/exception.cc"
+    Aborted
+
+
+We see when we are looking at the source code of Halt that Exit is not
+implemented in the exception handler. We have just to add it.

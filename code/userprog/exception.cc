@@ -43,6 +43,15 @@ UpdatePC ()
 }
 
 
+void copyStringFromMachine(int from, char *to, unsigned size){
+	unsigned int i;
+	for ( i = 0 ; i < size ; i++ ){
+		machine->ReadMem(from+i,1,(int*) (to+i) );
+	}
+	to[size-1] = '\0';
+}
+
+
 //----------------------------------------------------------------------
 // ExceptionHandler
 //      Entry point into the Nachos kernel.  Called when a user program
@@ -69,24 +78,37 @@ UpdatePC ()
 void
 ExceptionHandler (ExceptionType which)
 {
+	#ifdef CHANGED
+	int from;
+	unsigned int size;
+	char bufString[256];
+	#endif
     int type = machine->ReadRegister (2);
 
 	if ( which == SyscallException ){
 		switch (type){
+			case SC_Exit:
+				interrupt->Halt();
+				break;
 			case SC_Halt:
 				DEBUG ('a', "Shutdown, initiated by user program.\n");
 				interrupt->Halt ();
 				break;
-			#ifdef CHANGED
 			case SC_PutChar:
+				#ifdef CHANGED
 				DEBUG('a', "Putchar used by user program.\n");
 				synchconsole->SynchPutChar((char)machine->ReadRegister(4));
 				break;
+				#endif
 			case SC_PutString:
+				#ifdef CHANGED
+				from = machine->ReadRegister(4);
+				size = (unsigned int) machine->ReadRegister(5);
+				copyStringFromMachine(from,bufString,size);
+				synchconsole->SynchPutString(bufString);
 				DEBUG('a', "PutString used by user program.\n");
-				// TODO Copy mips string to linux string and make a call to SynchPutString
 				break;
-			#endif
+				#endif
 			default:
 	  			printf ("Unexpected user mode exception %d %d\n", which, type);
 	  			ASSERT (FALSE);
@@ -98,3 +120,9 @@ ExceptionHandler (ExceptionType which)
     UpdatePC ();
     // End of addition
 }
+
+
+
+
+
+

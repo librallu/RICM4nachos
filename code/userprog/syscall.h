@@ -130,8 +130,17 @@ void Fork (void (*func) ());
  */
 void Yield ();
 
-
+/**
+ * appel système affichant un caractère
+ */
 void PutChar(int c);
+
+
+/**
+ * appel système affichant une string
+ */
+void PutString(char* str, unsigned int size);
+
 
 #endif // IN_USER_MODE
 
