@@ -124,12 +124,18 @@ ExceptionHandler (ExceptionType which)
 				#endif
 			case SC_PutString:
 				#ifdef CHANGED
+				{
 				from = machine->ReadRegister(4);
-				size = (unsigned int) machine->ReadRegister(5);
+				size = (unsigned int)machine->ReadRegister(5);
+				if (size > MAX_STRING_SIZE){
+					printf("string buffer overflow %d %d\n",which,type);
+					ASSERT(FALSE);
+					break;
+				}
 				copyStringFromMachine(from,bufString,size);
 				synchconsole->SynchPutString(bufString);
-				DEBUG('a', "PutString used by user program.\n");
 				break;
+				}
 				#endif
 			case SC_GetInt:
 				#ifdef CHANGED
