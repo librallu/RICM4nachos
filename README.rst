@@ -382,7 +382,7 @@ implemented in the exception handler. We have just to add it.
 
 
 SynchGetChar
-============
+------------
 
 we have the following execution :
 
@@ -399,3 +399,70 @@ we have the following execution :
     Network I/O: packets received 0, sent 0
 
     Cleaning up...
+
+
+SynchGetString
+--------------
+
+We have the following execution for string size = 5 :
+
+.. code-block :: c
+
+    abcdef
+    abcd
+    ef
+
+    Machine halting!
+
+    Ticks: total 162744489, idle 162744253, system 170, user 66
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 7, writes 9
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+
+The output is correct.
+
+If we want to make multithread programs that uses getString, we must
+get sure that there is no conflict. For this, we can add a mutex that
+blocks other threads if they want to read the standard input.
+
+
+SynchPutInt
+-----------
+
+For the design of the put/get integers, we make a specific system call
+and call sprintf and sscanf functions. 
+
+.. code-block :: c
+
+    42
+    Machine halting!
+
+    Ticks: total 370, idle 300, system 40, user 30
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 0, writes 3
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+
+
+SynchGetInt
+-----------
+
+.. code-block :: c
+
+    1337
+    1337
+    Machine halting!
+
+    Ticks: total 133371198, idle 133371051, system 110, user 37
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 5, writes 5
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+
