@@ -99,6 +99,9 @@ ExceptionHandler (ExceptionType which)
 	char bufString[MAX_STRING_SIZE];
 	#endif
 
+
+	int type = machine->ReadRegister (2);
+
 	#ifndef CHANGED //Noterleif*n*def
 	
 	if((which == SyscallException) && (type == SC_Halt)){
@@ -112,7 +115,6 @@ ExceptionHandler (ExceptionType which)
 	#else //CHANGED
 
 
-	int type = machine->ReadRegister (2);
 
 	if ( which == SyscallException ){
 		switch (type){
@@ -165,6 +167,7 @@ ExceptionHandler (ExceptionType which)
 				break;
 		}
 	}
+	#endif //CHANGED
 
     // LB: Do not forget to increment the pc before returning!
     UpdatePC ();
