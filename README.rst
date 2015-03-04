@@ -312,3 +312,157 @@ Exercise
 
 After making modifications in Yield, we see that ./nachos-threads execute
 a thread twice before switching context, which is normal.
+
+
+
+
+
+Part Two
+########
+
+For the program "putchar.c", we expect the output "abcd".
+
+
+It's an error that writing a character before be warned of its presence
+because it can pass ahead of an another request.
+
+
+
+Strings
+*******
+
+We have implemented system calls for printing strings. 
+
+
+Case with a simple hello world :
+
+.. code-block :: c
+
+    hello world !
+    Machine halting!
+
+    Ticks: total 1568, idle 1400, system 150, user 18
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 0, writes 14
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+    
+    
+Case with a too long string :
+
+.. code-block :: c
+
+    01234567890123456789012345678901234567890123456789012345678901234567890
+    12345678901234567890123456789012345678901234567890123456789012345678901
+    23456789012345678901234567890123456789012345678901234567890123456789012
+    34567890123456789012345678901234567890123456789012345678901234567890123
+    456789012345678*** stack smashing detected ***: ./nachos-step2 terminated
+    Aborted
+
+
+
+Halt Problem
+============
+
+
+If we remove the Halt call, we have the following error message : 
+
+.. code-block :: c
+
+    abcd
+    Unexpected user mode exception 1 1
+    Assertion failed: line 111, file "../userprog/exception.cc"
+    Aborted
+
+
+We see when we are looking at the source code of Halt that Exit is not
+implemented in the exception handler. We have just to add it.
+
+
+SynchGetChar
+------------
+
+we have the following execution :
+
+.. code-block :: c
+
+    a
+    caractere:a
+    Machine halting!
+
+    Ticks: total 67287879, idle 67287691, system 140, user 48
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 2, writes 12
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+
+
+SynchGetString
+--------------
+
+We have the following execution for string size = 5 :
+
+.. code-block :: c
+
+    abcdef
+    abcd
+    ef
+
+    Machine halting!
+
+    Ticks: total 162744489, idle 162744253, system 170, user 66
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 7, writes 9
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+
+The output is correct.
+
+If we want to make multithread programs that uses getString, we must
+get sure that there is no conflict. For this, we can add a mutex that
+blocks other threads if they want to read the standard input.
+
+
+SynchPutInt
+-----------
+
+For the design of the put/get integers, we make a specific system call
+and call sprintf and sscanf functions. 
+
+.. code-block :: c
+
+    42
+    Machine halting!
+
+    Ticks: total 370, idle 300, system 40, user 30
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 0, writes 3
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+
+
+SynchGetInt
+-----------
+
+.. code-block :: c
+
+    1337
+    1337
+    Machine halting!
+
+    Ticks: total 133371198, idle 133371051, system 110, user 37
+    Disk I/O: reads 0, writes 0
+    Console I/O: reads 5, writes 5
+    Paging: faults 0
+    Network I/O: packets received 0, sent 0
+
+    Cleaning up...
+

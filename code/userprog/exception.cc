@@ -25,15 +25,12 @@
 #include "system.h"
 #include "syscall.h"
 
-#ifdef CHANGED
-#include "synchconsole.h"
-#endif
-
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
 // the user program immediately after the "syscall" instruction.
 //----------------------------------------------------------------------
-static void UpdatePC ()
+static void
+UpdatePC ()
 {
     int pc = machine->ReadRegister (PCReg);
     machine->WriteRegister (PrevPCReg, pc);
@@ -45,17 +42,21 @@ static void UpdatePC ()
 
 
 #ifdef CHANGED
-static void copyStringFromMachine(int from, char *to, unsigned int size) {
+void copyStringFromMachine(int from, char *to, unsigned size){
 	unsigned int i;
-	
-	for (i=0; i<=size-1;i++){
-		machine->ReadMem(from+i,1,(int*)(to+i));
+	for ( i = 0 ; i < size ; i++ ){
+		machine->ReadMem(from+i,1,(int*) (to+i) );
 	}
-	to[size]='\0';
+	to[size-1] = '\0';
+}
 
+void copyStringToMachine(char* from, int to, unsigned size){
+	unsigned int i;
+	for ( i = 0 ; i < size ; i++ ){
+		machine->WriteMem(to+i,1,(int)from[i]);
+	}
 }
 #endif //CHANGED
-
 
 //----------------------------------------------------------------------
 // ExceptionHandler
@@ -80,9 +81,16 @@ static void copyStringFromMachine(int from, char *to, unsigned int size) {
 //      are in machine.h.
 //----------------------------------------------------------------------
 
-void ExceptionHandler(ExceptionType which){
-	int type = machine->ReadRegister(2);
-	
+void
+ExceptionHandler (ExceptionType which)
+{
+	#ifdef CHANGED
+	int from;
+	unsigned int size;
+	int tmpInt;
+	char bufString[MAX_STRING_SIZE];
+	#endif
+
 	#ifndef CHANGED //Noterleif*n*def
 	
 	if((which == SyscallException) && (type == SC_Halt)){
@@ -94,37 +102,67 @@ void ExceptionHandler(ExceptionType which){
 	}
 	
 	#else //CHANGED
-	
-	if(which == SyscallException){
-		switch(type){
-		case SC_Halt:
-			DEBUG('a',"Shutdown, initiated by user program.\n");
-			interrupt->Halt();
-			break;
-		case SC_PutChar:
-			synchconsole->SynchPutChar((char)machine->ReadRegister(4));
-			break;
-		case SC_PutString:{
-			char buf[MAX_STRING_SIZE];
-			int from = machine->ReadRegister(4);
-			int size = machine->ReadRegister(5);
-			if (size > MAX_STRING_SIZE){
-				printf("string buffer overflow %d %d\n",which,type);
-				ASSERT(FALSE);
+
+
+	int type = machine->ReadRegister (2);
+
+	if ( which == SyscallException ){
+		switch (type){
+			case SC_Exit:
+				interrupt->Halt();
 				break;
-			}
-			copyStringFromMachine(from,buf,size);
-			synchconsole->SynchPutString(buf);
-			break;
-			}
-		default:
-			printf("Unexpected user mode exception %d %d\n",which,type);
-			ASSERT(FALSE);
-			break;
+			case SC_Halt:
+				DEBUG ('a', "Shutdown, initiated by user program.\n");
+				interrupt->Halt ();
+				break;
+			case SC_PutChar:
+				DEBUG('a', "Putchar used by user program.\n");
+				synchconsole->SynchPutChar((char)machine->ReadRegister(4));
+				break;
+			case SC_GetChar:
+				DEBUG('a', "getchar used by user program.\n");
+				machine->WriteRegister(2,(int)synchconsole->SynchGetChar());
+				break;
+			case SC_GetString:
+				from = machine->ReadRegister(4);
+				size = machine->ReadRegister(5);
+				synchconsole->SynchGetString(bufString, size);
+				copyStringToMachine(bufString,from,size);
+				DEBUG('a', "getstring used by user program.\n");
+				break;
+			case SC_PutString:
+				from = machine->ReadRegister(4);
+				size = (unsigned int)machine->ReadRegister(5);
+				if (size > MAX_STRING_SIZE){
+					printf("string buffer overflow %d %d\n",which,type);
+					ASSERT(FALSE);
+					break;
+				}
+				copyStringFromMachine(from,bufString,size);
+				synchconsole->SynchPutString(bufString);
+				break;
+			case SC_GetInt:
+				synchconsole->SynchGetInt(&tmpInt);
+				machine->WriteRegister(2,tmpInt);
+				break;
+			case SC_PutInt:
+				tmpInt = machine->ReadRegister(4);
+				synchconsole->SynchPutInt(tmpInt);
+				break;
+			default:
+	  			printf ("Unexpected user mode exception %d %d\n", which, type);
+	  			ASSERT (FALSE);
+				break;
 		}
 	}
-	
-	#endif //CHANGED
-	
-	UpdatePC();
+
+    // LB: Do not forget to increment the pc before returning!
+    UpdatePC ();
+    // End of addition
 }
+
+
+
+
+
+

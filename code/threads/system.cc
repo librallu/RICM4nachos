@@ -38,11 +38,10 @@ PostOffice *postOffice;
 #endif
 
 #ifdef CHANGED
-	#ifdef USER_PROGRAM
-	SynchConsole *synchconsole;
-	#endif
-#endif //CHANGED
-
+#ifdef USER_PROGRAM
+SynchConsole *synchconsole;
+#endif // USER_PROGRAM
+#endif // CHANGED
 
 // External definition, to allow us to take a pointer to this function
 extern void Cleanup ();
@@ -180,9 +179,7 @@ Initialize (int argc, char **argv)
 #endif
 
 #ifdef CHANGED
-#ifdef USER_PROGRAM
 	synchconsole = new SynchConsole(NULL,NULL);
-#endif
 #endif //CHANGED
 }
 
@@ -200,6 +197,9 @@ Cleanup ()
 
 #ifdef USER_PROGRAM
     delete machine;
+	#ifdef CHANGED
+	delete synchconsole;
+	#endif
 #endif
 
 #ifdef FILESYS_NEEDED

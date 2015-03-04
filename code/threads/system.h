@@ -58,7 +58,7 @@ extern PostOffice *postOffice;
 #ifdef USER_PROGRAM
 #include "synchconsole.h"
 extern SynchConsole *synchconsole;	// user program synchronous console
-#endif
+#endif //USER_PROGRAM
 
 #endif //CHANGED
 #endif // SYSTEM_H

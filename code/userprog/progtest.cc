@@ -11,6 +11,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "console.h"
+#include "synchconsole.h"
 #include "addrspace.h"
 #include "synch.h"
 
@@ -20,17 +21,15 @@
 //      memory, and jump to it.
 //----------------------------------------------------------------------
 
-void
-StartProcess (char *filename)
-{
+void StartProcess (char *filename) {
     OpenFile *executable = fileSystem->Open (filename);
     AddrSpace *space;
 
-    if (executable == NULL)
-      {
-	  printf ("Unable to open file %s\n", filename);
-	  return;
-      }
+    if (executable == NULL) {
+	    printf ("Unable to open file %s\n", filename);
+	    return;
+    }
+
     space = new AddrSpace (executable);
     currentThread->space = space;
 
@@ -95,8 +94,6 @@ ConsoleTest (char *in, char *out)
 	  }
 	  #endif
        
-	  console->PutChar (ch);	// echo it!
-	  writeDone->P ();	// wait for write to finish
 	  
 	  #ifdef CHANGED
 	  if (ch != '\n'){
@@ -114,3 +111,13 @@ ConsoleTest (char *in, char *out)
 	  #endif
       }
 }
+
+#ifdef CHANGED
+void SynchConsoleTest(char *in, char *out){
+	char ch;
+	SynchConsole *synchconsoleTest = new SynchConsole(in,out);
+	while ((ch = synchconsoleTest->SynchGetChar()) != EOF)
+		synchconsoleTest->SynchPutChar(ch);
+	fprintf(stderr, "Solaris: EOF detected in SynchConsole !\n");
+}
+#endif

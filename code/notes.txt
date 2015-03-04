@@ -1,0 +1,2 @@
+où plaçer la console synchrone à l'initialisation du système ?
+
