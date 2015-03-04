@@ -4,7 +4,7 @@
 int main() {
 
 	char c = GetChar();
-	PutString("caractere:",11);
+	PutString("caractere:");
 	PutChar(c);
 	PutChar('\n');
 	return 0;

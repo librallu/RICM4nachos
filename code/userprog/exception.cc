@@ -58,6 +58,13 @@ void copyStringToMachine(char* from, int to, unsigned size){
 	}
 }
 
+
+char readDirectMem(int from){
+	int to;
+	machine->ReadMem(from,1,&to);
+	return (char) to;
+}
+
 //----------------------------------------------------------------------
 // ExceptionHandler
 //      Entry point into the Nachos kernel.  Called when a user program
@@ -85,7 +92,7 @@ void
 ExceptionHandler (ExceptionType which)
 {
 	#ifdef CHANGED
-	int from;
+	int from,i;
 	unsigned int size;
 	int tmpInt;
 	char bufString[MAX_STRING_SIZE];
@@ -122,11 +129,13 @@ ExceptionHandler (ExceptionType which)
 				DEBUG('a', "getstring used by user program.\n");
 				break;
 				#endif
-			case SC_PutString:
+            case SC_PutString:
 				#ifdef CHANGED
 				{
 				from = machine->ReadRegister(4);
-				size = (unsigned int)machine->ReadRegister(5);
+				i=1;
+				while( readDirectMem(from+i) != '\0' ) i++;
+				size=i;
 				if (size > MAX_STRING_SIZE){
 					printf("string buffer overflow %d %d\n",which,type);
 					ASSERT(FALSE);

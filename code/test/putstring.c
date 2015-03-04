@@ -1,7 +1,13 @@
 #include "syscall.h"
 
 int main() {
-	PutString("hello world !\n",15);
+	//PutString("hello world !\n",15);
+	int i;
+	for ( i = 0 ; i < 10 ; i++ ){
+		PutString("abc\n");
+		PutInt(i);
+		PutString("\n");
+	}
 	/*
 	int i;
 	char str[300];
