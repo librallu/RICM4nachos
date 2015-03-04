@@ -146,7 +146,7 @@ void PutChar(int c);
 /**
  * system call to put string
  */
-void PutString(char* str, unsigned int size);
+void PutString(char* str);
 
 
 /**

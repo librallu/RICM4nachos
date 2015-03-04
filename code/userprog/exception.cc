@@ -56,6 +56,14 @@ void copyStringToMachine(char* from, int to, unsigned size){
 		machine->WriteMem(to+i,1,(int)from[i]);
 	}
 }
+
+
+char readDirectMem(int from){
+	int to;
+	machine->ReadMem(from,1,&to);
+	return (char) to;
+}
+
 #endif //CHANGED
 
 //----------------------------------------------------------------------
@@ -85,7 +93,7 @@ void
 ExceptionHandler (ExceptionType which)
 {
 	#ifdef CHANGED
-	int from;
+	int from,i;
 	unsigned int size;
 	int tmpInt;
 	char bufString[MAX_STRING_SIZE];
@@ -132,7 +140,9 @@ ExceptionHandler (ExceptionType which)
 				break;
 			case SC_PutString:
 				from = machine->ReadRegister(4);
-				size = (unsigned int)machine->ReadRegister(5);
+				i=1;
+				while( readDirectMem(from+i) != '\0' ) i++;
+				size=i;
 				if (size > MAX_STRING_SIZE){
 					printf("string buffer overflow %d %d\n",which,type);
 					ASSERT(FALSE);
