@@ -8,6 +8,8 @@
 #include "copyright.h"
 #include "system.h"
 
+
+
 // This defines *all* of the global data structures used by Nachos.
 // These are all initialized and de-allocated by this file.
 
@@ -34,6 +36,12 @@ Machine *machine;		// user program memory and registers
 #ifdef NETWORK
 PostOffice *postOffice;
 #endif
+
+#ifdef CHANGED
+	#ifdef USER_PROGRAM
+	SynchConsole *synchconsole;
+	#endif
+#endif //CHANGED
 
 
 // External definition, to allow us to take a pointer to this function
@@ -170,6 +178,12 @@ Initialize (int argc, char **argv)
 #ifdef NETWORK
     postOffice = new PostOffice (netname, rely, 10);
 #endif
+
+#ifdef CHANGED
+#ifdef USER_PROGRAM
+	synchconsole = new SynchConsole(NULL,NULL);
+#endif
+#endif //CHANGED
 }
 
 //----------------------------------------------------------------------
