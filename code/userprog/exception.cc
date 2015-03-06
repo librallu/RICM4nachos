@@ -161,6 +161,9 @@ ExceptionHandler (ExceptionType which)
 				tmpInt = machine->ReadRegister(4);
 				synchconsole->SynchPutInt(tmpInt);
 				break;
+			case SC_UserThreadCreate:
+
+				break;
 			default:
 	  			printf ("Unexpected user mode exception %d %d\n", which, type);
 	  			ASSERT (FALSE);

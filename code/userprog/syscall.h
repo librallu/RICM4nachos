@@ -37,6 +37,8 @@
 #define SC_GetString	14
 #define SC_GetInt		15
 #define SC_PutInt		16
+#define SC_UserThreadCreate	17
+
 #endif //CHANGED
 
 #ifdef IN_USER_MODE
