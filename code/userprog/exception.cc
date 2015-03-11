@@ -24,6 +24,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
+#include "userthread.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -162,7 +163,17 @@ ExceptionHandler (ExceptionType which)
 				synchconsole->SynchPutInt(tmpInt);
 				break;
 			case SC_UserThreadCreate:
-
+			{//Malek
+				DEBUG('t', "UserThreadCreate used by user program.\n");
+				int f = machine->ReadRegister(4);
+				int arg = machine->ReadRegister(5);
+				int result = do_UserThreadCreate(f, arg);
+				machine->WriteRegister(2,result);
+			}
+				break;
+			case SC_UserThreadExit:
+				DEBUG('t', "UserThreadCreate used by user program.\n");
+				//TODO To Complete
 				break;
 			default:
 	  			printf ("Unexpected user mode exception %d %d\n", which, type);

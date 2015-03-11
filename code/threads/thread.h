@@ -113,7 +113,7 @@ class Thread
 	printf ("%s, ", name);
     }
 
-  private:
+  protected:
     // some of the private data for this class is listed above
 
     int *stack;			// Bottom of the stack 

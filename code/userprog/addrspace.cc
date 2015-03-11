@@ -120,6 +120,10 @@ AddrSpace::AddrSpace (OpenFile * executable)
 			      noffH.initData.size, noffH.initData.inFileAddr);
       }
 
+    #ifdef CHANGED
+    //Added by Malek
+    stackBitMap = new BitMap(MAX_USER_THREAD);
+    #endif //CHANGED
 }
 
 //----------------------------------------------------------------------
@@ -132,6 +136,9 @@ AddrSpace::~AddrSpace ()
   // LB: Missing [] for delete
   // delete pageTable;
   delete [] pageTable;
+  #ifdef CHANGED
+  delete stackBitMap;
+  #endif //CHANGED
   // End of modification
 }
 
@@ -175,10 +182,12 @@ AddrSpace::InitRegisters ()
 //
 //      For now, nothing!
 //----------------------------------------------------------------------
-
+//Modified by Malek
 void
 AddrSpace::SaveState ()
 {
+    this->pageTable = machine->pageTable;
+    this->numPages = machine->pageTableSize;
 }
 
 //----------------------------------------------------------------------
@@ -195,3 +204,15 @@ AddrSpace::RestoreState ()
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
 }
+
+#ifdef CHANGED
+/**
+ * Returns a new stack 
+ * author malek
+ */
+
+int AddrSpace::getStack()
+{
+	return this->stackBitMap->Find();
+}
+#endif //CHANGED
