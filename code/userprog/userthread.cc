@@ -42,7 +42,6 @@ namespace userthread {
         this->Finish();
         // we need to free the thread memory
         space->stackBitMap->Clear(stackIndex);
-        
 	}
 
 	void StartUserThread(int f) {
