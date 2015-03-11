@@ -509,6 +509,7 @@ AddrSpace
 We add the function *do_UserThreadExit*.
 
 ..code-block :: C++
+
 	void do_UserThreadExit() {
         // The thread call the finish method.
         this->Finish();
