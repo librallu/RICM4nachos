@@ -466,3 +466,54 @@ SynchGetInt
 
     Cleaning up...
 
+
+
+Part Three
+##########
+
+Part One
+========
+
+Action I.1
+----------
+
+ - The stack of a kernel thread is allocated in the function *Thread::StackAllocate*
+   by the method *AllocBoundedArray* which is in the file *machine/sysdep.cc*
+
+
+ - Threads are created in the fork function (Thread::fork). In threads/thread.h,
+   we can find an enum that is thread status.
+
+   *SaveState* saves the machine state and *RestoreState* restores the machine
+   state.
+
+
+
+Action I.3
+----------
+
+In the case we have no more space in the processus memory, we cannot
+create a new Thread because it requires some space to store it's 
+state. We can modify the behaviour of thread creating for returning -1
+if it's impossible to create the thread.
+
+
+
+Action I.6
+----------
+
+When the thread is destroyed, we can recover it's allocated space in the
+AddrSpace
+
+
+We add the function *do_UserThreadExit*.
+
+..code-block :: C++
+	void do_UserThreadExit() {
+        // The thread call the finish method.
+        this->Finish();
+        // we need to free the thread memory
+        space->stackBitMap->Clear(stackIndex);
+	}
+
+

@@ -38,7 +38,11 @@ namespace userthread {
 	}
 
 	void do_UserThreadExit() {
-
+        // The thread call the finish method.
+        this->Finish();
+        // we need to free the thread memory
+        space->stackBitMap->Clear(stackIndex);
+        
 	}
 
 	void StartUserThread(int f) {
