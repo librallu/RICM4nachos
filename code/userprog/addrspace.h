@@ -41,6 +41,7 @@ class AddrSpace
      * author malek
      */
     int getStack();
+    void threadInitRegisters (int f, int stackIndex);
 #endif //CHANGED
 
   private:

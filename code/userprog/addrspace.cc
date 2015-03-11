@@ -207,7 +207,7 @@ AddrSpace::RestoreState ()
 
 #ifdef CHANGED
 void
-AddrSpace::threadInitRegisters ()
+AddrSpace::threadInitRegisters (int f, int stackIndex)
 {
     int i;
 
