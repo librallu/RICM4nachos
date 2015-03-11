@@ -471,11 +471,8 @@ SynchGetInt
 Part Three
 ##########
 
-Part One
-========
-
-Action I.1
-----------
+Action I 1
+**********
 
  - The stack of a kernel thread is allocated in the function *Thread::StackAllocate*
    by the method *AllocBoundedArray* which is in the file *machine/sysdep.cc*
@@ -490,7 +487,9 @@ Action I.1
 
 
 Action I.3
-----------
+**********
+
+
 
 In the case we have no more space in the processus memory, we cannot
 create a new Thread because it requires some space to store it's 
@@ -500,7 +499,8 @@ if it's impossible to create the thread.
 
 
 Action I.6
-----------
+**********
+
 
 When the thread is destroyed, we can recover it's allocated space in the
 AddrSpace
@@ -508,7 +508,7 @@ AddrSpace
 
 We add the function *do_UserThreadExit*.
 
-..code-block :: C++
+.. code-block :: C++
 
 	void do_UserThreadExit() {
         // The thread call the finish method.
