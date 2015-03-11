@@ -45,12 +45,12 @@ int do_UserThreadCreate(int f, int arg) {
 /**
  * Ends a UserThread
  */
-void do_UserThreadExit() {
-    // The thread call the finish method.
-    this->Finish();
-    // we need to free the thread memory
-    space->stackBitMap->Clear(stackIndex);
-}
+	void do_UserThreadExit() {
+        // The thread call the finish method.
+        currentThread->Finish();
+        // we need to free the thread memory
+        currentThread->space->stackBitMap->Clear(stackIndex);
+	}
 
 /**
  * This function initialize registers backup like Machine::InitRegisters, Machine::RestoreState and launches Machine::Run
