@@ -171,6 +171,12 @@ int GetInt();
  */
 void PutInt(int i);
 
+/**
+ * system call for UserThreadCreate
+ */
+
+int UserThreadCreate(void f(void *arg), void *arg);
+
 #endif // IN_USER_MODE
 
 #endif /* SYSCALL_H */
