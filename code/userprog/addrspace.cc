@@ -123,6 +123,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     #ifdef CHANGED
     //Added by Malek
     stackBitMap = new BitMap(MAX_USER_THREAD);
+    stackBitMap->Mark(0); //The stack 0 is already used by the main thread
     #endif //CHANGED
 }
 

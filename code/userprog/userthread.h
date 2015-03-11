@@ -23,6 +23,11 @@
 
 	};
 
+	typedef struct threadFunction_ {
+		int f;
+		int args;
+	} threadFunction;
+
 	extern	int do_UserThreadCreate(int f, int arg) ;
 
 	extern	void do_UserThreadExit() ;
