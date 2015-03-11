@@ -29,10 +29,10 @@ int do_UserThreadCreate(int f, int arg) {
 	UserThread* newThread = new UserThread(f, arg);
 	if ((stackIndex = currentThread->space->getStack()) == -1) {
 		return -1;
-
+	}
 
 	newThread->stackIndex = stackIndex;
-	Thread::Fork(StartUserThread, (int) f);
+	newThread->Fork(StartUserThread, (int) f);
 	return 0;
 }
 
@@ -41,9 +41,9 @@ int do_UserThreadCreate(int f, int arg) {
  */
 	void do_UserThreadExit() {
         // The thread call the finish method.
-        this->Finish();
+        currentThread->Finish();
         // we need to free the thread memory
-        space->stackBitMap->Clear(stackIndex);
+        currentThread->space->stackBitMap->Clear(stackIndex);
 	}
 
 /**
