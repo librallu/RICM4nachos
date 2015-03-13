@@ -13,6 +13,7 @@ SynchConsole::SynchConsole(char *readFile, char *writeFile) {
 	readAvail = new Semaphore("read avail", 0);
 	writeDone = new Semaphore("write done", 0);
 	console = new Console(readFile, writeFile, ReadAvail, WriteDone, 0);
+	mutex = new Semaphore("synchconsole mutex", 1);
 }
 
 SynchConsole::~SynchConsole() {
@@ -21,8 +22,10 @@ SynchConsole::~SynchConsole() {
 	delete readAvail;
 }
 void SynchConsole::SynchPutChar(const char ch){
+	mutex->P();
 	console->PutChar(ch);
 	writeDone->P();
+	mutex->V();
 }
 
 int SynchConsole::SynchGetChar() {
@@ -42,6 +45,7 @@ void SynchConsole::SynchPutString(const char s[]) {
 
 
 void SynchConsole::SynchGetString(char*s, int n){
+	mutex->P();
 	int i; 
 	char c;
 	for ( i = 0 ; i < n-1 ; i++ ){
@@ -55,6 +59,7 @@ void SynchConsole::SynchGetString(char*s, int n){
 		}	
 	}
 	s[i] = '\0';
+	mutex->V();
 }
 
 

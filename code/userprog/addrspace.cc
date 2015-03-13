@@ -231,7 +231,7 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
     // accidentally reference off the end!
     int offSet = stackIndex * PageSize; //TODO Not sure about this
     machine->WriteRegister (StackReg, numPages * PageSize - 16 - offSet);
-    DEBUG ('a', "Initializing stack register to %d\n", numPages * PageSize - 16);
+	DEBUG ('a', "Initializing stack register to %d\n", numPages * PageSize - 16);
 }
 
 /**
@@ -242,6 +242,10 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
 
 int AddrSpace::getStack()
 {
-	return this->stackBitMap->Find();
+	int res = this->stackBitMap->Find();
+	if ( res < 0 ){
+		printf("No more space in the stack !!!\n");
+	}
+	return res;
 }
 #endif //CHANGED

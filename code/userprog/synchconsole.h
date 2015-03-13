@@ -6,6 +6,7 @@
 #include "copyright.h"
 #include "utility.h"
 #include "console.h"
+#include "synch.h"
 
 class SynchConsole {
 	
@@ -24,6 +25,7 @@ class SynchConsole {
 
 	private:
 		Console *console;
+		Semaphore* mutex;
 };
 
 #endif // SYNCHCONSOLE_H

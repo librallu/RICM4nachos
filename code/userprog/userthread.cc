@@ -34,6 +34,7 @@ int UserThread::GetId(){
  * Creates a UserThread by launching StartUserThread as thread itself. 
  * Returns : -1 : There is no stack available
  * 			 -2 :
+ * 			 elsewhere : thread id
  */
 int do_UserThreadCreate(int f, int arg) {
 	//The parameters for startUserThread
@@ -53,9 +54,13 @@ int do_UserThreadCreate(int f, int arg) {
 		return -1;
 	}
 	newThread->stackIndex = stackIndex;
+	
 	newThread->Fork(StartUserThread, (int) fun);
-	currentThread->Yield();
+	
 	map_threads[0][newThread->GetId()] = (int)newThread;
+
+	currentThread->Yield();
+	
 	return newThread->GetId();
 }
 

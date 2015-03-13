@@ -1,19 +1,27 @@
 #include "syscall.h"
 
+
 void fun(void* arg){
 	int p = *((int*) arg);
-	PutString("Hello ");
+	PutString("Hello  ");
 	PutInt(p);
-	PutString(" !\n");
+	PutString(" !\n ");
 }
 
 int main(){
-	
-	int fils = UserThreadCreate(fun,0);
+	int arg = 0;
+	int fils = UserThreadCreate(fun,(void*) &arg);
+	PutString("Bonjour  ");
+	PutInt(fils);
+	PutString("\n ");
 	if ( fils < 0 )
 		PutString("ERREUR CREATION THREAD !\n");
-	else
+	else {
 		UserThreadJoin(fils);
+	}
+	//arg = 1;
+	//fils = UserThreadCreate(fun,(void*) &arg);
+	//UserThreadJoin(fils);
 	
 	return 0;
 }
