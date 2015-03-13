@@ -12,11 +12,19 @@ UserThread::UserThread(int fp, int argp) :
 {
 	this->f = fp;
 	this->arg = argp;
+	this->id = compteur++;
+	this->take_this = new Semaphore("NO!",0);
 }
 
 
 UserThread::~UserThread () {
 	//To complete
+}
+
+
+// returns thread id
+UserThread::GetId(){
+	return this->id;
 }
 
 /**
@@ -27,22 +35,24 @@ UserThread::~UserThread () {
 int do_UserThreadCreate(int f, int arg) {
 	//The parameters for startUserThread
 	threadFunction* fun;
-	if ((fun = (threadFunction*) malloc (sizeof(threadFunction))) == NULL) {
+	if ((fun = (threadFunction*) new (threadFunction)) == NULL) {
 		fprintf(stderr, "Erreur d'allocation malloc \n");
 	}
 	fun->f = f;
 	fun->args = arg;
-
+	
 	//The index of the thread stack
 	int stackIndex;
 	
 	UserThread* newThread = new UserThread(f, arg);
 	if ((stackIndex = currentThread->space->getStack()) == -1) {
+		fprintf(stderr,"ERREUR!\n");
 		return -1;
 	}
 	newThread->stackIndex = stackIndex;
 	newThread->Fork(StartUserThread, (int) fun);
-	return 0;
+	currentThread->Yield();
+	return newThread->getId();
 }
 
 /**
@@ -52,7 +62,8 @@ int do_UserThreadCreate(int f, int arg) {
         // The thread call the finish method.
         currentThread->Finish();
         // we need to free the thread memory
-        currentThread->space->stackBitMap->Clear(stackIndex);
+        currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex);
+		currentThread->take_this.V();
 	}
 
 /**
@@ -60,7 +71,7 @@ int do_UserThreadCreate(int f, int arg) {
  */
 void StartUserThread(int fun) {
 	//--------------------------------------------------------------------------------Malek
-	currentThread->space->threadInitRegisters (fun, stackIndex);
+	currentThread->space->threadInitRegisters (fun, ((UserThread*)currentThread)->stackIndex);
     machine->Run();
     //--------------------------------------------------------------------------------Malek
 }

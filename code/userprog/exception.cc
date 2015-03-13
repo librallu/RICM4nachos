@@ -171,6 +171,10 @@ ExceptionHandler (ExceptionType which)
 				machine->WriteRegister(2,result);
 			}
 				break;
+			case SC_UserThreadJoin:
+				DEBUG('t', "UserThreadJoin used by user program.\n");
+				int t = machine->ReadRegister(4);
+				break;
 			case SC_UserThreadExit:
 				DEBUG('t', "UserThreadExit used by user program.\n");
 				//TODO To Complete
