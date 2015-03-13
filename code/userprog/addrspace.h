@@ -17,7 +17,7 @@
 #include "filesys.h"
 #include "bitmap.h"
 
-#define UserStackSize		1024	// increase this as necessary!
+#define UserStackSize		2048	// increase this as necessary!
 #define MAX_USER_THREAD		divRoundUp(UserStackSize, PageSize)
 
 class AddrSpace

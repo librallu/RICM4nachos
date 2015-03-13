@@ -172,7 +172,7 @@ ExceptionHandler (ExceptionType which)
 			}
 				break;
 			case SC_UserThreadExit:
-				DEBUG('t', "UserThreadCreate used by user program.\n");
+				DEBUG('t', "UserThreadExit used by user program.\n");
 				//TODO To Complete
 				break;
 			default:

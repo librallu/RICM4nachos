@@ -20,11 +20,12 @@ UserThread::~UserThread () {
 }
 
 /**
- * Creates a UserThread
+ * Creates a UserThread by launching StartUserThread as thread itself. 
  * Returns : -1 : There is no stack available
  * 			 -2 :
  */
 int do_UserThreadCreate(int f, int arg) {
+	//The parameters for startUserThread
 	threadFunction* fun;
 	if ((fun = (threadFunction*) malloc (sizeof(threadFunction))) == NULL) {
 		fprintf(stderr, "Erreur d'allocation malloc \n");
@@ -32,13 +33,15 @@ int do_UserThreadCreate(int f, int arg) {
 	fun->f = f;
 	fun->args = arg;
 
+	//The index of the thread stack
 	int stackIndex;
+	
 	UserThread* newThread = new UserThread(f, arg);
 	if ((stackIndex = currentThread->space->getStack()) == -1) {
 		return -1;
 	}
 	newThread->stackIndex = stackIndex;
-	Thread::Fork(StartUserThread, (int) fun);
+	newThread->Fork(StartUserThread, (int) fun);
 	return 0;
 }
 
@@ -53,11 +56,11 @@ int do_UserThreadCreate(int f, int arg) {
 	}
 
 /**
- * This function initialize registers backup like Machine::InitRegisters, Machine::RestoreState and launches Machine::Run
+ * This function initialize registers backup with AddrSpace::threadInitRegisters and launches Machine::Run
  */
 void StartUserThread(int fun) {
 	//--------------------------------------------------------------------------------Malek
-	space->threadInitRegisters (((threadFunction*) fun)->f, stackIndex);
+	currentThread->space->threadInitRegisters (fun, stackIndex);
     machine->Run();
     //--------------------------------------------------------------------------------Malek
 }

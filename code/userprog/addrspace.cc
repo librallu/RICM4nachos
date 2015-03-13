@@ -216,11 +216,14 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
     	machine->WriteRegister (i, 0);
 
     // Initial program counter -- must be location of "Start"
-    machine->WriteRegister (PCReg, f);
+    machine->WriteRegister (PCReg, ((threadFunction*) f)->f);
 
     // Need to also tell MIPS where next instruction is, because
     // of branch delay possibility
-    machine->WriteRegister (NextPCReg, f+4);
+    machine->WriteRegister (NextPCReg, ((threadFunction*) f)->f+4);
+    
+    //Initialize the arguments 
+    machine->WriteRegister (4, ((threadFunction*) f)->args);
 
     // Set the stack register to the end of the address space, where we
     // allocated the stack; but subtract off a bit, to make sure we don't
@@ -233,6 +236,7 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
 /**
  * Returns a new stack 
  * author malek
+ * Returns : -1 if there is no stack left
  */
 
 int AddrSpace::getStack()
