@@ -6,14 +6,17 @@
  */
 
 #include "userthread.h"
+#include "system.h"
 
-UserThread::UserThread(int fp, int argp) :
-	Thread::Thread((char*) fp)
+
+UserThread::UserThread(int fp, int argp) : Thread::Thread("thread")
 {
 	this->f = fp;
 	this->arg = argp;
-	this->id = compteur++;
+	this->id = next_thread[0]++;
+	#ifdef CHANGED
 	this->take_this = new Semaphore("NO!",0);
+	#endif // CHANGED
 }
 
 
@@ -23,7 +26,7 @@ UserThread::~UserThread () {
 
 
 // returns thread id
-UserThread::GetId(){
+int UserThread::GetId(){
 	return this->id;
 }
 
@@ -52,7 +55,8 @@ int do_UserThreadCreate(int f, int arg) {
 	newThread->stackIndex = stackIndex;
 	newThread->Fork(StartUserThread, (int) fun);
 	currentThread->Yield();
-	return newThread->getId();
+	map_threads[0][newThread->GetId()] = (int)newThread;
+	return newThread->GetId();
 }
 
 /**
@@ -63,7 +67,8 @@ int do_UserThreadCreate(int f, int arg) {
         currentThread->Finish();
         // we need to free the thread memory
         currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex);
-		currentThread->take_this.V();
+		((UserThread*)currentThread)->take_this->V();
+		map_threads[0][((UserThread*)currentThread)->GetId()] = 0;
 	}
 
 /**

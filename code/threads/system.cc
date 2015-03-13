@@ -21,6 +21,11 @@ Statistics *stats;		// performance metrics
 Timer *timer;			// the hardware timer device,
 					// for invoking context switches
 
+#ifdef CHANGED
+int map_threads[MAX_PROCESSUS][MAX_THREAD] = {{0}};
+int next_thread[MAX_PROCESSUS] = {0};
+#endif
+
 #ifdef FILESYS_NEEDED
 FileSystem *fileSystem;
 #endif

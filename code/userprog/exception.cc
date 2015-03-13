@@ -172,8 +172,14 @@ ExceptionHandler (ExceptionType which)
 			}
 				break;
 			case SC_UserThreadJoin:
-				DEBUG('t', "UserThreadJoin used by user program.\n");
-				int t = machine->ReadRegister(4);
+				{
+					DEBUG('t', "UserThreadJoin used by user program.\n");
+					int t = machine->ReadRegister(4);
+					UserThread* fils = (UserThread*) map_threads[0][t];
+					if ( fils != NULL ){
+						fils->take_this->P();
+					}
+				}
 				break;
 			case SC_UserThreadExit:
 				DEBUG('t', "UserThreadExit used by user program.\n");

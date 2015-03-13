@@ -18,6 +18,13 @@
 
 #ifdef CHANGED
 #define MAX_STRING_SIZE 256
+
+#define MAX_PROCESSUS	1
+#define MAX_THREAD 		10
+
+extern int map_threads[MAX_PROCESSUS][MAX_THREAD];
+extern int next_thread[MAX_PROCESSUS];
+
 #endif
 
 // Initialization and cleanup routines

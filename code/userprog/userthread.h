@@ -8,11 +8,11 @@
 #ifndef USERTHREAD_H_
 #define USERTHREAD_H_
 
-#define THREAD_TAB_SIZE	10
 
 #include "thread.h"
 #include "syscall.h"
 #include "system.h"
+#include "synch.h"
 
 	class UserThread : public Thread {
 		public:
@@ -20,9 +20,8 @@
 			~UserThread();
 			int stackIndex;
 			int GetId();
-			Semaphore take_this;
+			Semaphore* take_this;//(const char*, int);
 		private:
-			static int compteur = 0;
 			int id;
 			int f;
 			int arg;

@@ -182,6 +182,9 @@ int UserThreadCreate(void f(void *arg), void *arg);
  */
 void UserThreadExit();
 
+
+void UserThreadJoin(int id);
+
 #endif // IN_USER_MODE
 
 #endif /* SYSCALL_H */

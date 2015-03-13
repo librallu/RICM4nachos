@@ -8,11 +8,12 @@ void fun(void* arg){
 }
 
 int main(){
-
-	if ( UserThreadCreate(fun,0) < 0 )
+	
+	int fils = UserThreadCreate(fun,0);
+	if ( fils < 0 )
 		PutString("ERREUR CREATION THREAD !\n");
 	else
-		UserThreadJoin
+		UserThreadJoin(fils);
 	
 	return 0;
 }
