@@ -56,7 +56,6 @@ int do_UserThreadCreate(int f, int arg) {
 	newThread->stackIndex = stackIndex;
 	
 	newThread->Fork(StartUserThread, (int) fun);
-	
 	map_threads[0][newThread->GetId()] = (int)newThread;
 
 	currentThread->Yield();
@@ -68,12 +67,14 @@ int do_UserThreadCreate(int f, int arg) {
  * Ends a UserThread
  */
 	void do_UserThreadExit() {
+
+		((UserThread*)currentThread)->take_this->V();
         // The thread call the finish method.
         currentThread->Finish();
         // we need to free the thread memory
         currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex);
-		((UserThread*)currentThread)->take_this->V();
-		map_threads[0][((UserThread*)currentThread)->GetId()] = 0;
+
+		//map_threads[0][((UserThread*)currentThread)->GetId()] = 0;
 	}
 
 /**

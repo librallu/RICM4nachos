@@ -6,6 +6,7 @@ void fun(void* arg){
 	PutString("Hello  ");
 	PutInt(p);
 	PutString(" !\n ");
+	UserThreadExit();
 }
 
 int main(){
