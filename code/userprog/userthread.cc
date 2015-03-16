@@ -21,7 +21,7 @@ UserThread::UserThread(int fp, int argp) : Thread::Thread("thread")
 
 
 UserThread::~UserThread () {
-	//To complete
+	delete take_this;
 }
 
 
