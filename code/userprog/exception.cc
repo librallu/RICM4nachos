@@ -167,9 +167,14 @@ ExceptionHandler (ExceptionType which)
 				DEBUG('t', "UserThreadCreate used by user program.\n");
 				int f = machine->ReadRegister(4);
 				int arg = machine->ReadRegister(5);
+				//int ret = machine->ReadRegister(6);
 				int result = do_UserThreadCreate(f, arg);
 				machine->WriteRegister(2,result);
 				//machine->WriteRegister(RetAddrReg, ret);
+				// (author : Luc) the lines commented are made in the
+				// goal to remove UserThreadExit of 
+				// user programs, but it seems that
+				// it don't work. I dont know why...
 			}
 				break;
 			case SC_UserThreadJoin:
