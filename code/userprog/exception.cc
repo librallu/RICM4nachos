@@ -144,7 +144,7 @@ ExceptionHandler (ExceptionType which)
 			case SC_PutString:
 				from = machine->ReadRegister(4);
 				i=1;
-				while( readDirectMem(from+i) != '\0' ) i++;
+				while( readDirectMem(from+i-1) != '\0' ) i++;
 				size=i;
 				if (size > MAX_STRING_SIZE){
 					printf("string buffer overflow %d %d\n",which,type);
@@ -169,6 +169,7 @@ ExceptionHandler (ExceptionType which)
 				int arg = machine->ReadRegister(5);
 				int result = do_UserThreadCreate(f, arg);
 				machine->WriteRegister(2,result);
+				//machine->WriteRegister(RetAddrReg, ret);
 			}
 				break;
 			case SC_UserThreadJoin:
