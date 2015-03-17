@@ -6,12 +6,12 @@ void fun(void* arg){
 	PutString("Hello ");
 	PutInt(p);
 	PutString(" !\n");
-	UserThreadExit();
+//	UserThreadExit();
 }
 
 int main(){
 	int arg = 0;
-	int fils = UserThreadCreate(fun,(void*) &arg, UserThreadExit);
+	int fils = UserThreadCreate(fun,(void*) &arg);
 	PutString("Bonjour ");
 	PutInt(fils);
 	PutString("\n");

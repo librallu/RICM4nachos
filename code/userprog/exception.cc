@@ -165,16 +165,20 @@ ExceptionHandler (ExceptionType which)
 			case SC_UserThreadCreate:
 			{//Malek
 				DEBUG('t', "UserThreadCreate used by user program.\n");
+				//Retrieve the system call parameters 
 				int f = machine->ReadRegister(4);
 				int arg = machine->ReadRegister(5);
-				//int ret = machine->ReadRegister(6);
-				int result = do_UserThreadCreate(f, arg);
-				machine->WriteRegister(2,result);
-				//machine->WriteRegister(RetAddrReg, ret);
+				int ret = machine->ReadRegister(7);
+
+				//Creates the thread and schedules it
+				int result = do_UserThreadCreate(f, arg, ret); 
+				machine->WriteRegister(2,result); //return the thread id
+
+				//machine->WriteRegister(RetAddrReg, ret);				
 				// (author : Luc) the lines commented are made in the
 				// goal to remove UserThreadExit of 
 				// user programs, but it seems that
-				// it don't work. I dont know why...
+				// it don't work. I dont know why... ==> Because the thread is not launched yet, so you're not writing in the correct context thread
 			}
 				break;
 			case SC_UserThreadJoin:

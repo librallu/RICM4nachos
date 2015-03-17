@@ -31,9 +31,10 @@
 	typedef struct threadFunction_ {
 		int f;
 		int args;
+		int ret;
 	} threadFunction;
 
-	extern	int do_UserThreadCreate(int f, int arg) ;
+	extern	int do_UserThreadCreate(int f, int arg, int ret) ;
 
 	extern	void do_UserThreadExit() ;
 

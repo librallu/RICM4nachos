@@ -186,6 +186,7 @@ PutInt:
 	.ent	UserThreadCreate
 UserThreadCreate:
 	addiu $2,$0,SC_UserThreadCreate
+	addiu $7,$0,UserThreadExit
 	syscall
 	j	$31
 	.end UserThreadCreate

@@ -175,7 +175,7 @@ void PutInt(int i);
 /**
  * system call for UserThreadCreate
  */
-int UserThreadCreate(void f(void *arg), void *arg, void ret(void));
+int UserThreadCreate(void f(void *arg), void *arg);
 
 /**
  * system call for UserThreadExit

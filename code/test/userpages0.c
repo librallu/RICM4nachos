@@ -20,10 +20,10 @@ int main(){
 	
 	int arg = 0;
 	PutString("----- BEGIN -----\n    "); 
-	int fils1 = UserThreadCreate(fun,(void*) &arg, UserThreadExit);
+	int fils1 = UserThreadCreate(fun,(void*) &arg);
 	if ( fils1 < 0 ) PutString("ERROR CREATING THREAD!!!\n");
 	arg = 1;
-	int fils2 = UserThreadCreate(fun,(void*) &arg, UserThreadExit);
+	int fils2 = UserThreadCreate(fun,(void*) &arg);
 	if ( fils2 < 0 ) PutString("ERROR CREATING THREAD !!!\n");
 	UserThreadJoin(fils1); // waiting for the first child
 	UserThreadJoin(fils2); // waiting for the second child

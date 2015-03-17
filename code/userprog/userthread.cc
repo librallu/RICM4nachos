@@ -15,7 +15,7 @@ UserThread::UserThread(int fp, int argp) : Thread::Thread("thread")
 	this->arg = argp;
 	this->id = next_thread[0]++;
 	#ifdef CHANGED
-	this->take_this = new Semaphore("NO!",0);
+	this->take_this = new Semaphore("UserThread Semaphore",0);
 	#endif // CHANGED
 }
 
@@ -36,7 +36,7 @@ int UserThread::GetId(){
  * 			 -2 :
  * 			 elsewhere : thread id
  */
-int do_UserThreadCreate(int f, int arg) {
+int do_UserThreadCreate(int f, int arg, int ret) {
 	//The parameters for startUserThread
 	threadFunction* fun;
 	if ((fun = (threadFunction*) new (threadFunction)) == NULL) {
@@ -44,6 +44,7 @@ int do_UserThreadCreate(int f, int arg) {
 	}
 	fun->f = f;
 	fun->args = arg;
+	fun->ret = ret;
 	
 	//The index of the thread stack
 	int stackIndex;
@@ -83,6 +84,7 @@ int do_UserThreadCreate(int f, int arg) {
 void StartUserThread(int fun) {
 	//--------------------------------------------------------------------------------Malek
 	currentThread->space->threadInitRegisters (fun, ((UserThread*)currentThread)->stackIndex);
+	machine->WriteRegister(RetAddrReg, ((threadFunction*) fun)->ret);
     machine->Run();
     //--------------------------------------------------------------------------------Malek
 }
