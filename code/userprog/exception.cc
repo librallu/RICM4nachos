@@ -65,6 +65,19 @@ char readDirectMem(int from){
 	return (char) to;
 }
 
+/**
+ * author malek
+ * Equivalent to UserThreadJoin except that it is done on all the threads 
+ */
+void waitTheThreads() {
+	for(int i=0; i<MAX_THREAD; i++) {
+		UserThread* fils = (UserThread*) map_threads[0][i];
+		if ( fils != NULL ){
+			fils->take_this->P();
+		}	
+	}
+	
+}
 #endif //CHANGED
 
 //----------------------------------------------------------------------
@@ -120,6 +133,7 @@ ExceptionHandler (ExceptionType which)
 	if ( which == SyscallException ){
 		switch (type){
 			case SC_Exit:
+				waitTheThreads();
 				interrupt->Halt();
 				break;
 			case SC_Halt:
