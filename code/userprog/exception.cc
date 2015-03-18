@@ -73,6 +73,7 @@ void waitTheThreads() {
 	for(int i=0; i<MAX_THREAD; i++) {
 		UserThread* fils = (UserThread*) map_threads[0][i];
 		if ( fils != NULL ){
+			map_joins[0][fils->GetId()]++;
 			fils->take_this->P();
 		}	
 	}
@@ -201,6 +202,7 @@ ExceptionHandler (ExceptionType which)
 					int t = machine->ReadRegister(4);
 					UserThread* fils = (UserThread*) map_threads[0][t];
 					if ( fils != NULL ){
+						map_joins[0][fils->GetId()]++;
 						fils->take_this->P();
 					}
 				}
