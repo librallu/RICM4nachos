@@ -384,6 +384,15 @@ implemented in the exception handler. We have just to add it.
 SynchGetChar
 ------------
 
+We use the following code in exception.cc :
+
+.. code-block :: c
+
+    case SC_PutChar:
+        DEBUG('a', "Putchar used by user program.\n");
+        synchconsole->SynchPutChar((char)machine->ReadRegister(4));
+        break;
+
 we have the following execution :
 
 .. code-block :: c
@@ -401,8 +410,79 @@ we have the following execution :
     Cleaning up...
 
 
+String functions
+----------------
+
+Before working on strings, we need to add some functions for
+copying string from/to machine.
+
+The readDirectMem function is used to wrap the machine->ReadMem function
+and returns the char value instead of using a side effect.
+
+.. code-block :: c
+
+    void copyStringFromMachine(int from, char *to, unsigned size){
+        unsigned int i;
+        for ( i = 0 ; i < size ; i++ ){
+            machine->ReadMem(from+i,1,(int*) (to+i) );
+        }
+        to[size-1] = '\0';
+    }
+
+    void copyStringToMachine(char* from, int to, unsigned size){
+        unsigned int i;
+        for ( i = 0 ; i < size ; i++ ){
+            machine->WriteMem(to+i,1,(int)from[i]);
+        }
+    }
+
+
+    char readDirectMem(int from){
+        int to;
+        machine->ReadMem(from,1,&to);
+        return (char) to;
+    }
+
+SynchPutString
+--------------
+
+We use the following code :
+In the while, we compute the size of the string (to not pass it in 
+parameter of the syscall). Then, if the size is too big, we raise an error.
+Next, we put the string.
+
+.. code-block :: c
+
+    case SC_PutString:
+        from = machine->ReadRegister(4);
+        i=1;
+        while( readDirectMem(from+i-1) != '\0' ) i++;
+        size=i;
+        if (size > MAX_STRING_SIZE){
+            printf("string buffer overflow %d %d\n",which,type);
+            ASSERT(FALSE);
+            break;
+        }
+        copyStringFromMachine(from,bufString,size);
+        synchconsole->SynchPutString(bufString);
+        break;
+
+
+
 SynchGetString
 --------------
+
+We use the following code : 
+
+.. code-block :: c
+
+    case SC_GetString:
+        from = machine->ReadRegister(4);
+        size = machine->ReadRegister(5);
+        synchconsole->SynchGetString(bufString, size);
+        copyStringToMachine(bufString,from,size);
+        DEBUG('a', "getstring used by user program.\n");
+        break;
 
 We have the following execution for string size = 5 :
 
@@ -435,6 +515,24 @@ SynchPutInt
 For the design of the put/get integers, we make a specific system call
 and call sprintf and sscanf functions. 
 
+
+The following code make translation of strings from/to integers. 
+
+.. code-block :: c
+
+    void SynchConsole::SynchPutInt(int n){
+        char buff[MAX_STRING_SIZE];
+        snprintf(buff,MAX_STRING_SIZE, "%d",n);
+        SynchPutString(buff);
+    }
+
+    void SynchConsole::SynchGetInt(int *n){
+        char buff[MAX_STRING_SIZE];
+        SynchGetString(buff,MAX_STRING_SIZE);
+        *n=0;
+        ASSERT(sscanf(buff,"%d",n) != EOF );
+    }
+
 .. code-block :: c
 
     42
@@ -465,6 +563,8 @@ SynchGetInt
     Network I/O: packets received 0, sent 0
 
     Cleaning up...
+
+
 
 
 
