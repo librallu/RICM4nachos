@@ -18,7 +18,6 @@ void fun(void* arg){
 int main(){
 	
 	int arg = 0;
-	PutString("----- BEGIN -----\n    "); 
 	int fils1 = UserThreadCreate(fun,(void*) &arg);
 	if ( fils1 < 0 ) PutString("ERROR CREATING THREAD!!!\n");
 	arg = 1;
