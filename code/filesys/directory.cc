@@ -25,6 +25,18 @@
 #include "filehdr.h"
 #include "directory.h"
 
+
+void initializePageTable(	DirectoryEntry* ptr, 
+							bool inUse, 
+							FileType type, 
+							int sector,
+							const char* name){
+	ptr->inUse = inUse;
+	ptr->type = type;
+	ptr->sector = sector;
+	strncpy(ptr->name, name , FileNameMaxLen);
+}
+
 //----------------------------------------------------------------------
 // Directory::Directory
 // 	Initialize a directory; initially, the directory is completely
@@ -35,12 +47,19 @@
 //	"size" is the number of entries in the directory
 //----------------------------------------------------------------------
 
-Directory::Directory(int size)
+Directory::Directory(int size, int currentSector, int parentSector)
 {
     table = new DirectoryEntry[size];
     tableSize = size;
-    for (int i = 0; i < tableSize; i++)
-	table[i].inUse = FALSE;
+    for (int i = 1; i < tableSize; i++)
+		table[i].inUse = FALSE;
+	
+	// add . and ..
+	initializePageTable(&(table[0]), TRUE, FILE, currentSector, ".");
+	if ( parentSector >= 0 ){
+		initializePageTable(&(table[1]), TRUE, FILE, parentSector, "..");
+	}
+
 }
 
 //----------------------------------------------------------------------
@@ -127,17 +146,16 @@ Directory::Find(const char *name)
 //----------------------------------------------------------------------
 
 bool
-Directory::Add(const char *name, int newSector)
+Directory::Add(const char *name, int newSector, FileType type)
 { 
     if (FindIndex(name) != -1)
 	return FALSE;
 
     for (int i = 0; i < tableSize; i++)
         if (!table[i].inUse) {
-            table[i].inUse = TRUE;
-            strncpy(table[i].name, name, FileNameMaxLen); 
-            table[i].sector = newSector;
-        return TRUE;
+			initializePageTable(&(table[i]), TRUE, type, newSector, name);
+        	return TRUE;
+		}
 	}
     return FALSE;	// no space.  Fix when we have extensible files.
 }
@@ -154,6 +172,10 @@ bool
 Directory::Remove(const char *name)
 { 
     int i = FindIndex(name);
+
+	// TODO add verification for directories.
+	// We can delete it if and only if the
+	// directory is empty
 
     if (i == -1)
 	return FALSE; 		// name not in directory
