@@ -547,4 +547,53 @@ if the file is a directory or a simple file :
     };
 
 
+Then, in the Directory::table, we consider that the two first entries,
+table[0] and table[1] refers respectively to . and ..
 
+
+we create the local function in directory.cc :
+
+.. code-block :: C++
+
+    void initializePageTable(	DirectoryEntry* ptr, 
+                                bool inUse, 
+                                FileType type, 
+                                int sector,
+                                const char* name){
+        ptr->inUse = inUse;
+        ptr->type = type;
+        ptr->sector = sector;
+        strncpy(ptr->name, name , FileNameMaxLen);
+    }
+    
+That helps us to initialize a PageTable.
+
+Now, in the Directory constructor, we add the . and .. gestion :
+
+.. code-block :: C++
+
+	// add . and ..
+	initializePageTable(&(table[0]), TRUE, FILE, currentSector, ".");
+	if ( parentSector >= 0 ){
+		initializePageTable(&(table[1]), TRUE, FILE, parentSector, "..");
+	}
+
+
+We also modify Directory::Add with an other parameter : fileType
+
+.. code-block :: C++
+
+    bool
+    Directory::Add(const char *name, int newSector, FileType type)
+    { 
+        if (FindIndex(name) != -1)
+        return FALSE;
+
+        for (int i = 0; i < tableSize; i++)
+            if (!table[i].inUse) {
+                initializePageTable(&(table[i]), TRUE, type, newSector, name);
+                return TRUE;
+            }
+        }
+        return FALSE;	// no space.  Fix when we have extensible files.
+    }
