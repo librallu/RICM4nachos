@@ -503,7 +503,7 @@ Action I.6
 
 
 When the thread is destroyed, we can recover it's allocated space in the
-AddrSpace
+AddrSpace, by calling the function BitMap->Clear() at the stack index thread
 
 
 We add the function *do_UserThreadExit*.
@@ -511,10 +511,86 @@ We add the function *do_UserThreadExit*.
 .. code-block :: C++
 
 	void do_UserThreadExit() {
+	((UserThread*)currentThread)->take_this->V();
         // The thread call the finish method.
-        this->Finish();
+        currentThread->Finish();
         // we need to free the thread memory
-        space->stackBitMap->Clear(stackIndex);
+        currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex);
 	}
 
+
+Action I.7
+**********
+
+We test a simple thread launch : 
+
+makethreads.cc : 
+
+.. code-block :: C++
+      void fun(void* arg){
+	      int p = *((int*) arg);
+	      PutString("Hello ");
+	      PutInt(p);
+	      PutString(" !\n");
+      }
+
+      int main(){
+	      int arg = 0;
+	      int fils = UserThreadCreate(fun,(void*) &arg);
+	      PutString("Thread : ");
+	      PutInt(fils);
+	      PutString(" launched\n");
+	      if ( fils < 0 )
+		      PutString("ERREUR CREATION THREAD !\n");
+	      }
+	      
+	      return 0;
+      }
+
+.. code-block :: C++
+      $ ./nachos-step2 -x makethreads
+      Hello 0 !
+      Thread : 0 launched
+      Machine halting!
+
+      Ticks: total 4037, idle 2981, system 960, user 96
+      Disk I/O: reads 0, writes 0
+      Console I/O: reads 0, writes 30
+      Paging: faults 0
+      Network I/O: packets received 0, sent 0
+
+      Cleaning up...
+
+
+Action II.1
+***********
+
+In goal to resolve the multithreading issue on the writing requests, and protect their variables we use a mutex = Semaphore(1) on SynchPutChar and SynchGetString functions.
+For testing this we just launch a second thread in makethreads.cc
+
+Action II.2 to Action II.5
+**************************
+
+When the main thread finishes all his instructions and is about to end by automatically calling Exit() system call, it remains blocked with every Productor/Consumer semaphore->P() thread instance.
+In order to recover the main thread sons with their IDs we used an array structure declared in system.h 
+
+.. code-block :: C++
+      #define MAX_PROCESSUS	1
+      #define MAX_THREAD 		MAX_USER_THREAD
+
+      extern int map_threads[MAX_PROCESSUS][MAX_THREAD];
+
+      
+Action III.1
+************
+
+Conceptions choices : 
+We chosed to abstract to the user the UserThreadExit() call by setting the LR register to UserThreadExit address. 
+At the UserThreadCreate routine (start.S) we set register 7 to UserThreadExit address. 
+And so in exceptionHandler (exception.cc) we retrieve this value and handle it do_UserThreadCreate as a third parameter.
+Then StartUserThread set it LR register to this address. Notice that it is very important that action is done in StartUserThread to write in the thred context.
+
+
+Part Four
+##########
 

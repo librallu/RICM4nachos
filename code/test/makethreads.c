@@ -12,9 +12,9 @@ void fun(void* arg){
 int main(){
 	int arg = 0;
 	int fils = UserThreadCreate(fun,(void*) &arg);
-	PutString("Bonjour ");
+	PutString("Thread : ");
 	PutInt(fils);
-	PutString("\n");
+	PutString(" launched\n");
 	if ( fils < 0 )
 		PutString("ERREUR CREATION THREAD !\n");
 	else {

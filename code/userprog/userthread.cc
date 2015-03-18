@@ -82,9 +82,13 @@ int do_UserThreadCreate(int f, int arg, int ret) {
  * This function initialize registers backup with AddrSpace::threadInitRegisters and launches Machine::Run
  */
 void StartUserThread(int fun) {
-	//--------------------------------------------------------------------------------Malek
+	//Initialize all the registers
 	currentThread->space->threadInitRegisters (fun, ((UserThread*)currentThread)->stackIndex);
 	machine->WriteRegister(RetAddrReg, ((threadFunction*) fun)->ret);
+	
+	//Eviter les fuites mémoires
+	delete ((threadFunction*) fun);
+
+	
     machine->Run();
-    //--------------------------------------------------------------------------------Malek
 }

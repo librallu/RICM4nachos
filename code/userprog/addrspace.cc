@@ -261,11 +261,9 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
     for (i = 0; i < NumTotalRegs; i++)
     	machine->WriteRegister (i, 0);
 
-    // Initial program counter -- must be location of "Start"
     machine->WriteRegister (PCReg, ((threadFunction*) f)->f);
 
-    // Need to also tell MIPS where next instruction is, because
-    // of branch delay possibility
+    // Need to also tell MIPS where next instruction is, because of branch delay possibility
     machine->WriteRegister (NextPCReg, ((threadFunction*) f)->f+4);
     
     //Initialize the arguments 
