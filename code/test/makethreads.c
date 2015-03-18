@@ -17,9 +17,6 @@ int main(){
 	PutString(" launched\n");
 	if ( fils < 0 )
 		PutString("ERREUR CREATION THREAD !\n");
-	else {
-//		UserThreadJoin(fils);
-	}
 	
 	return 0;
 }
