@@ -154,7 +154,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
       {
 	  DEBUG ('a', "Initializing data segment, at 0x%x, size %d\n",
 		 noffH.initData.virtualAddr, noffH.initData.size);
-	  // modif luc
+// modif luc {
 #ifdef CHANGED
 	  ReadAtVirtual(executable, noffH.initData.virtualAddr,
 							noffH.initData.size, noffH.initData.inFileAddr,
@@ -164,6 +164,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		//	      (machine->mainMemory
 		//	       [noffH.initData.virtualAddr]),
 		//	      noffH.initData.size, noffH.initData.inFileAddr);
+// }
       }
 
     #ifdef CHANGED

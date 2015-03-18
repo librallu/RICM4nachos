@@ -594,3 +594,37 @@ Then StartUserThread set it LR register to this address. Notice that it is very 
 Part Four
 ##########
 
+Action I.1
+**********
+
+.. code-block :: C++
+    void fun(void* arg) {
+	    int p = *((int*) arg);
+	    if ( p == 0 ){
+		    PutChar('a');
+		    PutChar('c');
+		    PutChar('e');
+		    PutChar('r');
+	    } else {
+		    PutChar('q');
+		    PutChar('s');
+		    PutChar('d');
+		    PutChar('f');
+	    }
+	    UserThreadExit();
+    }
+
+    int main(){	    
+	    int arg = 0;
+	    PutString("----- BEGIN -----\n    "); 
+	    int fils1 = UserThreadCreate(fun,(void*) &arg);
+	    if ( fils1 < 0 ) PutString("ERROR CREATING THREAD!!!\n");
+	    arg = 1;
+	    int fils2 = UserThreadCreate(fun,(void*) &arg);
+	    if ( fils2 < 0 ) PutString("ERROR CREATING THREAD !!!\n");
+	    arg = 2;
+	    int fils3 = UserThreadCreate(fun,(void*) &arg);
+	    if ( fils3 < 0 ) PutString("ERROR CREATING THREAD !!!\n");
+	    PutString("\n------ END ------\n"); // pretty new line
+	    return 0;
+    }
