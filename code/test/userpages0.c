@@ -13,7 +13,6 @@ void fun(void* arg){
 		PutChar('d');
 		PutChar('f');
 	}
-	UserThreadExit();
 }
 
 int main(){
