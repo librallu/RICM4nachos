@@ -29,9 +29,17 @@
 // Internal data structures kept public so that Directory operations can
 // access them directly.
 
+
+// change :
+// Indicates which type of file (DIR, FILE)
+enum FileType{ DIR, FILE };
+
+
+
 class DirectoryEntry {
   public:
-    bool inUse;				// Is this directory entry in use?
+    FileType type;
+	bool inUse;				// Is this directory entry in use?
     int sector;				// Location on disk to find the 
 					//   FileHeader for this file 
     char name[FileNameMaxLen + 1];	// Text name for file, with +1 for 

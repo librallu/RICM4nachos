@@ -518,3 +518,33 @@ We add the function *do_UserThreadExit*.
 	}
 
 
+
+
+
+Part Five
+#########
+
+
+step 1
+======
+
+In this step, we are interested to add subdirectories.
+For this, we add in the directory entry a new field that indicates
+if the file is a directory or a simple file :
+
+.. code-block :: C++
+
+    enum FileType{ DIR, FILE };
+    
+    class DirectoryEntry {
+      public:
+        FileType type;
+        bool inUse;				// Is this directory entry in use?
+        int sector;				// Location on disk to find the 
+                        //   FileHeader for this file 
+        char name[FileNameMaxLen + 1];	// Text name for file, with +1 for 
+                        // the trailing '\0'
+    };
+
+
+
