@@ -73,6 +73,8 @@ class Directory {
 
     bool Remove(const char *name);	// Remove a file from the directory
 
+    bool IsEmpty(); // return true if the directory is empty
+
     void List();			// Print the names of all the files
 					//  in the directory
     void Print();			// Verbose print of the contents

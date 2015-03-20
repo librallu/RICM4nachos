@@ -173,15 +173,40 @@ Directory::Remove(const char *name)
 { 
     int i = FindIndex(name);
 
-	// TODO add verification for directories.
-	// We can delete it if and only if the
-	// directory is empty
+    if ( table[i].type == DIR ){ // if it's a directory
+        // TODO add verification for directories.
+        // We can delete it if and only if the
+        // directory is empty
+        
+        Directory* d = new Directory;
+        d->FetchFrom(new OpenFile(table[i].sector));
+        if ( d->isEmpty() ){
+            table[i].inUse = FALSE;
+            return TRUE;
+        } else {
+            return FALSE;
+        }
 
-    if (i == -1)
-	return FALSE; 		// name not in directory
-    table[i].inUse = FALSE;
-    return TRUE;	
+    } else {
+        if (i == -1)
+            return FALSE; 		// name not in directory
+        table[i].inUse = FALSE;
+        return TRUE;
+    }
 }
+
+//----------------------------------------------------------------------
+// Directory::IsEmpty
+//  Return true if the directory is empty, false elsewhere
+//----------------------------------------------------------------------
+bool Directory::IsEmpty(){
+    for ( int i = 2 ; i < tableSize ; i++ )
+        if ( table[i].inUse == FALSE )
+            return TRUE;
+    return FALSE;
+}
+
+
 
 //----------------------------------------------------------------------
 // Directory::List
