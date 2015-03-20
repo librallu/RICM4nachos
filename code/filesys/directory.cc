@@ -134,8 +134,10 @@ Directory::Find(const char *name)
     return -1;
 }
 
+
+
 //----------------------------------------------------------------------
-// Directory::Add
+// Directory::AddFile
 // 	Add a file into the directory.  Return TRUE if successful;
 //	return FALSE if the file name is already in the directory, or if
 //	the directory is completely full, and has no more space for
@@ -144,6 +146,10 @@ Directory::Find(const char *name)
 //	"name" -- the name of the file being added
 //	"newSector" -- the disk sector containing the added file's header
 //----------------------------------------------------------------------
+bool Directory::Add(const char *name, int newSector){
+    return AddFile(name,newSector,FILE);
+}
+
 
 bool
 Directory::Add(const char *name, int newSector, FileType type)
