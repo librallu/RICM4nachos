@@ -125,9 +125,10 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	  pageTable[i].virtualPage = i; // step 4 action I.4
 	  pageTable[i].physicalPage = (i+1)%numPages;
 	  #else
-	  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
-	  pageTable[i].physicalPage = i;
+		  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
+		  pageTable[i].physicalPage = i;
 	  #endif
+	  
 	  pageTable[i].valid = TRUE;
 	  pageTable[i].use = FALSE;
 	  pageTable[i].dirty = FALSE;

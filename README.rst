@@ -628,6 +628,7 @@ We test a simple thread launch :
 makethreads.cc : 
 
 .. code-block :: C++
+      
       void fun(void* arg){
 	      int p = *((int*) arg);
 	      PutString("Hello ");
@@ -691,44 +692,6 @@ At the UserThreadCreate routine (start.S) we set register 7 to UserThreadExit ad
 And so in exceptionHandler (exception.cc) we retrieve this value and handle it do_UserThreadCreate as a third parameter.
 Then StartUserThread set it LR register to this address. Notice that it is very important that action is done in StartUserThread to write in the thred context.
 
-
-Part Four
-##########
-
-Action I.1
-**********
-
-.. code-block :: C++
-    void fun(void* arg) {
-	    int p = *((int*) arg);
-	    if ( p == 0 ){
-		    PutChar('a');
-		    PutChar('c');
-		    PutChar('e');
-		    PutChar('r');
-	    } else {
-		    PutChar('q');
-		    PutChar('s');
-		    PutChar('d');
-		    PutChar('f');
-	    }
-	    UserThreadExit();
-    }
-
-    int main(){	    
-	    int arg = 0;
-	    PutString("----- BEGIN -----\n    "); 
-	    int fils1 = UserThreadCreate(fun,(void*) &arg);
-	    if ( fils1 < 0 ) PutString("ERROR CREATING THREAD!!!\n");
-	    arg = 1;
-	    int fils2 = UserThreadCreate(fun,(void*) &arg);
-	    if ( fils2 < 0 ) PutString("ERROR CREATING THREAD !!!\n");
-	    arg = 2;
-	    int fils3 = UserThreadCreate(fun,(void*) &arg);
-	    if ( fils3 < 0 ) PutString("ERROR CREATING THREAD !!!\n");
-	    PutString("\n------ END ------\n"); // pretty new line
-	    return 0;
-    }
 
 Part Four: Virtual Memory Management
 ####################################
