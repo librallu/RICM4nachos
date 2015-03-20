@@ -751,4 +751,40 @@ Action I.3
 We implemented as taught a ReadAtVirtual function using a buffer for reading
 and then writing using virtual address translation.
 
+Action I.4
+**********
+
+We modified addrspace.cc to implement the page +1 address translation,
+you can find the code below:
+
+..codeblock:: C++
+
+for (i = 0; i < numPages; i++)
+      {
+	  #ifdef CHANGED
+	  pageTable[i].virtualPage = i; // step 4 action I.4
+	  pageTable[i].physicalPage = (i+1)%numPages;
+	  #else
+	  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
+	  pageTable[i].physicalPage = i;
+	  #endif
+	  pageTable[i].valid = TRUE;
+	  pageTable[i].use = FALSE;
+	  pageTable[i].dirty = FALSE;
+	  pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
+	  // a separate page, we could set its 
+	  // pages to be read-only
+      }
+      
+and now a part of the trace of an execution of a program with the -d a option:
+``
+Writing VA 0x0, size 1, value 0xffffff86
+	Translate 0x0, write: phys addr = 0x80``
+	
+We can see that the address 0x0 was translated to 0x80 witch is 128 bytes
+appart, thus corresponding to the current definition of the pagesize.
+We conclude that the address translation is effectively working.
+
+ 
+
 
