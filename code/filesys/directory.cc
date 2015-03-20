@@ -47,6 +47,15 @@ void initializePageTable(	DirectoryEntry* ptr,
 //	"size" is the number of entries in the directory
 //----------------------------------------------------------------------
 
+Directory::Directory(int size)
+{
+    table = new DirectoryEntry[size];
+    tableSize = size;
+    for (int i = 1; i < tableSize; i++)
+		table[i].inUse = FALSE;
+}
+
+
 Directory::Directory(int size, int currentSector, int parentSector)
 {
     table = new DirectoryEntry[size];
