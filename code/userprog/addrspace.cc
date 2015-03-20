@@ -122,8 +122,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
     for (i = 0; i < numPages; i++)
       {
 	  #ifdef CHANGED
-		  pageTable[i].virtualPage = i; // step 4 action I.4
-		  pageTable[i].physicalPage = i+1;
+	  pageTable[i].virtualPage = i; // step 4 action I.4
+	  pageTable[i].physicalPage = (i+1)%numPages;
 	  #else
 		  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
 		  pageTable[i].physicalPage = i;
