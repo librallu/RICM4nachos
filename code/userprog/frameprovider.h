@@ -8,14 +8,15 @@
 #ifndef USERPROG_FRAMEPROVIDER_H_
 #define USERPROG_FRAMEPROVIDER_H_
 
-class frameprovider {
+class FrameProvider {
 	public:
-		frameprovider();
-		virtual ~frameprovider();
-
+		FrameProvider();
+		virtual ~FrameProvider();
+		int GetEmptyFrame();
 
 	private:
-
+		BitMap* bitMap;
+		TranslationEntry* pageTable;
 };
 
 #endif /* USERPROG_FRAMEPROVIDER_H_ */
