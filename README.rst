@@ -627,6 +627,7 @@ We test a simple thread launch :
 makethreads.cc : 
 
 .. code-block :: C++
+      
       void fun(void* arg){
 	      int p = *((int*) arg);
 	      PutString("Hello ");
