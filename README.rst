@@ -619,6 +619,7 @@ We add the function *do_UserThreadExit*.
 	}
 
 
+=======
 Action I.7
 **********
 
@@ -729,3 +730,26 @@ Action I.1
 	    PutString("\n------ END ------\n"); // pretty new line
 	    return 0;
     }
+
+Part Four: Virtual Memory Management
+####################################
+
+Action I.1
+**********
+
+Nothing spetial to report, source code can be found at test/userpages0.c.
+
+Action I.2
+**********
+
+In the function AddrSpace::AddrSpace, we can see that the executable->ReadAt fonction
+has no virtual memory translation in it ( 'cf' filesys/openfile.cc ), it
+consequently writes directly the memory.
+
+Action I.3
+**********
+
+We implemented as taught a ReadAtVirtual function using a buffer for reading
+and then writing using virtual address translation.
+
+
