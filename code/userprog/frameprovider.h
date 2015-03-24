@@ -13,7 +13,8 @@ class FrameProvider {
 		FrameProvider();
 		virtual ~FrameProvider();
 		int GetEmptyFrame();
-
+		int ReleaseFrame(int frameAddress);
+		int NumAvailFrame();
 	private:
 		BitMap* bitMap;
 		TranslationEntry* pageTable;

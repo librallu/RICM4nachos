@@ -25,6 +25,9 @@ FrameProvider::~FrameProvider() {
 int FrameProvider::GetEmptyFrame() {
 	int frameIndex = bitMap->Find();
 	
+	if (frameIndex == -1)
+		return -1;
+	
 	pageTable[frameIndex].virtualPage = i; // step 4 action I.4
 	pageTable[frameIndex].physicalPage = i+1;
 	
