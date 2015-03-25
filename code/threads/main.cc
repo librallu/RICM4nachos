@@ -97,9 +97,12 @@ main (int argc, char **argv)
 	  if (!strcmp(*argv, "-sc"))
 	    SynchConsoleTest(NULL, NULL);
 	  if (!strcmp(*argv, "-mkd")){ // creating a new directory in the root one
-	    ASSERT (argc > 1);
-	    fileSystem->
-	    argCount = 2;
+		ASSERT (argc > 1);
+			
+		printf("création du dossier %s\n",*(argv+1));
+		fileSystem->CreateDir(*(argv+1));
+
+		argCount = 2;
 	  }
 #endif
 	  if (!strcmp (*argv, "-x"))
