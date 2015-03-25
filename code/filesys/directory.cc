@@ -46,6 +46,10 @@ void initializePageTable(	DirectoryEntry* ptr,
 //
 //	"size" is the number of entries in the directory
 //----------------------------------------------------------------------
+Directory::Directory(){
+
+}
+
 
 Directory::Directory(int size)
 {
@@ -63,10 +67,11 @@ Directory::Directory(int size, int currentSector, int parentSector)
     for (int i = 1; i < tableSize; i++)
 		table[i].inUse = FALSE;
 	
+
 	// add . and ..
-	initializePageTable(&(table[0]), TRUE, FILE, currentSector, ".");
+	initializePageTable(&(table[0]), TRUE, FS_FILE, currentSector, ".");
 	if ( parentSector >= 0 ){
-		initializePageTable(&(table[1]), TRUE, FILE, parentSector, "..");
+		initializePageTable(&(table[1]), TRUE, FS_FILE, parentSector, "..");
 	}
 
 }
@@ -146,7 +151,7 @@ Directory::Find(const char *name)
 
 
 //----------------------------------------------------------------------
-// Directory::AddFile
+// Directory::Add
 // 	Add a file into the directory.  Return TRUE if successful;
 //	return FALSE if the file name is already in the directory, or if
 //	the directory is completely full, and has no more space for
@@ -156,7 +161,7 @@ Directory::Find(const char *name)
 //	"newSector" -- the disk sector containing the added file's header
 //----------------------------------------------------------------------
 bool Directory::Add(const char *name, int newSector){
-    return AddFile(name,newSector,FILE);
+  	return Add(name,newSector,FS_FILE);
 }
 
 
@@ -188,14 +193,14 @@ Directory::Remove(const char *name)
 { 
     int i = FindIndex(name);
 
-    if ( table[i].type == DIR ){ // if it's a directory
+    if ( table[i].type == FS_DIR ){ // if it's a directory
         // TODO add verification for directories.
         // We can delete it if and only if the
         // directory is empty
         
-        Directory* d = new Directory;
+        Directory* d = new Directory();
         d->FetchFrom(new OpenFile(table[i].sector));
-        if ( d->isEmpty() ){
+        if ( d->IsEmpty() ){
             table[i].inUse = FALSE;
             return TRUE;
         } else {

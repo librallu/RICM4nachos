@@ -32,7 +32,7 @@
 
 // change :
 // Indicates which type of file (DIR, FILE)
-enum FileType{ DIR, FILE };
+enum FileType{ FS_DIR, FS_FILE };
 
 
 
@@ -58,6 +58,7 @@ class DirectoryEntry {
 
 class Directory {
   public:
+	Directory();
     Directory(int size);
     Directory(int size, int currentSector, int parentSector); 		// Initialize an empty directory
 					// with space for "size" files
