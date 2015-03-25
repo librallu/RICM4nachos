@@ -164,9 +164,9 @@ bool
 Directory::Add(const char *name, int newSector, FileType type)
 { 
     if (FindIndex(name) != -1)
-	return FALSE;
+		return FALSE;
 
-    for (int i = 0; i < tableSize; i++)
+    for (int i = 0; i < tableSize; i++){
         if (!table[i].inUse) {
 			initializePageTable(&(table[i]), TRUE, type, newSector, name);
         	return TRUE;
