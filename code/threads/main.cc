@@ -91,11 +91,16 @@ main (int argc, char **argv)
       {
 	  argCount = 1;
 	  if (!strcmp (*argv, "-z"))	// print copyright
-	      printf ("%s", copyright);
+	    printf ("%s", copyright);
 #ifdef USER_PROGRAM
 #ifdef CHANGED
-	if (!strcmp(*argv, "-sc"))
-		SynchConsoleTest(NULL, NULL);
+	  if (!strcmp(*argv, "-sc"))
+	    SynchConsoleTest(NULL, NULL);
+	  if (!strcmp(*argv, "-mkd")){ // creating a new directory in the root one
+	    ASSERT (argc > 1);
+	    fileSystem->
+	    argCount = 2;
+	  }
 #endif
 	  if (!strcmp (*argv, "-x"))
 	    {			// run a user program
