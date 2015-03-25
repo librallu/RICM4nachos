@@ -9,13 +9,13 @@
  */
 
 #include "frameprovider.h"
-#include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* time */
+//#include <cstdlib>     /* srand, rand */
+//#include <ctime>       /* time */
 
 FrameProvider::FrameProvider(int addRandom) {
-	bitMap = new BitMap(numPages);
+	bitMap = new BitMap(NumPhysPages);
 	if (addRandom) {
-		srand (time(NULL));
+		RandomInit(0);
 		random = true; 
 	}
 	//bitMap->Mark(0);
@@ -31,7 +31,7 @@ FrameProvider::~FrameProvider() {
  * 			 -1 if there is no more frame available
  */
 int FrameProvider::GetEmptyFrame() {
-	int frameIndex = NULL;
+	int frameIndex = 0;
 	if (! bitMap->NumClear()>0) 
 		return -1;
 	
@@ -39,7 +39,7 @@ int FrameProvider::GetEmptyFrame() {
 		frameIndex = bitMap->Find();	
 	} else {
 		do {
-			frameIndex = rand() % NumPhysPages;	
+			frameIndex = Random() % NumPhysPages;	
 		} while (bitMap->Test(frameIndex));
 	}
 	
@@ -59,5 +59,5 @@ void FrameProvider::ReleaseFrame(int frameAddress) {
  * Number a frame clear
  */
 int FrameProvider::NumAvailFrame() {
-	return bitMap->numClear();
+	return bitMap->NumClear();
 }

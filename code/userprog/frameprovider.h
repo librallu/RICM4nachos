@@ -7,6 +7,8 @@
 
 #ifndef USERPROG_FRAMEPROVIDER_H_
 #define USERPROG_FRAMEPROVIDER_H_
+#include "bitmap.h"
+#include "system.h"
 
 class FrameProvider {
 	public:
