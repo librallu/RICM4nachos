@@ -10,14 +10,14 @@
 
 class FrameProvider {
 	public:
-		FrameProvider();
+		FrameProvider(int addRandom);
 		virtual ~FrameProvider();
 		int GetEmptyFrame();
-		int ReleaseFrame(int frameAddress);
+		void ReleaseFrame(int frameAddress);
 		int NumAvailFrame();
 	private:
 		BitMap* bitMap;
-		TranslationEntry* pageTable;
+		bool random;
 };
 
 #endif /* USERPROG_FRAMEPROVIDER_H_ */

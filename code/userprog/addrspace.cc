@@ -23,6 +23,12 @@
 
 #include <strings.h>		/* for bzero */
 
+//Added by malek
+#ifdef CHANGED
+#include "frameprovider.h" 
+FrameProvider* frameProvider;
+#endif
+
 //----------------------------------------------------------------------
 // SwapHeader
 //      Do little endian to big endian conversion on the bytes in the 
@@ -117,13 +123,20 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
     DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 	   numPages, size);
-// first, set up the translation 
+    
+    //Added by Malek
+    #ifdef CHANGED
+    //int TRUE = 1;
+    frameProvider = new FrameProvider(1);
+    #endif
+    
+    // first, set up the translation 
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++)
       {
 	  #ifdef CHANGED
 	  pageTable[i].virtualPage = i; // step 4 action I.4
-	  pageTable[i].physicalPage = (i+1)%numPages;
+	  pageTable[i].physicalPage = frameProvider->GetEmptyFrame(); //(i+1)%numPages;
 	  #else
 		  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
 		  pageTable[i].physicalPage = i;
@@ -139,7 +152,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 // zero out the entire address space, to zero the unitialized data segment 
 // and the stack segment
-    bzero (machine->mainMemory, size);
+    //bzero (machine->mainMemory, size); //on doit virer ca car accede a la memoire entiere découper pour tous les process users
 
 // then, copy in the code and data segments into memory
     if (noffH.code.size > 0)
@@ -173,8 +186,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
 // }
       }
 
-    #ifdef CHANGED
     //Added by Malek
+    #ifdef CHANGED
     stackBitMap = new BitMap(MAX_USER_THREAD);
     stackBitMap->Mark(0); //The stack 0 is already used by the main thread
     #endif //CHANGED
@@ -192,6 +205,7 @@ AddrSpace::~AddrSpace ()
   delete [] pageTable;
   #ifdef CHANGED
   delete stackBitMap;
+  delete frameProvider;
   #endif //CHANGED
   // End of modification
 }

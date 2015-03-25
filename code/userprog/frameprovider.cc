@@ -1,16 +1,24 @@
 /*
  * frameprovider.cc
- *
+ * Le principe de cette classe est de géré les cadres de la mémoire.
+ * Elle n'utilise qu'un bitmap qui permet de determiner l'utilisation des frame.
+ * En aucun cas elle ne gere la translation d'adresse virtuelle a physique
+ * 
  *  Created on: 18 mars 2015
  *      Author: malek
  */
 
 #include "frameprovider.h"
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
-FrameProvider::FrameProvider() {
+FrameProvider::FrameProvider(int addRandom) {
 	bitMap = new BitMap(numPages);
-	pageTable = new TranslationEntry[numPages];
-	bitMap->Mark(0);
+	if (addRandom) {
+		srand (time(NULL));
+		random = true; 
+	}
+	//bitMap->Mark(0);
 }
 
 FrameProvider::~FrameProvider() {
@@ -18,49 +26,38 @@ FrameProvider::~FrameProvider() {
 }
 
 /**
- * The function returns a frame address
+ * The function returns a frame offset address 
  * Returns : Positive value if everything went well
  * 			 -1 if there is no more frame available
  */
 int FrameProvider::GetEmptyFrame() {
-	int frameIndex = bitMap->Find();
-	
-	if (frameIndex == -1)
+	int frameIndex = NULL;
+	if (! bitMap->NumClear()>0) 
 		return -1;
 	
-	pageTable[frameIndex].virtualPage = i; // step 4 action I.4
-	pageTable[frameIndex].physicalPage = i+1;
+	if (! random) {
+		frameIndex = bitMap->Find();	
+	} else {
+		do {
+			frameIndex = rand() % NumPhysPages;	
+		} while (bitMap->Test(frameIndex));
+	}
 	
-	pageTable[frameIndex].valid = TRUE;
-	pageTable[frameIndex].use = TRUE;
-	pageTable[frameIndex].dirty = FALSE;
-	// if the code segment was entirely on a separate page, we could set its pages to be read-only
-	pageTable[frameIndex].readOnly = FALSE;	
+    bzero (machine->mainMemory + frameIndex * PageSize, PageSize);
 
-	// zero out the entire address space, to zero the unitialized data segment 
-	// and the stack segment
-    bzero (machine->mainMemory+pageTable[frameIndex].physicalPage*numPages, PageSize);
-
-	return machine->mainMemory+pageTable[frameIndex].physicalPage*numPages;
+	return frameIndex * PageSize;
 }
 
 /**
  * Release a frame
- * Returns : 0 if everything went well
- * 			 -1 if the frameAddress is incorrect
  */
-int ReleaseFrame(int frameAddress) {
-	int frameIndex = frameAddress / PageSize;
-	if (frameIndex<=numPages) {
-		pageTable[frameIndex].valid = FALSE;
-		pageTable[frameIndex].use = FALSE;
-		pageTable[frameIndex].dirty = FALSE;
-		bitMap->Clear(frameIndex);
-		return 0;
-	}
-	return -1;
+void FrameProvider::ReleaseFrame(int frameAddress) {
+	bitMap->Clear(frameAddress / PageSize);
 }
 
-int NumAvailFrame() {
+/**
+ * Number a frame clear
+ */
+int FrameProvider::NumAvailFrame() {
 	return bitMap->numClear();
 }
