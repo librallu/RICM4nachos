@@ -28,11 +28,9 @@
 
 void initializePageTable(	DirectoryEntry* ptr, 
 							bool inUse, 
-							FileType type, 
 							int sector,
 							const char* name){
 	ptr->inUse = inUse;
-	ptr->type = type;
 	ptr->sector = sector;
 	strncpy(ptr->name, name , FileNameMaxLen);
 }
@@ -49,7 +47,6 @@ void initializePageTable(	DirectoryEntry* ptr,
 Directory::Directory(){
 
 }
-
 
 Directory::Directory(int size)
 {
@@ -69,10 +66,8 @@ Directory::Directory(int size, int currentSector, int parentSector)
 	
 
 	// add . and ..
-	initializePageTable(&(table[0]), TRUE, FS_FILE, currentSector, ".");
-	if ( parentSector >= 0 ){
-		initializePageTable(&(table[1]), TRUE, FS_FILE, parentSector, "..");
-	}
+	initializePageTable(&(table[0]), TRUE, currentSector, ".");
+	initializePageTable(&(table[1]), TRUE, currentSector==0?currentSector:parentSector, "..");
 
 }
 
@@ -160,20 +155,17 @@ Directory::Find(const char *name)
 //	"name" -- the name of the file being added
 //	"newSector" -- the disk sector containing the added file's header
 //----------------------------------------------------------------------
-bool Directory::Add(const char *name, int newSector){
-  	return Add(name,newSector,FS_FILE);
-}
 
 
 bool
-Directory::Add(const char *name, int newSector, FileType type)
+Directory::Add(const char *name, int newSector)
 { 
     if (FindIndex(name) != -1)
 		return FALSE;
 
     for (int i = 0; i < tableSize; i++){
         if (!table[i].inUse) {
-			initializePageTable(&(table[i]), TRUE, type, newSector, name);
+			initializePageTable(&(table[i]), TRUE, newSector, name);
         	return TRUE;
 		}
 	}
@@ -192,12 +184,10 @@ bool
 Directory::Remove(const char *name)
 { 
     int i = FindIndex(name);
+	FileHeader* hdr = new FileHeader;
+	hdr->FetchFrom(i);
 
-    if ( table[i].type == FS_DIR ){ // if it's a directory
-        // TODO add verification for directories.
-        // We can delete it if and only if the
-        // directory is empty
-        
+    if ( hdr->IsDirectory() ){ // if it's a directory
         Directory* d = new Directory();
         d->FetchFrom(new OpenFile(table[i].sector));
         if ( d->IsEmpty() ){

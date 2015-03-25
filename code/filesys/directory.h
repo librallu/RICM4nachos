@@ -30,15 +30,12 @@
 // access them directly.
 
 
-// change :
-// Indicates which type of file (DIR, FILE)
-enum FileType{ FS_DIR, FS_FILE };
+
 
 
 
 class DirectoryEntry {
   public:
-    FileType type;
 	bool inUse;				// Is this directory entry in use?
     int sector;				// Location on disk to find the 
 					//   FileHeader for this file 
@@ -71,10 +68,7 @@ class Directory {
     int Find(const char *name);		// Find the sector number of the 
 					// FileHeader for file: "name"
 
-    bool Add(const char *name, int newSector); // add a normal file
-
-
-    bool Add(const char *name, int newSector, FileType type);  // Add a file name into the directory
+    bool Add(const char *name, int newSector);  // Add a file name into the directory
 
     bool Remove(const char *name);	// Remove a file from the directory
 

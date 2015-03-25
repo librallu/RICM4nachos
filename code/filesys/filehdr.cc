@@ -148,3 +148,7 @@ FileHeader::Print()
     }
     delete [] data;
 }
+
+int FileHeader::IsDirectory(){
+	return numBytes < 0;
+}
