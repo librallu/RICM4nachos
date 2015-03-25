@@ -42,6 +42,7 @@ class AddrSpace
      */
     int getStack();
     void threadInitRegisters (int f, int stackIndex);
+    bool allFramesAllocated;
 #endif //CHANGED
 
   private:

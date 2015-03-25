@@ -34,6 +34,8 @@
 
 Thread::Thread (const char *threadName)
 {
+	this->id = next_thread[0]++; //Added by malek
+
     name = threadName;
     stackTop = NULL;
     stack = NULL;

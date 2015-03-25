@@ -9,6 +9,7 @@
  */
 
 #include "frameprovider.h"
+#include "system.h"
 //#include <cstdlib>     /* srand, rand */
 //#include <ctime>       /* time */
 
@@ -28,24 +29,28 @@ FrameProvider::~FrameProvider() {
 /**
  * The function returns a frame offset address 
  * Returns : Positive value if everything went well
- * 			 -1 if there is no more frame available
+ * 			 NULL if there is no more frame available
  */
-int FrameProvider::GetEmptyFrame() {
+int* FrameProvider::GetEmptyFrame(int n) {
 	int frameIndex = 0;
-	if (! bitMap->NumClear()>0) 
-		return -1;
+	if (! bitMap->NumClear()>=n) 
+		return NULL;
 	
-	if (! random) {
-		frameIndex = bitMap->Find();	
-	} else {
-		do {
-			frameIndex = Random() % NumPhysPages;	
-		} while (bitMap->Test(frameIndex));
+	int* frames = new int[n];
+	for(int i=0; i<n; i++) {
+		if (! random) {
+			frameIndex = bitMap->Find();	
+		} else {
+			do {
+				frameIndex = Random() % NumPhysPages;	
+			} while (bitMap->Test(frameIndex));
+		}
+		
+	    bzero (machine->mainMemory + frameIndex * PageSize, PageSize);
+	    frames[i] = frameIndex;    
 	}
 	
-    bzero (machine->mainMemory + frameIndex * PageSize, PageSize);
-
-	return frameIndex * PageSize;
+	return frames;
 }
 
 /**

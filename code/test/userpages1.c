@@ -1,8 +1,9 @@
 #include "syscall.h"
-#define THIS "THIS userprog0"
-#define THAT "that userprog0"
+#define THIS "aaa userprog1"
+#define THAT "bbb userprog1"
 
 const int N  = 10;
+
 
 
 void f(void *ss) {
@@ -21,8 +22,7 @@ void f(void *ss) {
 
 int main ()
 {
-	if ( UserThreadCreate(f, (void *) THIS) < 0 ) PutString("ERROR CREATING THREAD 1 !\n");
-	if ( UserThreadCreate(f, (void *) THAT) < 0 ) PutString("ERROR CREATING THREAD 2 !\n");
-
+	UserThreadCreate(f, (void *) THIS);
+	f((void*) THAT);
 	return 0;
 }

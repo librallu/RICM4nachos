@@ -23,12 +23,6 @@
 
 #include <strings.h>		/* for bzero */
 
-//Added by malek
-#ifdef CHANGED
-#include "frameprovider.h" 
-FrameProvider* frameProvider;
-#endif
-
 //----------------------------------------------------------------------
 // SwapHeader
 //      Do little endian to big endian conversion on the bytes in the 
@@ -124,19 +118,22 @@ AddrSpace::AddrSpace (OpenFile * executable)
     DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 	   numPages, size);
     
-    //Added by Malek
-    #ifdef CHANGED
-    //int TRUE = 1;
-    frameProvider = new FrameProvider(1);
-    #endif
+    
     
     // first, set up the translation 
     pageTable = new TranslationEntry[numPages];
+
+    //Added by Malek
+    #ifdef CHANGED
+    	int* frames = frameProvider->GetEmptyFrame(numPages);
+    	allFramesAllocated = (frames != NULL);
+    #endif
+    
     for (i = 0; i < numPages; i++)
       {
 	  #ifdef CHANGED
 	  pageTable[i].virtualPage = i; // step 4 action I.4
-	  pageTable[i].physicalPage = frameProvider->GetEmptyFrame(); //(i+1)%numPages;
+	  pageTable[i].physicalPage = frames[i]; //(i+1)%numPages;
 	  #else
 		  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
 		  pageTable[i].physicalPage = i;
@@ -150,6 +147,10 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	  // pages to be read-only
       }
 
+    //Added by Malek
+    #ifdef CHANGED
+    	delete[] frames;
+    #endif
 // zero out the entire address space, to zero the unitialized data segment 
 // and the stack segment
     //bzero (machine->mainMemory, size); //on doit virer ca car accede a la memoire entiere découper pour tous les process users

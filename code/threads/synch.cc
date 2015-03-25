@@ -24,7 +24,7 @@
 #include "copyright.h"
 #include "synch.h"
 #include "system.h"
-
+#include "thread.h"
 //----------------------------------------------------------------------
 // Semaphore::Semaphore
 //      Initialize a semaphore, so that it can be used for synchronization.
@@ -32,7 +32,6 @@
 //      "debugName" is an arbitrary name, useful for debugging.
 //      "initialValue" is the initial value of the semaphore.
 //----------------------------------------------------------------------
-
 Semaphore::Semaphore (const char *debugName, int initialValue)
 {
     name = debugName;

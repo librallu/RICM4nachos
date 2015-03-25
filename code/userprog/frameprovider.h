@@ -8,13 +8,13 @@
 #ifndef USERPROG_FRAMEPROVIDER_H_
 #define USERPROG_FRAMEPROVIDER_H_
 #include "bitmap.h"
-#include "system.h"
+
 
 class FrameProvider {
 	public:
 		FrameProvider(int addRandom);
 		virtual ~FrameProvider();
-		int GetEmptyFrame();
+		int* GetEmptyFrame(int n);
 		void ReleaseFrame(int frameAddress);
 		int NumAvailFrame();
 	private:

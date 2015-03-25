@@ -19,12 +19,8 @@
 			UserThread(int f, int arg);
 			~UserThread();
 			int stackIndex;
-			int GetId();
-			Semaphore* take_this;//(const char*, int);
-		private:
-			int id;
-			int f;
-			int arg;
+
+			Semaphore* take_this;
 
 	};
 
@@ -39,6 +35,11 @@
 	extern	void do_UserThreadExit() ;
 
 	extern	void StartUserThread(int f);
-
+//
+//	extern int do_ForkExec(char* filename);
+//
+//	extern void StartForkExec(int arg);
+//
+//	extern void do_ForkExecExit();
 
 #endif /* USERTHREAD_H_ */

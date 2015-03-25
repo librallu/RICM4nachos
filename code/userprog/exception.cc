@@ -47,6 +47,9 @@ void copyStringFromMachine(int from, char *to, unsigned size){
 	unsigned int i;
 	for ( i = 0 ; i < size ; i++ ){
 		machine->ReadMem(from+i,1,(int*) (to+i) );
+
+		if (*(to+i) == '\0') //Added by malek
+			return;
 	}
 	to[size-1] = '\0';
 }
@@ -57,7 +60,6 @@ void copyStringToMachine(char* from, int to, unsigned size){
 		machine->WriteMem(to+i,1,(int)from[i]);
 	}
 }
-
 
 char readDirectMem(int from){
 	int to;
@@ -77,8 +79,18 @@ void waitTheThreads() {
 			fils->take_this->P();
 		}	
 	}
-	
 }
+//void waitTheThreads() {
+//	int pid = currentThread->getPID();
+//	for(int i=1; i<MAX_THREAD; i++) { //next_thread[pid]
+//		UserThread* fils = (UserThread*) map_threads[pid][i];
+//		if ( fils != NULL ){
+//			map_joins[pid][fils->GetId()]++;
+//			fils->take_this->P();
+//		}
+//	}
+//
+//}
 #endif //CHANGED
 
 //----------------------------------------------------------------------
@@ -108,10 +120,10 @@ void
 ExceptionHandler (ExceptionType which)
 {
 	#ifdef CHANGED
-	int from,i;
-	unsigned int size;
-	int tmpInt;
-	char bufString[MAX_STRING_SIZE];
+//	int from,i;
+//	unsigned int size;
+//	int tmpInt;
+//	char bufString[MAX_STRING_SIZE];
 	#endif
 
 
@@ -150,32 +162,43 @@ ExceptionHandler (ExceptionType which)
 				machine->WriteRegister(2,(int)synchconsole->SynchGetChar());
 				break;
 			case SC_GetString:
-				from = machine->ReadRegister(4);
-				size = machine->ReadRegister(5);
+			{
+				int from = machine->ReadRegister(4);
+				unsigned int size = machine->ReadRegister(5);
+				char bufString[MAX_STRING_SIZE];
 				synchconsole->SynchGetString(bufString, size);
 				copyStringToMachine(bufString,from,size);
 				DEBUG('a', "getstring used by user program.\n");
+			}
 				break;
 			case SC_PutString:
-				from = machine->ReadRegister(4);
-				i=1;
-				while( readDirectMem(from+i-1) != '\0' ) i++;
-				size=i;
-				if (size > MAX_STRING_SIZE){
-					printf("string buffer overflow %d %d\n",which,type);
-					ASSERT(FALSE);
-					break;
-				}
-				copyStringFromMachine(from,bufString,size);
+			{
+				int from = machine->ReadRegister(4);
+				char bufString[MAX_STRING_SIZE];
+//				i=1;
+//				while( readDirectMem(from+i-1) != '\0' ) i++;
+//				size=i;
+//				if (size > MAX_STRING_SIZE){
+//					printf("string buffer overflow %d %d\n",which,type);
+//					ASSERT(FALSE);
+//					break;
+//				}
+				copyStringFromMachine(from,bufString,MAX_STRING_SIZE);
 				synchconsole->SynchPutString(bufString);
+			}
 				break;
 			case SC_GetInt:
+			{
+				int tmpInt;
 				synchconsole->SynchGetInt(&tmpInt);
 				machine->WriteRegister(2,tmpInt);
+			}
 				break;
 			case SC_PutInt:
-				tmpInt = machine->ReadRegister(4);
+			{
+				int tmpInt = machine->ReadRegister(4);
 				synchconsole->SynchPutInt(tmpInt);
+			}
 				break;
 			case SC_UserThreadCreate:
 			{//Malek
@@ -197,19 +220,37 @@ ExceptionHandler (ExceptionType which)
 			}
 				break;
 			case SC_UserThreadJoin:
-				{
-					DEBUG('t', "UserThreadJoin used by user program.\n");
-					int t = machine->ReadRegister(4);
-					UserThread* fils = (UserThread*) map_threads[0][t];
-					if ( fils != NULL ){
-						map_joins[0][fils->GetId()]++;
-						fils->take_this->P();
-					}
+			{
+				DEBUG('t', "UserThreadJoin used by user program.\n");
+				int t = machine->ReadRegister(4);
+				UserThread* fils = (UserThread*) map_threads[0][t];
+				if ( fils != NULL ){
+					map_joins[0][fils->GetId()]++;
+					fils->take_this->P();
 				}
+			}
 				break;
 			case SC_UserThreadExit:
 				DEBUG('t', "UserThreadExit used by user program.\n");
 				do_UserThreadExit();
+				break;
+				
+			case SC_ForkExec:
+			{
+				DEBUG('t', "ForkExec used by user program.\n");
+				int from = machine->ReadRegister(4);
+				char to[100];
+				copyStringFromMachine(from, to, 100);
+				int ret = do_ForkExec(to);
+
+				switch (ret) {
+				case -1 : printf("ForkExec error : something went wrong with opening the executable file\n"); break;
+				case -2 : printf("ForkExec error : something went wrong with opening the address space allocation\n"); break;
+				case -3 : printf("ForkExec error : not enough frame to launch the process\n"); break;
+				case -4 : printf("ForkExec error : reached the number max of processes\n"); break;
+				default : printf("Process created with a PID : %d\n", ret); break;
+				}
+			}
 				break;
 			default:
 	  			printf ("Unexpected user mode exception %d %d\n", which, type);
