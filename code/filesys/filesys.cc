@@ -214,6 +214,57 @@ FileSystem::Create(const char *name, int initialSize)
     return success;
 }
 
+bool
+FileSystem::CreateDir(const char *name)
+{
+    Directory *directory;
+    BitMap *freeMap;
+    FileHeader *hdr;
+    Directory *newDir;
+    OpenFile *openNewDir;
+    int sector;
+    bool success;
+
+    DEBUG('f', "Creating directory %s\n", name);
+
+    directory = new Directory(NumDirEntries);
+    directory->FetchFrom(directoryFile);
+
+    if (directory->Find(name) != -1)
+      success = FALSE;			// file is already in directory
+    else {	
+        freeMap = new BitMap(NumSectors);
+        freeMap->FetchFrom(freeMapFile);
+        sector = freeMap->Find();	// find a sector to hold the file header
+    	if (sector == -1) 		
+            success = FALSE;		// no free block for file header 
+        else if (!directory->Add(name, sector, FS_DIR))
+            success = FALSE;	// no space in directory
+	else {
+    	    hdr = new FileHeader;
+	    if (!hdr->Allocate(freeMap, DirectoryFileSize))
+            	success = FALSE;	// no space on disk for data
+	    else {	
+	    	success = TRUE;
+		newDir = new Directory(NumDirEntries, sector, DirectorySector);
+		// everthing worked, flush all changes back to disk
+    	    	hdr->WriteBack(sector); 		
+    	    	directory->WriteBack(directoryFile);
+    	    	freeMap->WriteBack(freeMapFile);
+		openNewDir = new OpenFile(sector);
+		newDir->WriteBack(openNewDir);
+		delete newDir;
+		delete openNewDir;
+	    }
+            delete hdr;
+	}
+        delete freeMap;
+    }
+    delete directory;
+    return success;
+}
+
+
 //----------------------------------------------------------------------
 // FileSystem::Open
 // 	Open a file for reading and writing.  
