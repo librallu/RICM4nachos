@@ -11,13 +11,17 @@
 
 UserThread::UserThread(int fp, int argp) : Thread::Thread("thread")
 {
-//	this->id = next_thread[0]++;
+	numSons = 0;
 	this->take_this = new Semaphore("UserThread Semaphore",0);
+	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
+	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
 }
 
 
 UserThread::~UserThread () {
 	delete take_this;
+	delete mutex;
+	delete waitSons;
 }
 
 /**
@@ -38,17 +42,43 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 	
 	//The index of the thread stack
 	int stackIndex;
-	
+	//We create a thread
 	UserThread* newThread = new UserThread(f, arg);
+
+	/** We allocate a stack from the current space
+	 * TODO For now currentThread is from the same process that i'm in. But when we shall have multiple processes it might
+	 * cause some issue since we can possibly I THINK I'M NOT SURE have a commutation between the system call to
+	 * UserThreadCreate and the time we are in this code.
+	 * This a systeme call so interruption are off and no comutation should happen you would say ... yes in theory
+	 */
 	if ((stackIndex = currentThread->space->getStack()) == -1) {
 		fprintf(stderr,"ERREUR!\n");
 		return -1;
 	}
+	//We set the stack index pointer
 	newThread->stackIndex = stackIndex;
-	
+	//TODO Not sure about current thread is the father, at worst we give in parameterd
+	newThread->parent = currentThread;
+	//We set the pid son
+	newThread->setPID(newThread->parent->getPID());
+
+	//TODO We incremente the id of the main thread or main thread son or grand children etc..
+	//We maybe should put this in the consructor but it implies that the PID that we give him pid in parameter
+	newThread->id = next_thread[newThread->getPID()]++; //Added by malek
+
+	//we notify the father to wait for me
+	if (newThread->parent->GetId() == 0) {
+		((ForkExec*) newThread->parent)->take_this->P(); //This is the main thread
+	} else {
+		((UserThread*) newThread->parent)->take_this->P(); //This a UserThread
+	}
+
+	//We Fork the thread
 	newThread->Fork(StartUserThread, (int) fun);
-	map_threads[0][newThread->GetId()] = (int)newThread;
-	map_joins[0][newThread->GetId()] = 0; 
+	//We keep a map of all therad for the PID/ID and reference correspondance
+	map_threads[newThread->getPID()][newThread->GetId()] = (int) newThread;
+	//We need to know if some thread orther than my sons is waiting for me
+	map_joins[currentThread->getPID()][newThread->GetId()] = 0;
 	currentThread->Yield();
 	
 	return newThread->GetId();
@@ -58,11 +88,15 @@ int do_UserThreadCreate(int f, int arg, int ret) {
  * Ends a UserThread
  */
 void do_UserThreadExit() {
+	//Wait for his sons to call sons->V()
+	((UserThread*)currentThread)->waitForMySons();
 	
-	for(int i=0;i < map_joins[0][((UserThread*)currentThread)->GetId()];i++){
+	//We release every thread waiting for me
+	for(int i=0;i < map_joins[currentThread->getPID()][((UserThread*)currentThread)->GetId()];i++){
 		((UserThread*)currentThread)->take_this->V();
 	}
-    map_threads[0][((UserThread*)currentThread)->GetId()] = (int) NULL;
+
+    map_threads[currentThread->getPID()][((UserThread*)currentThread)->GetId()] = (int) NULL;
     // The thread call the finish method.
     currentThread->Finish();
     // we need to free the thread memory

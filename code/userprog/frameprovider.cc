@@ -13,7 +13,7 @@
 //#include <cstdlib>     /* srand, rand */
 //#include <ctime>       /* time */
 
-FrameProvider::FrameProvider(int addRandom) {
+FrameProvider::FrameProvider(bool addRandom) {
 	bitMap = new BitMap(NumPhysPages);
 	if (addRandom) {
 		RandomInit(0);
@@ -56,8 +56,8 @@ int* FrameProvider::GetEmptyFrame(int n) {
 /**
  * Release a frame
  */
-void FrameProvider::ReleaseFrame(int frameAddress) {
-	bitMap->Clear(frameAddress / PageSize);
+void FrameProvider::ReleaseFrame(int frame) {
+	bitMap->Clear(frame);
 }
 
 /**

@@ -11,12 +11,17 @@
 
 ForkExec::ForkExec() : Thread::Thread("process") 
 {
+	numSons = 0;
 	this->take_this = new Semaphore("Process Semaphore",0);
+	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
+	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
 }
 
 ForkExec::~ForkExec() 
 {
 	delete take_this;
+	delete mutex;
+	delete waitSons;
 }
 
 
@@ -60,8 +65,9 @@ int do_ForkExec(char* filename) {
 	 }
 	 
 	 t->setPID(pid);
-	 map_process[pid] = (int) t; //stock le pseudo processus dans la map des processus
-	 map_threads[pid][next_thread[pid]++] = (int) t; //stock le pseudo processus dans la map des processus
+	 int mainThreadID = next_thread[pid]++; //should be 0
+	 t->setId(pid);
+	 map_threads[pid][mainThreadID] = (int) t; //stock le pseudo processus dans la map des processus
 	 
 	 /* il faut voir Thread comme un thread linux (car c'est du c++) qui conceptuellement est un processus MIPS.  
 	  * Ceci s'apparente donc a un lancement de processus, puisque un nouvel espace d'adressage est initialisé
@@ -80,14 +86,11 @@ void StartForkExec(int arg) {
 }
 
 void do_ForkExecExit() {
+	((ForkExec*)currentThread)->waitForMySons();
 	for(int i=0;i < map_joins[currentThread->getPID()][currentThread->GetId()];i++){
 		((ForkExec*) currentThread)->take_this->V();
 	}
 	
 	map_threads[currentThread->getPID()][currentThread->GetId()] = (int) NULL;
     currentThread->Finish();
-//    currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex); //A faire lorsque'il y a plus d'un thread
-
-//    frameProvider->ReleaseFrame(currentThread->space->);
-    
 }

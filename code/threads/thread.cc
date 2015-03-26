@@ -34,8 +34,6 @@
 
 Thread::Thread (const char *threadName)
 {
-	this->id = next_thread[0]++; //Added by malek
-
     name = threadName;
     stackTop = NULL;
     stack = NULL;
@@ -69,6 +67,10 @@ Thread::~Thread ()
     ASSERT (this != currentThread);
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
+//#ifdef USER_PROGRAM
+//    if(space != NULL)
+//    	delete space;
+//#endif
 }
 
 //----------------------------------------------------------------------

@@ -20,7 +20,7 @@
 #include "copyright.h"
 //#include "thread.h"
 #include "list.h"
-//namespace sync {
+
 // The following class defines a "semaphore" whose value is a non-negative
 // integer.  The semaphore has only two operations P() and V():
 //
@@ -49,6 +49,12 @@ class Semaphore
     void P ();			// these are the only operations on a semaphore
     void V ();			// they are both *atomic*
 
+//#ifdef CHANGED
+//    //Added by malek : might be useful. Instead of using a map_join[][] for counting the number of P() we can just have this
+//    int getValue() {
+//    	return value;
+//    }
+//#endif
   private:
     const char *name;		// useful for debugging
     int value;			// semaphore value, always >= 0

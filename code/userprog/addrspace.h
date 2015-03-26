@@ -43,13 +43,21 @@ class AddrSpace
     int getStack();
     void threadInitRegisters (int f, int stackIndex);
     bool allFramesAllocated;
+    void giveBackFrames();
+
+    //Normally shouldn't be here
+    typedef struct threadFunction_ {
+		int f;
+		int args;
+		int ret;
+	} threadFunction;
 #endif //CHANGED
 
   private:
       TranslationEntry * pageTable;	// Assume linear page table translation
     // for now!
-    unsigned int numPages;	// Number of pages in the virtual 
-    // address space
+    unsigned int numPages;	// Number of pages in the virtual address space
+
 };
 
 #endif // ADDRSPACE_H

@@ -719,3 +719,74 @@ Action I.4
 **********
 
 We replaced i by i+1 in 
+
+Summary 
+*******
+
+In goal to store and manage our processes and thread. We declared somme variables (in system.h) initialize at zero: 
+
+extern int map_threads[MAX_PROCESSUS][MAX_THREAD];
+extern int map_joins[MAX_PROCESSUS][MAX_THREAD];
+extern int next_thread_id[MAX_PROCESSUS];
+extern int next_process_id;
+
+map_thread : is for storing the thread references. map_thread[PID][ID] allows us to find any thread from a PID and ID
+map_joins  : counts the number of join calls made. You will find explanation below
+next_thread_id and next_process_id is just a way to get unique IDs and PIDs
+
+Since a Thread object can be seen as a ForkExec (process) or a userThread we need to distinguish 
+the groups of threads that belongs to a same process. And the PID with the ID are going to help us to achieve that.                                                                             
+We don't need to compare the references of address space of each thread. A PID is simpler to manipulate 
+than a reference to an address space.
+And so every thread with a same PID belongs to a same process. 
+
+The files we added : 
+frameprovider.cc and .h
+userthread.cc and .h inherit from Thread.
+forkexec.cc and .h inherit from Thread.
+This file above wasn't asked in the subject but we judged that we had to give him its own class since it represent
+a kernel thread, a MIPS process and the main thread among his sons.
+
+
+Our conception choices :                                                                                     
+                                                                                                             
+All threads initiated from a same father are inside a same process, so they have the same PID value.       
+Now we chose to add an ID value in goal to distinguish the threads in a same process.                                 
+Also in goal to keep a tracability between sons/fathers for future porpuses, each thread keep his reference  
+parent in a variable so we could build an ascendent tree from any thread X with sames PIDs.                
+
+For the non terminaison of the main thread while one of his sons at least hasn't finished we chose that      
+every son does father->waitForMe() when they launch and a father->waitSons->V() when they die.
+The waitForMe() function remembers to call waitSons->P() when father finishes.
+We didn't want to use the son semaphore as if the father last longer than the son which will consequently be set the 
+son to destrution, just as his semaphore.
+                                                                                                                                                                                      
+Let admit that a son thread becomes at his turn a father by launching a thread. In that case the generated   
+thread belong to the same process that his father does.                                                      
+And just like we said above, the son does a waitForMe() call on his father in goal let him know to wait for him.          
+And when the son dies (or exits) it does a waitSons->V() call for releasing his father. This works even for more than one   
+thread son. 
+
+Let see how we implemented the join functionnality:
+Here again xe chose to use semaphores. And so we added a semaphore field to UserThread and ForkExec classes 
+Let say X want to wait for Y. X will call Y->semaphore->P() (by UserThreadJoin system call), and from the Y side 
+we need to do a this->V() when Y has finished. If you see the UserThreadExit() function in UserThread.cc you would notice that
+we call Y->V() the number of time P() has been called. Indeed we keep a join counter (map_joins[PID][ID]++) for every thread, 
+in goal release every one.
+This way to do things has two advantages : 
+-> a succession of UserThreadJoin calls from the same thread doesn't affect the program behavior. It is like doing one UserThreadJoin call.
+-> beside the fact that sons wait their father, anythread from the same process can wait for another thread. 
+We can even imagine a nasty case where a son does a join on his father which should cause a dead lock. But our system prevent this since we free
+evryone a same number off call to V()
+
+UserThreadExit is automacally called when a user thread finishes his work. In StartUserThread we set the LR register 
+to UserThreadExit address function.
+
+To assure a mutual exlcusion with some functions used by multiple threads at a same time possibly, we added a Mutex : 
+--> frame allocation 
+--> 
+
+To avoid memory leak we make sure to call "delete space" in the Thread destructor if of course space != NULL. The thread 
+destrutor is automatically called when toBeDestroyed is set to true, scheduled for destruction. This way of doing is due 
+to the fact a current thread cannot destro himself.
+

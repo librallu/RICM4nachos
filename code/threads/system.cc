@@ -25,9 +25,8 @@ Timer *timer;			// the hardware timer device,
 int map_threads[MAX_PROCESSUS][MAX_THREAD] = {{0}};
 int map_joins[MAX_PROCESSUS][MAX_THREAD] = {{0}};
 int next_thread[MAX_PROCESSUS] = {0};
-int map_process[MAX_PROCESSUS]= {0}; //added by malek
 int next_process_id = 0; //added by malek
-FrameProvider* frameProvider  = new FrameProvider(1); //added by malek
+FrameProvider* frameProvider  = new FrameProvider(true); //added by malek
 //Manager* manager = new Manager(MAX_PROCESSUS, MAX_THREAD);
 #endif
 
