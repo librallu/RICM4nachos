@@ -32,7 +32,6 @@
 					waitSons->P();
 			}
 
-
 		private:
 			Semaphore* waitSons;
 			Semaphore* mutex;

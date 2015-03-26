@@ -315,9 +315,10 @@ int AddrSpace::getStack()
 	return res;
 }
 
-void AddrSpace::giveBackFrames() {
+void
+AddrSpace::giveBackFrames() {
 	for(unsigned int i=0; i<numPages; i++) {
-		frameprovider->ReleaseFrame(this->pageTable[i].physicalPage);
+		//frameprovider->ReleaseFrame(this->pageTable[i].physicalPage);
 	}
 }
 

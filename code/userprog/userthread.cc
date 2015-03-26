@@ -7,7 +7,7 @@
 
 #include "userthread.h"
 #include "system.h"
-
+#include "forkexec.h"
 
 UserThread::UserThread(int fp, int argp) : Thread::Thread("thread")
 {
@@ -23,7 +23,19 @@ UserThread::~UserThread () {
 	delete mutex;
 	delete waitSons;
 }
-
+//Called by son thread at his creation
+void UserThread::waitForMe() {
+	mutex->P();
+	numSons++;
+	mutex->V();
+}
+//Called by a son thread at his destruction
+void UserThread::GoFree() {waitSons->V();}
+//Called at the father UserThreadExit
+void UserThread::waitForMySons() {
+	for(int i=0; i<numSons; i++)
+		waitSons->P();
+}
 /**
  * Creates a UserThread by launching StartUserThread as thread itself. 
  * Returns : -1 : There is no stack available
@@ -64,7 +76,7 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 
 	//TODO We incremente the id of the main thread or main thread son or grand children etc..
 	//We maybe should put this in the consructor but it implies that the PID that we give him pid in parameter
-	newThread->id = next_thread[newThread->getPID()]++; //Added by malek
+	newThread->setId(next_thread[newThread->getPID()]++); //Added by malek
 
 	//we notify the father to wait for me
 	if (newThread->parent->GetId() == 0) {

@@ -27,7 +27,7 @@ extern int map_joins[MAX_PROCESSUS][MAX_THREAD];
 extern int next_thread[MAX_PROCESSUS];
 //Added by malek
 extern int next_process_id;
-//#include "frameprovider.h"
+#include "frameprovider.h"
 //#include "forkexec.h"
 extern FrameProvider* frameProvider;
 //extern Manager* manager;

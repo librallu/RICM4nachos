@@ -76,7 +76,7 @@ char readDirectMem(int from){
  */
 void waitTheThreads() {
 	for (int process=0; process<MAX_PROCESSUS; process++) {
-		if(map_threads[process][0] != NULL) {
+		if(map_threads[process][0] != 0) {
 //			for(int i=0; i<MAX_THREAD; i++) {
 //				UserThread* fils = (UserThread*) map_threads[0][i];
 //				if ( fils != NULL ){
@@ -266,7 +266,7 @@ ExceptionHandler (ExceptionType which)
 				if ( fils != NULL ){
 					//We have to remember every thread that is waiting for us, in goal to release him in the future
 					map_joins[fils->getPID()][fils->GetId()]++;
-					if (fils->take_this->getValue())
+					//if (fils->take_this->getValue())
 						fils->take_this->P();
 				}
 			}

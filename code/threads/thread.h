@@ -113,26 +113,25 @@ class Thread
 	printf ("%s, ", name);
     }
 
-//#ifdef CHANGED
-//    //PIDs
-//    int getPID() {
-//    	return this->PID;
-//    }
-//
-//    void setPID(int pid) {
-//      	this->PID = pid;
-//    }
-//
-//    //IDs
-//    int GetId(){
-//    	return this->id;
-//    }
-//    void setId(int ID) {
-//      	this->id = ID;
-//    }
-//
-//    //virtual void waitForMe();
-//#endif
+#ifdef CHANGED
+    //PIDs
+    int getPID() {
+    	return this->PID;
+    }
+
+    void setPID(int pid) {
+      	this->PID = pid;
+    }
+
+    //IDs
+    int GetId(){
+    	return this->id;
+    }
+    void setId(int ID) {
+      	this->id = ID;
+    }
+    Thread* parent;
+#endif
 
   protected:
     // some of the private data for this class is listed above
@@ -147,26 +146,26 @@ class Thread
     // Allocate a stack for thread.
     // Used internally by Fork()
 
-//#ifdef CHANGED
-//    //-----------------------------------------------------------------------------------------
-//    // Modified by Malek
-//    /**
-//     * Since a Thread object can be seen as a process or a userThread we need to distinguish
-//     * the groups of threads that belongs to a single process. And the PID is going to help us
-//     * to achieve that.
-//     * We don't to compare the references of address space of each thread.
-//     * And so every thread with a same PID belongs to a same process. Plus a process PID is simpler
-//     * to manipulate in structures in general than a reference to the address space
-//     */
-//
-//    int PID;
-//    /**
-//     * In case of a process this value should be always 0 because it is the main thread
-//     */
-//    int id;
-//    Thread* parent;
-//    //-----------------------------------------------------------------------------------------
-//#endif
+#ifdef CHANGED
+    //-----------------------------------------------------------------------------------------
+    // Modified by Malek
+    /**
+     * Since a Thread object can be seen as a process or a userThread we need to distinguish
+     * the groups of threads that belongs to a single process. And the PID is going to help us
+     * to achieve that.
+     * We don't to compare the references of address space of each thread.
+     * And so every thread with a same PID belongs to a same process. Plus a process PID is simpler
+     * to manipulate in structures in general than a reference to the address space
+     */
+
+    int PID;
+    /**
+     * In case of a process this value should be always 0 because it is the main thread
+     */
+    int id;
+
+    //-----------------------------------------------------------------------------------------
+#endif
 
 #ifdef USER_PROGRAM
 // A thread running a user program actually has *two* sets of CPU registers -- 
