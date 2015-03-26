@@ -24,7 +24,7 @@
 #include "copyright.h"
 #include "synch.h"
 #include "system.h"
-#include "thread.h"
+//#include "thread.h"
 //----------------------------------------------------------------------
 // Semaphore::Semaphore
 //      Initialize a semaphore, so that it can be used for synchronization.
