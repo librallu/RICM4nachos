@@ -11,12 +11,17 @@
 
 ForkExec::ForkExec() : Thread::Thread("process") 
 {
+	numSons = 0;
 	this->take_this = new Semaphore("Process Semaphore",0);
+	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
+	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
 }
 
 ForkExec::~ForkExec() 
 {
 	delete take_this;
+	delete mutex;
+	delete waitSons;
 }
 
 
@@ -31,9 +36,9 @@ ForkExec::~ForkExec()
  * dont le pgm a deja été mis en mémoire. On a juste besoin d'allouer une pile.
  * Dans le cas present, ForkExec initialise un nouvel espace d'adressage.  
  */
-int do_ForkExec(char* filename) {
+int do_ForkExec(char* filename, int exit_syscall) {
 
-	 Thread* t = new Thread(filename);
+	 ForkExec* t = new ForkExec();
 	 OpenFile *executable = fileSystem->Open (filename);
 
 	 if (executable == NULL) {
@@ -60,34 +65,39 @@ int do_ForkExec(char* filename) {
 	 }
 	 
 	 t->setPID(pid);
-	 map_process[pid] = (int) t; //stock le pseudo processus dans la map des processus
-	 map_threads[pid][next_thread[pid]++] = (int) t; //stock le pseudo processus dans la map des processus
+	 int mainThreadID = next_thread[pid]++; //should be 0
+	 t->setId(mainThreadID);
+	 map_threads[pid][mainThreadID] = (int) t; //stock le pseudo processus dans la map des processus
 	 
+	 //We need to know if some thread orther than my sons is waiting for me
+	 map_joins[t->getPID()][t->GetId()] = 0;
+
 	 /* il faut voir Thread comme un thread linux (car c'est du c++) qui conceptuellement est un processus MIPS.  
 	  * Ceci s'apparente donc a un lancement de processus, puisque un nouvel espace d'adressage est initialisé
 	  * A la place d'un machine->Run() il est necessaire d'effectuer un Fork pour que le pseudo processus soit schedulé
 	  */
-	 t->Fork(StartForkExec, pid);
-
+	 t->Fork(StartForkExec, exit_syscall);
+//	 currentThread->Yield();
 	 return pid;
 }
 
 void StartForkExec(int arg) {
 	currentThread->space->InitRegisters ();	// set the initial register values
 	currentThread->space->RestoreState ();	// load page table register
+	machine->WriteRegister(RetAddrReg, arg); //calling do_ForkExecExit
 	machine->Run ();		// jump to the user progam
 	ASSERT (FALSE);		// machine->Run never returns;
 }
 
 void do_ForkExecExit() {
+	fprintf(stderr, "COUCOUCOU\n");
+	((ForkExec*)currentThread)->waitForMySons();
 	for(int i=0;i < map_joins[currentThread->getPID()][currentThread->GetId()];i++){
 		((ForkExec*) currentThread)->take_this->V();
 	}
-	
-	map_threads[currentThread->getPID()][currentThread->GetId()] = (int) NULL;
-    currentThread->Finish();
-//    currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex); //A faire lorsque'il y a plus d'un thread
+	//Realeasing the main system process
+	((ForkExec*) currentThread)->take_this->V();
 
-//    frameProvider->ReleaseFrame(currentThread->space->);
-    
+	map_threads[currentThread->getPID()][currentThread->GetId()] = 0;
+    currentThread->Finish();
 }

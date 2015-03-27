@@ -113,6 +113,7 @@ class Thread
 	printf ("%s, ", name);
     }
 
+#ifdef CHANGED
     //PIDs
     int getPID() {
     	return this->PID;
@@ -129,6 +130,8 @@ class Thread
     void setId(int ID) {
       	this->id = ID;
     }
+    Thread* parent;
+#endif
 
   protected:
     // some of the private data for this class is listed above
@@ -143,6 +146,7 @@ class Thread
     // Allocate a stack for thread.
     // Used internally by Fork()
 
+#ifdef CHANGED
     //-----------------------------------------------------------------------------------------
     // Modified by Malek
     /**
@@ -153,13 +157,15 @@ class Thread
      * And so every thread with a same PID belongs to a same process. Plus a process PID is simpler
      * to manipulate in structures in general than a reference to the address space
      */
+
     int PID;
     /**
      * In case of a process this value should be always 0 because it is the main thread
      */
     int id;
-    Thread* parent;
+
     //-----------------------------------------------------------------------------------------
+#endif
 
 #ifdef USER_PROGRAM
 // A thread running a user program actually has *two* sets of CPU registers -- 

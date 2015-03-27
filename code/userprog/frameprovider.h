@@ -12,7 +12,7 @@
 
 class FrameProvider {
 	public:
-		FrameProvider(int addRandom);
+		FrameProvider(bool addRandom);
 		virtual ~FrameProvider();
 		int* GetEmptyFrame(int n);
 		void ReleaseFrame(int frameAddress);

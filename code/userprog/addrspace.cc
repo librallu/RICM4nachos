@@ -19,7 +19,7 @@
 #include "system.h"
 #include "addrspace.h"
 #include "noff.h"
-#include "userthread.h"
+//#include "userthread.h"
 
 #include <strings.h>		/* for bzero */
 
@@ -185,6 +185,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		//	       [noffH.initData.virtualAddr]),
 		//	      noffH.initData.size, noffH.initData.inFileAddr);
 // }
+	  fprintf(stderr, "AddrSPace finnished.\n");
       }
 
     //Added by Malek
@@ -201,13 +202,14 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 AddrSpace::~AddrSpace ()
 {
-  // LB: Missing [] for delete
-  // delete pageTable;
-  delete [] pageTable;
+
   #ifdef CHANGED
+  giveBackFrames();
   delete stackBitMap;
-  delete frameProvider;
   #endif //CHANGED
+  // LB: Missing [] for delete
+    // delete pageTable;
+    delete [] pageTable;
   // End of modification
 }
 
@@ -313,4 +315,14 @@ int AddrSpace::getStack()
 	}
 	return res;
 }
+
+void
+AddrSpace::giveBackFrames() {
+	for(unsigned int i=0; i<numPages; i++) {
+		//frameprovider->ReleaseFrame(this->pageTable[i].physicalPage);
+	}
+}
+
 #endif //CHANGED
+
+

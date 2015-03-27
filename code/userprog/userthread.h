@@ -22,6 +22,17 @@
 
 			Semaphore* take_this;
 
+			//Called by son thread at his creation
+			void waitForMe();
+			//Called by a son thread at his destruction
+			void GoFree();
+			//Called at the father UserThreadExit
+			void waitForMySons();
+
+		private:
+			Semaphore* waitSons;
+			Semaphore* mutex;
+			int numSons;
 	};
 
 	typedef struct threadFunction_ {
@@ -35,11 +46,5 @@
 	extern	void do_UserThreadExit() ;
 
 	extern	void StartUserThread(int f);
-//
-//	extern int do_ForkExec(char* filename);
-//
-//	extern void StartForkExec(int arg);
-//
-//	extern void do_ForkExecExit();
 
 #endif /* USERTHREAD_H_ */
