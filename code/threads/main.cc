@@ -170,6 +170,7 @@ main (int argc, char **argv)
 	    }
 #endif // NETWORK
       }
+	//interrupt->Halt();
     currentThread->Finish ();	// NOTE: if the procedure "main" 
     // returns, then the program "nachos"
     // will exit (as any other normal program

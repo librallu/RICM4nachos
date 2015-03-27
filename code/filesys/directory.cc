@@ -25,6 +25,8 @@
 #include "filehdr.h"
 #include "directory.h"
 
+#define DEFAULT_SIZE 10
+
 
 void initializePageTable(	DirectoryEntry* ptr, 
 							bool inUse, 
@@ -45,15 +47,21 @@ void initializePageTable(	DirectoryEntry* ptr,
 //	"size" is the number of entries in the directory
 //----------------------------------------------------------------------
 Directory::Directory(){
-
+	Directory(DEFAULT_SIZE);
 }
 
 Directory::Directory(int size)
 {
+	//Directory(size,0,0);
+	
     table = new DirectoryEntry[size];
     tableSize = size;
-    for (int i = 1; i < tableSize; i++)
+    for (int i = 0; i < tableSize; i++)
 		table[i].inUse = FALSE;
+
+	// add . and ..
+	initializePageTable(&(table[0]), TRUE, 0, ".");
+	initializePageTable(&(table[1]), TRUE, 0, "..");
 }
 
 
@@ -61,10 +69,9 @@ Directory::Directory(int size, int currentSector, int parentSector)
 {
     table = new DirectoryEntry[size];
     tableSize = size;
-    for (int i = 1; i < tableSize; i++)
+    for (int i = 0; i < tableSize; i++)
 		table[i].inUse = FALSE;
 	
-
 	// add . and ..
 	initializePageTable(&(table[0]), TRUE, currentSector, ".");
 	initializePageTable(&(table[1]), TRUE, currentSector==0?currentSector:parentSector, "..");
@@ -228,7 +235,7 @@ Directory::List()
 {
    for (int i = 0; i < tableSize; i++)
 	if (table[i].inUse)
-	    printf("%s\n", table[i].name);
+	    printf("%d : %s\n", i, table[i].name);
 }
 
 //----------------------------------------------------------------------
