@@ -185,6 +185,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		//	       [noffH.initData.virtualAddr]),
 		//	      noffH.initData.size, noffH.initData.inFileAddr);
 // }
+	  fprintf(stderr, "AddrSPace finnished.\n");
       }
 
     //Added by Malek
@@ -203,7 +204,7 @@ AddrSpace::~AddrSpace ()
 {
 
   #ifdef CHANGED
-//  giveBackFrames();
+  giveBackFrames();
   delete stackBitMap;
   #endif //CHANGED
   // LB: Missing [] for delete

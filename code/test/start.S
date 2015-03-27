@@ -214,9 +214,19 @@ UserThreadJoin:
 	.ent	ForkExec
 ForkExec:
 	addiu $2,$0,SC_ForkExec
+	addiu $7,$0,ForkExit
 	syscall
 	j	$31
 	.end ForkExec
+
+
+	.globl ForkExit
+	.ent	ForkExit
+ForkExit:
+	addiu $2,$0,SC_ForkExit
+	syscall
+	j	$31
+	.end ForkExit
 
 /* dummy function to keep gcc happy */
         .globl  __main

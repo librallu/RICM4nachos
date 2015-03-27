@@ -40,7 +40,7 @@
 
 
 
-	extern int do_ForkExec(char* filename);
+	extern int do_ForkExec(char* filename, int exit_syscall);
 
 	extern void StartForkExec(int arg);
 

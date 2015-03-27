@@ -85,7 +85,7 @@ void waitTheThreads() {
 //				}
 //			}
 //			map_joins[process][0]++; //Not sure
-			((ForkExec*)map_threads[process][0])->take_this->P();
+			((ForkExec*) map_threads[process][0])->take_this->P();
 		}
 	}
 
@@ -279,25 +279,34 @@ ExceptionHandler (ExceptionType which)
 			case SC_ForkExec:
 			{
 				DEBUG('t', "ForkExec used by user program.\n");
+				fprintf(stderr, "malek : ForkExec used by user program.\n");
 				int from = machine->ReadRegister(4);
+				int exit_fun = machine->ReadRegister(7);
 				char to[100];
 				copyStringFromMachine(from, to, 100);
-				int ret = do_ForkExec(to);
-
-				switch (ret) {
-				case -1 : printf("ForkExec error : something went wrong with opening the executable file\n"); break;
-				case -2 : printf("ForkExec error : something went wrong with opening the address space allocation\n"); break;
-				case -3 : printf("ForkExec error : not enough frame to launch the process\n"); break;
-				case -4 : printf("ForkExec error : reached the number max of processes\n"); break;
-				default : printf("Process created with a PID : %d\n", ret); break;
-				}
+				int ret = do_ForkExec(to, exit_fun);
+				machine->WriteRegister(2,ret); //return the process pid
+//				switch (ret) {
+//				case -1 : printf("ForkExec error : something went wrong with opening the executable file\n"); break;
+//				case -2 : printf("ForkExec error : something went wrong with opening the address space allocation\n"); break;
+//				case -3 : printf("ForkExec error : not enough frame to launch the process\n"); break;
+//				case -4 : printf("ForkExec error : reached the number max of processes\n"); break;
+//				default : printf("Process created with a PID : %d\n", ret); break;
+//				}
 			}
 				break;
+
+			case SC_ForkExit:
+				DEBUG('t', "ForkExit used by user program.\n");
+				do_ForkExecExit();
+				break;
+
 			default:
 	  			printf ("Unexpected user mode exception %d %d\n", which, type);
 	  			ASSERT (FALSE);
 				break;
 		}
+
 	}
 	#endif //CHANGED
 

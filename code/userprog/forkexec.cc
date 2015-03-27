@@ -36,9 +36,9 @@ ForkExec::~ForkExec()
  * dont le pgm a deja été mis en mémoire. On a juste besoin d'allouer une pile.
  * Dans le cas present, ForkExec initialise un nouvel espace d'adressage.  
  */
-int do_ForkExec(char* filename) {
+int do_ForkExec(char* filename, int exit_syscall) {
 
-	 Thread* t = new Thread(filename);
+	 ForkExec* t = new ForkExec();
 	 OpenFile *executable = fileSystem->Open (filename);
 
 	 if (executable == NULL) {
@@ -66,31 +66,38 @@ int do_ForkExec(char* filename) {
 	 
 	 t->setPID(pid);
 	 int mainThreadID = next_thread[pid]++; //should be 0
-	 t->setId(pid);
+	 t->setId(mainThreadID);
 	 map_threads[pid][mainThreadID] = (int) t; //stock le pseudo processus dans la map des processus
 	 
+	 //We need to know if some thread orther than my sons is waiting for me
+	 map_joins[t->getPID()][t->GetId()] = 0;
+
 	 /* il faut voir Thread comme un thread linux (car c'est du c++) qui conceptuellement est un processus MIPS.  
 	  * Ceci s'apparente donc a un lancement de processus, puisque un nouvel espace d'adressage est initialisé
 	  * A la place d'un machine->Run() il est necessaire d'effectuer un Fork pour que le pseudo processus soit schedulé
 	  */
-	 t->Fork(StartForkExec, pid);
-
+	 t->Fork(StartForkExec, exit_syscall);
+//	 currentThread->Yield();
 	 return pid;
 }
 
 void StartForkExec(int arg) {
 	currentThread->space->InitRegisters ();	// set the initial register values
 	currentThread->space->RestoreState ();	// load page table register
+	machine->WriteRegister(RetAddrReg, arg); //calling do_ForkExecExit
 	machine->Run ();		// jump to the user progam
 	ASSERT (FALSE);		// machine->Run never returns;
 }
 
 void do_ForkExecExit() {
+	fprintf(stderr, "COUCOUCOU\n");
 	((ForkExec*)currentThread)->waitForMySons();
 	for(int i=0;i < map_joins[currentThread->getPID()][currentThread->GetId()];i++){
 		((ForkExec*) currentThread)->take_this->V();
 	}
-	
-	map_threads[currentThread->getPID()][currentThread->GetId()] = (int) NULL;
+	//Realeasing the main system process
+	((ForkExec*) currentThread)->take_this->V();
+
+	map_threads[currentThread->getPID()][currentThread->GetId()] = 0;
     currentThread->Finish();
 }
