@@ -30,7 +30,8 @@ extern int next_process_id;
 #include "frameprovider.h"
 //#include "forkexec.h"
 extern FrameProvider* frameProvider;
-//extern Manager* manager;
+#include "manager.h"
+extern Manager* manager;
 #endif
 
 // Initialization and cleanup routines

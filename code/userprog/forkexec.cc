@@ -84,12 +84,11 @@ int do_ForkExec(char* filename, int exit_syscall) {
 
 void StartForkExec(int arg) {
 	fprintf(stderr, "%d\n", arg);
-	currentThread->space->InitRegisters ();	// set the initial register values
-	machine->WriteRegister(RetAddrReg, arg); //calling do_ForkExecExit
+
 	currentThread->space->RestoreState ();	// load page table register
+	currentThread->space->InitRegisters ();	// set the initial register values
 
-
-
+	machine->WriteRegister(RetAddrReg, arg); //calling do_ForkExecExit
 	machine->Run ();		// jump to the user progam
 	ASSERT (FALSE);		// machine->Run never returns;
 }
