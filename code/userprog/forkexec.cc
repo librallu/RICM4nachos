@@ -9,7 +9,7 @@
 #include "system.h"
 
 
-ForkExec::ForkExec() : Thread::Thread("process") 
+ForkExec::ForkExec(const char* process_name) : Thread::Thread(process_name)
 {
 	numSons = 0;
 	this->take_this = new Semaphore("Process Semaphore",0);
@@ -38,7 +38,7 @@ ForkExec::~ForkExec()
  */
 int do_ForkExec(char* filename, int exit_syscall) {
 
-	 ForkExec* t = new ForkExec();
+	 ForkExec* t = new ForkExec("process");
 	 OpenFile *executable = fileSystem->Open (filename);
 
 	 if (executable == NULL) {
@@ -48,19 +48,19 @@ int do_ForkExec(char* filename, int exit_syscall) {
 
 	 t->space = new AddrSpace (executable);
 	 if (t->space == NULL) {
-		 printf ("Unable to allocate an address space %s\n", filename);
+		 fprintf (stderr, "Unable to allocate an address space %s\n", filename);
 		 return -2;
 	 }
 
 	 if (! t->space->allFramesAllocated) {
-		 printf ("Unable to allocate an the frames %s\n", filename);
+		 fprintf (stderr, "Unable to allocate an the frames %s\n", filename);
 		 return -3;
 	 }
 	 
 	 delete executable;		// close file
 	 int pid = next_process_id++;
-	 if (pid > MAX_PROCESSUS) {
-		 printf("The number max of processes is reached\n");
+	 if (pid >= MAX_PROCESSUS) {
+		 fprintf (stderr, "The number max of processes is reached\n");
 		 return -4;
 	 }
 	 
@@ -78,13 +78,18 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	  */
 	 t->Fork(StartForkExec, exit_syscall);
 //	 currentThread->Yield();
+
 	 return pid;
 }
 
 void StartForkExec(int arg) {
+	fprintf(stderr, "%d\n", arg);
 	currentThread->space->InitRegisters ();	// set the initial register values
-	currentThread->space->RestoreState ();	// load page table register
 	machine->WriteRegister(RetAddrReg, arg); //calling do_ForkExecExit
+	currentThread->space->RestoreState ();	// load page table register
+
+
+
 	machine->Run ();		// jump to the user progam
 	ASSERT (FALSE);		// machine->Run never returns;
 }

@@ -13,7 +13,7 @@
 	class ForkExec : public Thread
 	{
 		public:
-			ForkExec();
+			ForkExec(const char* process_name);
 			virtual ~ForkExec();
 
 			//This a semaphore is used for joins in inherited class UserThread and ForkExec

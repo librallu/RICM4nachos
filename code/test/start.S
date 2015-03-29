@@ -214,7 +214,8 @@ UserThreadJoin:
 	.ent	ForkExec
 ForkExec:
 	addiu $2,$0,SC_ForkExec
-	addiu $7,$0,ForkExit
+	addiu $5,$0,ForkExit
+	addiu $6,$0,UserThreadExit
 	syscall
 	j	$31
 	.end ForkExec

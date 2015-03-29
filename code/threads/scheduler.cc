@@ -54,7 +54,7 @@ void
 Scheduler::ReadyToRun (Thread * thread)
 {
     DEBUG ('t', "Putting thread %s on ready list.\n", thread->getName ());
-
+    //fprintf(stderr, "scheduler ReadyToRun:: Putting thread %s on ready list.\n", thread->getName ());
     thread->setStatus (READY);
     readyList->Append ((void *) thread);
 }
@@ -91,7 +91,7 @@ void
 Scheduler::Run (Thread * nextThread)
 {
     Thread *oldThread = currentThread;
-
+    //fprintf (stderr, "SCHEDULER::RUN Switching from thread \"%s\" to thread \"%s\"\n", oldThread->getName (), nextThread->getName ());
     // LB: For safety...
     ASSERT (interrupt->getLevel () == IntOff);
     // End of addition

@@ -71,7 +71,7 @@ char readDirectMem(int from){
 
 /**
  * author malek
- * To be sure that everyone there no process to wait for
+ * To be sure that  there is no process to wait for
  * We wait on the processes
  */
 void waitTheThreads() {
@@ -85,10 +85,10 @@ void waitTheThreads() {
 //				}
 //			}
 //			map_joins[process][0]++; //Not sure
+			fprintf(stderr, "Join on main thread %d. I am %d thread\n", process, (int) currentThread);
 			((ForkExec*) map_threads[process][0])->take_this->P();
 		}
 	}
-
 }
 
 //void waitTheThreads() {
@@ -281,23 +281,17 @@ ExceptionHandler (ExceptionType which)
 				DEBUG('t', "ForkExec used by user program.\n");
 				fprintf(stderr, "malek : ForkExec used by user program.\n");
 				int from = machine->ReadRegister(4);
-				int exit_fun = machine->ReadRegister(7);
+				int exit_fun = machine->ReadRegister(5);
 				char to[100];
 				copyStringFromMachine(from, to, 100);
 				int ret = do_ForkExec(to, exit_fun);
 				machine->WriteRegister(2,ret); //return the process pid
-//				switch (ret) {
-//				case -1 : printf("ForkExec error : something went wrong with opening the executable file\n"); break;
-//				case -2 : printf("ForkExec error : something went wrong with opening the address space allocation\n"); break;
-//				case -3 : printf("ForkExec error : not enough frame to launch the process\n"); break;
-//				case -4 : printf("ForkExec error : reached the number max of processes\n"); break;
-//				default : printf("Process created with a PID : %d\n", ret); break;
-//				}
 			}
 				break;
 
 			case SC_ForkExit:
 				DEBUG('t', "ForkExit used by user program.\n");
+				fprintf(stderr,"NOOOOOOOONNNNNNN\n");
 				do_ForkExecExit();
 				break;
 

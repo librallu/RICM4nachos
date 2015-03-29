@@ -301,6 +301,10 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
 	DEBUG ('a', "Initializing stack register to %d\n", numPages * PageSize - 16);
 }
 
+//void AddrSpace::mainThreadInit() {
+//    currentThread->setZone(this->GetNewZone());
+//    currentThread->setId(this->GetNewThreadId(zone));
+//}
 /**
  * Returns a new stack 
  * author malek

@@ -39,6 +39,8 @@ Thread::Thread (const char *threadName)
     stack = NULL;
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
+    PID = -1;
+    id = -1;
     space = NULL;
     // FBT: Need to initialize special registers of simulator to 0
     // in particular LoadReg or it could crash when switching
@@ -99,6 +101,8 @@ Thread::Fork (VoidFunctionPtr func, int arg)
     DEBUG ('t', "Forking thread \"%s\" with func = 0x%x, arg = %d\n",
 	   name, (int) func, arg);
 
+    fprintf(stderr, "Forking thread \"%s\" with address = %d, arg = %d\n", name, (int) currentThread, arg);
+
     StackAllocate (func, arg);
 
 #ifdef USER_PROGRAM
@@ -109,13 +113,15 @@ Thread::Fork (VoidFunctionPtr func, int arg)
     // an already running program, as in the "fork" Unix system call. 
     
     // LB: Observe that currentThread->space may be NULL at that time.
-    this->space = currentThread->space;
+    if (space == NULL) //by malek : If it is null than this is userthread otherwise this is a forkexec address space
+    	this->space = currentThread->space;
 
 #endif // USER_PROGRAM
 
     IntStatus oldLevel = interrupt->SetLevel (IntOff);
     scheduler->ReadyToRun (this);	// ReadyToRun assumes that interrupts 
     // are disabled!
+
     (void) interrupt->SetLevel (oldLevel);
 }
 
