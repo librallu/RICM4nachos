@@ -23,6 +23,7 @@ Timer *timer;			// the hardware timer device,
 
 #ifdef CHANGED
 int map_threads[MAX_PROCESSUS][MAX_THREAD] = {{0}};
+int map_joins[MAX_PROCESSUS][MAX_THREAD] = {{0}};
 int next_thread[MAX_PROCESSUS] = {0};
 #endif
 
