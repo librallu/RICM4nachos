@@ -82,11 +82,11 @@ main (int argc, char **argv)
 
     DEBUG ('t', "Entering main");
     (void) Initialize (argc, argv);
-
+/*
 #ifdef THREADS
     ThreadTest ();
 #endif
-
+*/
     for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount)
       {
 	  argCount = 1;
@@ -96,6 +96,7 @@ main (int argc, char **argv)
 #ifdef CHANGED
 	  if (!strcmp(*argv, "-sc"))
 	    SynchConsoleTest(NULL, NULL);
+#ifdef FILESYS
 	  if (!strcmp(*argv, "-mkd")){ // creating a new directory in the root one
 		ASSERT (argc > 1);
 			
@@ -105,10 +106,15 @@ main (int argc, char **argv)
 		argCount = 2;
 	  }
 #endif
+#endif
 	  if (!strcmp (*argv, "-x"))
 	    {			// run a user program
 		ASSERT (argc > 1);
+
 		StartProcess (*(argv + 1));
+#ifdef CHANGED
+		synchconsole = new SynchConsole(NULL,NULL);
+#endif //CHANGED
 		argCount = 2;
 	    }
 	  else if (!strcmp (*argv, "-c"))

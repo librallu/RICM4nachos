@@ -182,9 +182,7 @@ Initialize (int argc, char **argv)
     postOffice = new PostOffice (netname, rely, 10);
 #endif
 
-#ifdef CHANGED
-	synchconsole = new SynchConsole(NULL,NULL);
-#endif //CHANGED
+
 }
 
 //----------------------------------------------------------------------
