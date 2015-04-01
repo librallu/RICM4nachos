@@ -121,8 +121,14 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++)
       {
-	  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
-	  pageTable[i].physicalPage = i;
+	  #ifdef CHANGED
+	  pageTable[i].virtualPage = i; // step 4 action I.4
+	  pageTable[i].physicalPage = (i+1)%numPages;
+	  #else
+		  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
+		  pageTable[i].physicalPage = i;
+	  #endif
+	  
 	  pageTable[i].valid = TRUE;
 	  pageTable[i].use = FALSE;
 	  pageTable[i].dirty = FALSE;
@@ -154,7 +160,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
       {
 	  DEBUG ('a', "Initializing data segment, at 0x%x, size %d\n",
 		 noffH.initData.virtualAddr, noffH.initData.size);
-	  // modif luc
+// modif luc {
 #ifdef CHANGED
 	  ReadAtVirtual(executable, noffH.initData.virtualAddr,
 							noffH.initData.size, noffH.initData.inFileAddr,
@@ -164,6 +170,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		//	      (machine->mainMemory
 		//	       [noffH.initData.virtualAddr]),
 		//	      noffH.initData.size, noffH.initData.inFileAddr);
+// }
       }
 
     #ifdef CHANGED
@@ -261,11 +268,9 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
     for (i = 0; i < NumTotalRegs; i++)
     	machine->WriteRegister (i, 0);
 
-    // Initial program counter -- must be location of "Start"
     machine->WriteRegister (PCReg, ((threadFunction*) f)->f);
 
-    // Need to also tell MIPS where next instruction is, because
-    // of branch delay possibility
+    // Need to also tell MIPS where next instruction is, because of branch delay possibility
     machine->WriteRegister (NextPCReg, ((threadFunction*) f)->f+4);
     
     //Initialize the arguments 

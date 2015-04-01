@@ -58,7 +58,7 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 	
 	newThread->Fork(StartUserThread, (int) fun);
 	map_threads[0][newThread->GetId()] = (int)newThread;
-
+	map_joins[0][newThread->GetId()] = 0; 
 	currentThread->Yield();
 	
 	return newThread->GetId();
@@ -68,23 +68,29 @@ int do_UserThreadCreate(int f, int arg, int ret) {
  * Ends a UserThread
  */
 	void do_UserThreadExit() {
-
-		((UserThread*)currentThread)->take_this->V();
+		
+		for(int i=0;i < map_joins[0][((UserThread*)currentThread)->GetId()];i++){
+			((UserThread*)currentThread)->take_this->V();
+		}
+        map_threads[0][((UserThread*)currentThread)->GetId()] = (int) NULL;
         // The thread call the finish method.
         currentThread->Finish();
         // we need to free the thread memory
         currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex);
-
-		//map_threads[0][((UserThread*)currentThread)->GetId()] = 0;
+		
 	}
 
 /**
  * This function initialize registers backup with AddrSpace::threadInitRegisters and launches Machine::Run
  */
 void StartUserThread(int fun) {
-	//--------------------------------------------------------------------------------Malek
+	//Initialize all the registers
 	currentThread->space->threadInitRegisters (fun, ((UserThread*)currentThread)->stackIndex);
 	machine->WriteRegister(RetAddrReg, ((threadFunction*) fun)->ret);
+	
+	//Eviter les fuites mémoires
+	delete ((threadFunction*) fun);
+
+	
     machine->Run();
-    //--------------------------------------------------------------------------------Malek
 }
