@@ -35,6 +35,7 @@
 // by allocating blocks for the file (if it is a new file), or by
 // reading it from disk.
 
+
 class FileHeader {
   public:
     bool Allocate(BitMap *bitMap, int fileSize);// Initialize a file header, 
@@ -53,6 +54,8 @@ class FileHeader {
 
     int FileLength();			// Return the length of the file 
 					// in bytes
+	
+	int IsDirectory();
 
     void Print();			// Print the contents of the file.
 

@@ -25,14 +25,14 @@
 #include "filehdr.h"
 #include "directory.h"
 
+#define DEFAULT_SIZE 10
+
 
 void initializePageTable(	DirectoryEntry* ptr, 
 							bool inUse, 
-							FileType type, 
 							int sector,
 							const char* name){
 	ptr->inUse = inUse;
-	ptr->type = type;
 	ptr->sector = sector;
 	strncpy(ptr->name, name , FileNameMaxLen);
 }
@@ -46,13 +46,22 @@ void initializePageTable(	DirectoryEntry* ptr,
 //
 //	"size" is the number of entries in the directory
 //----------------------------------------------------------------------
+Directory::Directory(){
+	Directory(DEFAULT_SIZE);
+}
 
 Directory::Directory(int size)
 {
+	//Directory(size,0,0);
+	
     table = new DirectoryEntry[size];
     tableSize = size;
-    for (int i = 1; i < tableSize; i++)
+    for (int i = 0; i < tableSize; i++)
 		table[i].inUse = FALSE;
+
+	// add . and ..
+	initializePageTable(&(table[0]), TRUE, 0, ".");
+	initializePageTable(&(table[1]), TRUE, 0, "..");
 }
 
 
@@ -60,14 +69,12 @@ Directory::Directory(int size, int currentSector, int parentSector)
 {
     table = new DirectoryEntry[size];
     tableSize = size;
-    for (int i = 1; i < tableSize; i++)
+    for (int i = 0; i < tableSize; i++)
 		table[i].inUse = FALSE;
 	
 	// add . and ..
-	initializePageTable(&(table[0]), TRUE, FILE, currentSector, ".");
-	if ( parentSector >= 0 ){
-		initializePageTable(&(table[1]), TRUE, FILE, parentSector, "..");
-	}
+	initializePageTable(&(table[0]), TRUE, currentSector, ".");
+	initializePageTable(&(table[1]), TRUE, currentSector==0?currentSector:parentSector, "..");
 
 }
 
@@ -146,7 +153,7 @@ Directory::Find(const char *name)
 
 
 //----------------------------------------------------------------------
-// Directory::AddFile
+// Directory::Add
 // 	Add a file into the directory.  Return TRUE if successful;
 //	return FALSE if the file name is already in the directory, or if
 //	the directory is completely full, and has no more space for
@@ -155,20 +162,17 @@ Directory::Find(const char *name)
 //	"name" -- the name of the file being added
 //	"newSector" -- the disk sector containing the added file's header
 //----------------------------------------------------------------------
-bool Directory::Add(const char *name, int newSector){
-    return AddFile(name,newSector,FILE);
-}
 
 
 bool
-Directory::Add(const char *name, int newSector, FileType type)
+Directory::Add(const char *name, int newSector)
 { 
     if (FindIndex(name) != -1)
-	return FALSE;
+		return FALSE;
 
-    for (int i = 0; i < tableSize; i++)
+    for (int i = 0; i < tableSize; i++){
         if (!table[i].inUse) {
-			initializePageTable(&(table[i]), TRUE, type, newSector, name);
+			initializePageTable(&(table[i]), TRUE, newSector, name);
         	return TRUE;
 		}
 	}
@@ -187,15 +191,13 @@ bool
 Directory::Remove(const char *name)
 { 
     int i = FindIndex(name);
+	FileHeader* hdr = new FileHeader;
+	hdr->FetchFrom(i);
 
-    if ( table[i].type == DIR ){ // if it's a directory
-        // TODO add verification for directories.
-        // We can delete it if and only if the
-        // directory is empty
-        
-        Directory* d = new Directory;
+    if ( hdr->IsDirectory() ){ // if it's a directory
+        Directory* d = new Directory();
         d->FetchFrom(new OpenFile(table[i].sector));
-        if ( d->isEmpty() ){
+        if ( d->IsEmpty() ){
             table[i].inUse = FALSE;
             return TRUE;
         } else {
@@ -233,7 +235,7 @@ Directory::List()
 {
    for (int i = 0; i < tableSize; i++)
 	if (table[i].inUse)
-	    printf("%s\n", table[i].name);
+	    printf("%d : %s\n", i, table[i].name);
 }
 
 //----------------------------------------------------------------------
