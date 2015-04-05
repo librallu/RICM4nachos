@@ -61,6 +61,7 @@ extern "C" {
 int atoi(const char *str);
 double atof(const char *str);
 int abs(int i);
+//char* itoa(int i, char* str, int base); //Added by malek
 
 #include <stdio.h>		// for printf, fprintf
 #include <string.h>		// for DEBUG, etc.

@@ -788,5 +788,5 @@ To assure a mutual exlcusion with some functions used by multiple threads at a s
 
 To avoid memory leak we make sure to call "delete space" in the Thread destructor if of course space != NULL. The thread 
 destrutor is automatically called when toBeDestroyed is set to true, scheduled for destruction. This way of doing is due 
-to the fact a current thread cannot destro himself.
+to the fact a current thread cannot destroy himself.
 

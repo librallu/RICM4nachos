@@ -9,9 +9,9 @@
 #include "system.h"
 #include "forkexec.h"
 
-UserThread::UserThread(int fp, int argp) : Thread::Thread("thread")
+UserThread::UserThread(char* namet) : Thread::Thread(namet)
 {
-	numSons = 0;
+//	numSons = 0;
 	this->take_this = new Semaphore("UserThread Semaphore",0);
 //	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
 //	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
@@ -53,11 +53,9 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 	fun->f = f;
 	fun->args = arg;
 	fun->ret = ret;
-	
+
 	//The index of the thread stack
 	int stackIndex;
-	//We create a thread
-	UserThread* newThread = new UserThread(f, arg);
 
 	/** We allocate a stack from the current space
 	 * TODO For now currentThread is from the same process that i'm in. But when we shall have multiple processes it might
@@ -70,66 +68,56 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 		return -1;
 	}
 
-	//We set the stack index pointer
-	newThread->stackIndex = stackIndex;
 	//TODO Not sure about current thread is the father, at worst we give in parameterd
-	newThread->parent = currentThread;
-	//We set the pid son
-	newThread->setPID(newThread->parent->getPID());
+	Thread* parent = currentThread;
+	int PID = parent->getPID();
 
 	//the space is set after the fork, let use the parent space ref
-	int id = newThread->parent->space->nextThread();
-	if (id < 0) {
+	int ID = parent->space->nextThread();
+	if (ID < 0) {
 		fprintf(stderr,"UserThread.cc : maximum of thread reached !\n");
-		delete newThread;
 		return -1;
 	}
 
-	newThread->setId(id);
-	newThread->parent->space->setThread(id, (int) newThread);
-	/*
-	//if the father is not an instanceof Thread class
-	if (newThread->parent->GetId() != -1){
-		//we notify the father to wait for me
-		if (newThread->parent->GetId() == 0) {
-			((ForkExec*) newThread->parent)->take_this->P(); //This is the main thread
-		} else {
-			((UserThread*) newThread->parent)->take_this->P(); //This a UserThread
-		}
-	}
-	 */
+	char* name = new char[30];
+	sprintf(name, "[Process %d] thread %d",PID,ID);
+	UserThread* newThread = new UserThread(name);
 
-	//We Fork the thread
+	//We set the stack index pointer
+	newThread->stackIndex = stackIndex;
+	newThread->parent = parent;
+	newThread->setPID(PID);
+	newThread->setID(ID);
+	newThread->parent->space->setThread(ID, (int) newThread);
 	newThread->Fork(StartUserThread, (int) fun);
-	//We keep a map of all thread for the PID/ID and reference correspondance
-	//map_threads[newThread->getPID()][newThread->GetId()] = (int) newThread;
-	//We need to know if some thread other than my sons is waiting for me
-	//map_joins[newThread->getPID()][newThread->GetId()] = 0;
+
+	//DEBUG
+	for(int i=0; i<10; i++)
+		fprintf(stderr, "map_thread : %d --> %d\n", i, parent->space->map_threads[i]);
 
 	currentThread->Yield();
-
-	return newThread->GetId();
+	return newThread->getID();
 }
 
 /**
  * Ends a UserThread
  */
 void do_UserThreadExit() {
-	//Wait for his sons to call sons->V()
-	//((UserThread*)currentThread)->waitForMySons();
 	
 	//We release every thread waiting for me
-	int ID = currentThread->GetId();
-	for(int i=0; i<currentThread->space->map_joins[ID]; i++)
+	int ID = currentThread->getID();
+	for(int i=0; i<currentThread->space->map_joins[ID]; i++) {
 		((UserThread*) currentThread->space->map_threads[ID])->take_this->V();
+		if (DEBUG_THREAD)
+			fprintf(stderr, "Thread %d : releaseing the joins\n", ID);
+	}
 
-	currentThread->space->setThread(ID, (int) NULL); //We might have to set it to 0
+	currentThread->space->clearThread(ID);
 
     // The thread call the finish method.
     currentThread->Finish();
     // we need to free the thread memory
     currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex);
-	
 }
 
 /**

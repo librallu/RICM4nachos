@@ -194,7 +194,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		//	       [noffH.initData.virtualAddr]),
 		//	      noffH.initData.size, noffH.initData.inFileAddr);
 // }
-	  fprintf(stderr, "AddrSPace finnished.\n");
       }
 
     //Added by Malek
@@ -286,6 +285,13 @@ AddrSpace::RestoreState ()
 }
 
 #ifdef CHANGED
+
+void AddrSpace::giveBackFrames() {
+	for(unsigned int i=0; i<numPages; i++) {
+		((FrameProvider*) getFrameProvider())->ReleaseFrame(this->pageTable[i].physicalPage);
+	}
+}
+
 void
 AddrSpace::threadInitRegisters (int f, int stackIndex)
 {
@@ -329,12 +335,7 @@ int AddrSpace::getStack()
 	return res;
 }
 
-void
-AddrSpace::giveBackFrames() {
-	for(unsigned int i=0; i<numPages; i++) {
-		//frameprovider->ReleaseFrame(this->pageTable[i].physicalPage);
-	}
-}
+
 
 #endif //CHANGED
 

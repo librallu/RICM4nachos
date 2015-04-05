@@ -16,7 +16,7 @@
 
 	class UserThread : public Thread {
 		public:
-			UserThread(int f, int arg);
+			UserThread(char* namet);
 			~UserThread();
 			int stackIndex;
 

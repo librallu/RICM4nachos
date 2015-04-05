@@ -36,6 +36,7 @@ void StartProcess (char *filename) {
     //------------------------------------------
     //The process launched by the system is saved in the table of processes 
 #ifdef CHANGED
+
 	 Thread* t = currentThread;
      int pid = nextProcess();
 	 if (pid < 0) {
@@ -43,17 +44,12 @@ void StartProcess (char *filename) {
 		 //Halt();
 	 }
 	 t->setPID(pid);
-	 
-	 //We place the mainthread at position 0 of the process's thread table
-	 //We update the ID
-	 //t->space->next_thread->Mark(0);
-	 //t->setId(0);
 	 //On ne stock pas le main thread, et on le mark de facon a le reconnaitre dans la destruction de addrspace, dans ~Thread
-	 t->setId(-1); 
+	 t->setID(-1); 
+//	 t->space->setThread(t->getID(), (int) t); //stock le pseudo processus dans la map des thread 
 	 
-	 //We update the process's thread table
-	 t->space->setThread(t->GetId(), (int) t); //stock le pseudo processus dans la map des thread 
-	 
+		if (DEBUG_PROCESS)
+			fprintf (stderr, "ProgTest : Initilizing user program main thread with pid %d\n", pid);
 #endif    
     //-------------------------------------------
 

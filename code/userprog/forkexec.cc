@@ -7,21 +7,21 @@
 
 #include "forkexec.h"
 #include "system.h"
-
+#include "addrspace.h"
 
 ForkExec::ForkExec(const char* process_name) : Thread::Thread(process_name)
 {
-	numSons = 0;
+//	numSons = 0;
 	this->take_this = new Semaphore("Process Semaphore",0);
-	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
-	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
+//	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
+//	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
 }
 
 ForkExec::~ForkExec() 
 {
 	delete take_this;
-	delete mutex;
-	delete waitSons;
+//	delete mutex;
+//	delete waitSons;
 }
 
 
@@ -38,7 +38,7 @@ ForkExec::~ForkExec()
  */
 int do_ForkExec(char* filename, int exit_syscall) {
 
-	 ForkExec* t = new ForkExec("process");
+
 	 OpenFile *executable = fileSystem->Open (filename);
 
 	 if (executable == NULL) {
@@ -46,39 +46,46 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	    return -1;
 	 }
 
-	 t->space = new AddrSpace (executable);
-	 if (t->space == NULL) {
+	 AddrSpace* space = new AddrSpace (executable);
+	 if (space == NULL) {
 		 fprintf (stderr, "Unable to allocate an address space %s\n", filename);
-		 delete t;
 		 return -2;
 	 }
 
-	 if (! t->space->allFramesAllocated) {
+	 if (! space->allFramesAllocated) {
 		 fprintf (stderr, "Unable to allocate an the frames %s\n", filename);
-		 delete t;
 		 return -3;
 	 }
 	 
 	 delete executable;		// close file
+
 	 int pid = nextProcess();
 	 if (pid < 0) {
 		 fprintf (stderr, "The number max of processes is reached\n");
-		 delete t;
 		 return -4;
 	 }
+
+	 Thread* parent = currentThread;
+	 char name[15];
+	 sprintf(name, "process %d",pid);
+	 ForkExec* t = new ForkExec(name);
+
 	 //On ne stock pas la reference du main thread
 	 t->setPID(pid);
-	 t->setId(-1); //This is how we identify him
+	 t->setID(-1); //This is how we identify the main thread
+	 t->space = space; //So at Fork call it dosn't affect the same addrspace as my process father
+	 t->parent = parent;
 
-	 //map_threads[pid][mainThreadID] = (int) t; //stock le pseudo processus dans la map des processus
-	 
+	 if(DEBUG_PROCESS)
+	 		fprintf(stderr, "do_ForkExecExit is called by %s process PID %d\n", parent->getName(), parent->getPID());
+
 	 /* il faut voir Thread comme un thread linux (car c'est du c++) qui conceptuellement est un processus MIPS.  
 	  * Ceci s'apparente donc a un lancement de processus, puisque un nouvel espace d'adressage est initialisé
 	  * A la place d'un machine->Run() il est necessaire d'effectuer un Fork pour que le pseudo processus soit schedulé
 	  */
-	 t->Fork(StartForkExec, exit_syscall);
-//	 currentThread->Yield(); //On ne fait pas de yield car c'est un process en parallele
-	 fprintf (stderr, "BONJOUR JE MAPPELLE\n");
+	 t->Fork(StartForkExec, 0);
+	 currentThread->Yield(); //On ne fait pas de yield car c'est un process en parallele
+
 	 return pid;
 }
 
@@ -88,13 +95,15 @@ void StartForkExec(int arg) {
 	currentThread->space->RestoreState ();	// load page table register
 	currentThread->space->InitRegisters ();	// set the initial register values
 
-//	machine->WriteRegister(RetAddrReg, arg); //calling do_ForkExecExit
 	machine->Run ();		// jump to the user progam
 	ASSERT (FALSE);		// machine->Run never returns;
 }
 
-//void do_ForkExecExit() {
-//	fprintf(stderr, "COUCOUCOU\n");
+void do_ForkExecExit() {
+	DEBUG('p', "ForkExitProcess : %s", currentThread->getName());
+	int PID = currentThread->getPID();
+	if(DEBUG_PROCESS)
+		fprintf(stderr, "do_ForkExecExit is called by %s process\n",currentThread->getName());
 //	((ForkExec*)currentThread)->waitForMySons();
 //	for(int i=0;i < map_joins[currentThread->getPID()][currentThread->GetId()];i++){
 //		((ForkExec*) currentThread)->take_this->V();
@@ -104,4 +113,15 @@ void StartForkExec(int arg) {
 //
 //	map_threads[currentThread->getPID()][currentThread->GetId()] = 0;
 //    currentThread->Finish();
-//}
+
+    next_process->Clear(PID);
+    if (next_process->NumClear() == MAX_PROCESSUS) {
+    	if(DEBUG_PROCESS)
+    		fprintf(stderr, "Process %s is halting\n", currentThread->getName());
+        interrupt->Halt();
+    }
+    if(DEBUG_PROCESS)
+    	fprintf(stderr, "Process %s is finished\n", currentThread->getName());
+    currentThread->Finish();
+
+}

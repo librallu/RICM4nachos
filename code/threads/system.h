@@ -17,6 +17,8 @@
 #include "timer.h"
 
 #ifdef CHANGED
+#define DEBUG_THREAD 1
+#define DEBUG_PROCESS 1
 #define MAX_STRING_SIZE 256
 #define MAX_PROCESSUS	10
 //#define MAX_THREAD 		MAX_USER_THREAD
@@ -25,7 +27,7 @@ extern BitMap* next_process;
 extern int nextProcess();
 #include "frameprovider.h"
 extern FrameProvider* frameProvider;
-
+extern int getFrameProvider();
 #endif
 
 // Initialization and cleanup routines

@@ -41,7 +41,7 @@ Thread::Thread (const char *threadName)
 #ifdef USER_PROGRAM
 #ifdef CHANGED
     PID = -1;
-    id = -1;
+    ID = -1;
 #endif
     space = NULL;
     // FBT: Need to initialize special registers of simulator to 0
@@ -71,10 +71,12 @@ Thread::~Thread ()
     ASSERT (this != currentThread);
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
-//#ifdef USER_PROGRAM
-//    if(space != NULL && GetId()==-1) //If this is the main thread
-//    	delete space;
-//#endif
+#ifdef USER_PROGRAM
+    if(space != NULL && getID()==-1) { //If this is the main thread
+    	fprintf(stderr,"This %s i'm destroying my addrspace\n", (char*) name);
+    	delete space;
+    }
+#endif
 }
 
 //----------------------------------------------------------------------

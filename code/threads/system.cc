@@ -27,6 +27,7 @@ extern int nextProcess() { //returns a new PID
 	return next_process->Find();
 }
 FrameProvider* frameProvider  = new FrameProvider(true); //added by malek
+extern int getFrameProvider(){return (int) frameProvider;}
 #endif
 
 #ifdef FILESYS_NEEDED
