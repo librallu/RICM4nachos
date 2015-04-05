@@ -20,29 +20,8 @@ UserThread::UserThread(char* namet) : Thread::Thread(namet)
 
 UserThread::~UserThread () {
 	delete take_this;
-//	delete mutex;
-//	delete waitSons;
 }
-////Called by son thread at his creation
-//void UserThread::waitForMe() {
-//	mutex->P();
-//	numSons++;
-//	mutex->V();
-//}
-////Called by a son thread at his destruction
-//void UserThread::GoFree() {waitSons->V();}
-//
-////Called at the father UserThreadExit
-//void UserThread::waitForMySons() {
-//	for(int i=0; i<numSons; i++)
-//		waitSons->P();
-//}
-/**
- * Creates a UserThread by launching StartUserThread as thread itself. 
- * Returns : -1 : There is no stack available
- * 			 -2 :
- * 			 elsewhere : thread id
- */
+
 int do_UserThreadCreate(int f, int arg, int ret) {
 
 	//The parameters for startUserThread
@@ -92,6 +71,7 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 	newThread->Fork(StartUserThread, (int) fun);
 
 	//DEBUG
+	fprintf(stderr, "currentThread %s \n", parent->getName());
 	for(int i=0; i<10; i++)
 		fprintf(stderr, "map_thread : %d --> %d\n", i, parent->space->map_threads[i]);
 

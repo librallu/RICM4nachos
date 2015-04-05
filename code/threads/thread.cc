@@ -72,10 +72,12 @@ Thread::~Thread ()
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
 #ifdef USER_PROGRAM
-    if(space != NULL && getID()==-1) { //If this is the main thread
+#ifdef CHANGED
+    if(space != NULL && this->getID()==-1) { //If this is the main thread
     	fprintf(stderr,"This %s i'm destroying my addrspace\n", (char*) name);
     	delete space;
     }
+#endif
 #endif
 }
 

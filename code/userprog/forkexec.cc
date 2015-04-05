@@ -77,7 +77,7 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	 t->parent = parent;
 
 	 if(DEBUG_PROCESS)
-	 		fprintf(stderr, "do_ForkExecExit is called by %s process PID %d\n", parent->getName(), parent->getPID());
+		fprintf(stderr, "do_ForkExec is called by %s process PID %d\n", parent->getName(), parent->getPID());
 
 	 /* il faut voir Thread comme un thread linux (car c'est du c++) qui conceptuellement est un processus MIPS.  
 	  * Ceci s'apparente donc a un lancement de processus, puisque un nouvel espace d'adressage est initialisé
@@ -90,8 +90,6 @@ int do_ForkExec(char* filename, int exit_syscall) {
 }
 
 void StartForkExec(int arg) {
-	fprintf(stderr, "%d\n", arg);
-
 	currentThread->space->RestoreState ();	// load page table register
 	currentThread->space->InitRegisters ();	// set the initial register values
 
