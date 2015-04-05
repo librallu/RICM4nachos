@@ -18,20 +18,14 @@
 
 #ifdef CHANGED
 #define MAX_STRING_SIZE 256
-
 #define MAX_PROCESSUS	10
-#define MAX_THREAD 		MAX_USER_THREAD
+//#define MAX_THREAD 		MAX_USER_THREAD
 
-extern int map_threads[MAX_PROCESSUS][MAX_THREAD];
-extern int map_joins[MAX_PROCESSUS][MAX_THREAD];
-extern int next_thread[MAX_PROCESSUS];
-//Added by malek
-extern int next_process_id;
+extern BitMap* next_process;
+extern int nextProcess();
 #include "frameprovider.h"
-//#include "forkexec.h"
 extern FrameProvider* frameProvider;
-#include "manager.h"
-extern Manager* manager;
+
 #endif
 
 // Initialization and cleanup routines

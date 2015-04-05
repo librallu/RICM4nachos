@@ -39,8 +39,10 @@ Thread::Thread (const char *threadName)
     stack = NULL;
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
+#ifdef CHANGED
     PID = -1;
     id = -1;
+#endif
     space = NULL;
     // FBT: Need to initialize special registers of simulator to 0
     // in particular LoadReg or it could crash when switching
@@ -70,7 +72,7 @@ Thread::~Thread ()
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
 //#ifdef USER_PROGRAM
-//    if(space != NULL)
+//    if(space != NULL && GetId()==0) //If this is the main thread
 //    	delete space;
 //#endif
 }

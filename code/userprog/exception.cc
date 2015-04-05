@@ -75,20 +75,23 @@ char readDirectMem(int from){
  * We wait on the processes
  */
 void waitTheThreads() {
-	for (int process=0; process<MAX_PROCESSUS; process++) {
-		if(map_threads[process][0] != 0) {
+
+//	for (int process=0; process<MAX_PROCESSUS; process++) {
+//		if(map_threads[process][0] != 0) {
 //			for(int i=0; i<MAX_THREAD; i++) {
-//				UserThread* fils = (UserThread*) map_threads[0][i];
+
+//				UserThread* fils = (UserThread*) map_threads[process][i];
+
 //				if ( fils != NULL ){
-//					map_joins[0][fils->GetId()]++;
+//					map_joins[process][fils->GetId()]++;
 //					fils->take_this->P();
 //				}
 //			}
 //			map_joins[process][0]++; //Not sure
-			fprintf(stderr, "Join on main thread %d. I am %d thread\n", process, (int) currentThread);
-			((ForkExec*) map_threads[process][0])->take_this->P();
-		}
-	}
+//			fprintf(stderr, "Join on main thread %d. I am %d thread\n", process, (int) currentThread);
+//			((ForkExec*) map_threads[process][0])->take_this->P();
+//		}
+//	}
 }
 
 //void waitTheThreads() {
@@ -257,15 +260,16 @@ ExceptionHandler (ExceptionType which)
 				 * a la mort (do_UserThreadExit()) du thread X en faisant autant de V()
 				 */
 				DEBUG('t', "UserThreadJoin used by user program.\n");
-				//We retreave to thread ref we want to wait for
+				//We retreave to thread (ID) we want to wait for
 				int t = machine->ReadRegister(4);
 
 				//This should be UserThread object because no one can wait on the mainThread. His is the one who is waiting
 				//for everyone
-				UserThread* fils = (UserThread*) map_threads[currentThread->getPID()][t];
+				//UserThread* fils = (UserThread*) map_threads[currentThread->getPID()][t];
+				UserThread* fils = (UserThread*) currentThread->space->map_threads[t];
 				if ( fils != NULL ){
 					//We have to remember every thread that is waiting for us, in goal to release him in the future
-					map_joins[fils->getPID()][fils->GetId()]++;
+					fils->space->map_joins[fils->GetId()]++;
 					//if (fils->take_this->getValue())
 						fils->take_this->P();
 				}
@@ -289,11 +293,11 @@ ExceptionHandler (ExceptionType which)
 			}
 				break;
 
-			case SC_ForkExit:
-				DEBUG('t', "ForkExit used by user program.\n");
-				fprintf(stderr,"NOOOOOOOONNNNNNN\n");
-				do_ForkExecExit();
-				break;
+//			case SC_ForkExit:
+//				DEBUG('t', "ForkExit used by user program.\n");
+//				fprintf(stderr,"NOOOOOOOONNNNNNN\n");
+//				do_ForkExecExit();
+//				break;
 
 			default:
 	  			printf ("Unexpected user mode exception %d %d\n", which, type);

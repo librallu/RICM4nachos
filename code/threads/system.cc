@@ -22,12 +22,11 @@ Timer *timer;			// the hardware timer device,
 					// for invoking context switches
 
 #ifdef CHANGED
-int map_threads[MAX_PROCESSUS][MAX_THREAD] = {{0}};
-int map_joins[MAX_PROCESSUS][MAX_THREAD] = {{0}};
-int next_thread[MAX_PROCESSUS] = {0};
-int next_process_id = 0; //added by malek
+BitMap* next_process = new BitMap(MAX_PROCESSUS);
+extern int nextProcess() { //returns a new PID
+	return next_process->Find();
+}
 FrameProvider* frameProvider  = new FrameProvider(true); //added by malek
-Manager* manager = new Manager(MAX_PROCESSUS, MAX_THREAD);
 #endif
 
 #ifdef FILESYS_NEEDED

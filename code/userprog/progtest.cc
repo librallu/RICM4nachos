@@ -32,6 +32,27 @@ void StartProcess (char *filename) {
 
     space = new AddrSpace (executable);
     currentThread->space = space;
+    
+    //------------------------------------------
+    //The process launched by the system is saved in the table of processes 
+#ifdef CHANGED
+	 Thread* t = currentThread;
+     int pid = nextProcess();
+	 if (pid < 0) {
+		 fprintf (stderr, "The number max of processes is reached\n");
+		 //Halt();
+	 }
+	 t->setPID(pid);
+	 
+	 //We place the mainthread at position 0 of the process's thread table
+	 //We update the ID
+	 t->space->next_thread->Mark(0);
+	 t->setId(0);
+	 //We update the process's thread table
+	 t->space->setThread(t->GetId(), (int) t); //stock le pseudo processus dans la map des thread 
+	 
+#endif    
+    //-------------------------------------------
 
     delete executable;		// close file
 

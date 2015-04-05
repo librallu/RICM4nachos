@@ -94,6 +94,23 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 
 AddrSpace::AddrSpace (OpenFile * executable)
 {
+#ifdef CHANGED
+	//Initialisation of the thread structure
+	//for(int i=0; i<MAX_PROCESSUS; i++) {
+		for(int j=0; j<MAX_THREAD; j++) {
+			map_threads[j]  = 0;
+			map_joins[j]  = 0;
+		}
+		next_thread = new BitMap(MAX_THREAD);
+	//}
+
+//    map_threads[MAX_PROCESSUS][MAX_THREAD] = {0};
+//    map_joins[MAX_PROCESSUS][MAX_THREAD] = {0};
+//    next_thread[MAX_PROCESSUS] = {};
+//    next_process = new BitMap(MAX_PROCESSUS);
+
+#endif
+
     NoffHeader noffH;
     unsigned int i, size;
 
@@ -315,7 +332,7 @@ int AddrSpace::getStack()
 {
 	int res = this->stackBitMap->Find();
 	if ( res < 0 ){
-		printf("No more space in the stack !!!\n");
+		printf("AddrSpace : No more space in the stack !!!\n");
 	}
 	return res;
 }
