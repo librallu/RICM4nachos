@@ -78,7 +78,7 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	  */
 	 t->Fork(StartForkExec, exit_syscall);
 //	 currentThread->Yield(); //On ne fait pas de yield car c'est un process en parallele
-
+	 fprintf (stderr, "BONJOUR JE MAPPELLE\n");
 	 return pid;
 }
 

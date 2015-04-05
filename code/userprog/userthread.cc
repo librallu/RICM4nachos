@@ -13,15 +13,15 @@ UserThread::UserThread(int fp, int argp) : Thread::Thread("thread")
 {
 	numSons = 0;
 	this->take_this = new Semaphore("UserThread Semaphore",0);
-	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
-	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
+//	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
+//	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
 }
 
 
 UserThread::~UserThread () {
 	delete take_this;
-	delete mutex;
-	delete waitSons;
+//	delete mutex;
+//	delete waitSons;
 }
 ////Called by son thread at his creation
 //void UserThread::waitForMe() {
