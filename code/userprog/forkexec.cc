@@ -49,11 +49,13 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	 t->space = new AddrSpace (executable);
 	 if (t->space == NULL) {
 		 fprintf (stderr, "Unable to allocate an address space %s\n", filename);
+		 delete t;
 		 return -2;
 	 }
 
 	 if (! t->space->allFramesAllocated) {
 		 fprintf (stderr, "Unable to allocate an the frames %s\n", filename);
+		 delete t;
 		 return -3;
 	 }
 	 
@@ -61,20 +63,21 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	 int pid = nextProcess();
 	 if (pid < 0) {
 		 fprintf (stderr, "The number max of processes is reached\n");
+		 delete t;
 		 return -4;
 	 }
 	 //On ne stock pas la reference du main thread
 	 t->setPID(pid);
 	 t->setId(-1); //This is how we identify him
 
-	 //	 map_threads[pid][mainThreadID] = (int) t; //stock le pseudo processus dans la map des processus
+	 //map_threads[pid][mainThreadID] = (int) t; //stock le pseudo processus dans la map des processus
 	 
 	 /* il faut voir Thread comme un thread linux (car c'est du c++) qui conceptuellement est un processus MIPS.  
 	  * Ceci s'apparente donc a un lancement de processus, puisque un nouvel espace d'adressage est initialisé
 	  * A la place d'un machine->Run() il est necessaire d'effectuer un Fork pour que le pseudo processus soit schedulé
 	  */
 	 t->Fork(StartForkExec, exit_syscall);
-//	 currentThread->Yield();
+//	 currentThread->Yield(); //On ne fait pas de yield car c'est un process en parallele
 
 	 return pid;
 }

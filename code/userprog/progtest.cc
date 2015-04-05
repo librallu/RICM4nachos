@@ -46,8 +46,11 @@ void StartProcess (char *filename) {
 	 
 	 //We place the mainthread at position 0 of the process's thread table
 	 //We update the ID
-	 t->space->next_thread->Mark(0);
-	 t->setId(0);
+	 //t->space->next_thread->Mark(0);
+	 //t->setId(0);
+	 //On ne stock pas le main thread, et on le mark de facon a le reconnaitre dans la destruction de addrspace, dans ~Thread
+	 t->setId(-1); 
+	 
 	 //We update the process's thread table
 	 t->space->setThread(t->GetId(), (int) t); //stock le pseudo processus dans la map des thread 
 	 

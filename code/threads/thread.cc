@@ -72,7 +72,7 @@ Thread::~Thread ()
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
 //#ifdef USER_PROGRAM
-//    if(space != NULL && GetId()==0) //If this is the main thread
+//    if(space != NULL && GetId()==-1) //If this is the main thread
 //    	delete space;
 //#endif
 }
@@ -103,7 +103,7 @@ Thread::Fork (VoidFunctionPtr func, int arg)
     DEBUG ('t', "Forking thread \"%s\" with func = 0x%x, arg = %d\n",
 	   name, (int) func, arg);
 
-    fprintf(stderr, "Forking thread \"%s\" with address = %d, arg = %d\n", name, (int) currentThread, arg);
+    //fprintf(stderr, "Forking thread \"%s\" with address = %d, arg = %d\n", name, (int) currentThread, arg);
 
     StackAllocate (func, arg);
 

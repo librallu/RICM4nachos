@@ -242,8 +242,8 @@ ExceptionHandler (ExceptionType which)
 				int ret = machine->ReadRegister(7);
 
 				//Creates the thread and schedules it
-				int result = do_UserThreadCreate(f, arg, ret); 
-				machine->WriteRegister(2,result); //return the thread id
+				int ID = do_UserThreadCreate(f, arg, ret);
+				machine->WriteRegister(2,ID); //return the thread id
 
 				//machine->WriteRegister(RetAddrReg, ret);				
 				// (author : Luc) the lines commented are made in the
@@ -261,17 +261,19 @@ ExceptionHandler (ExceptionType which)
 				 */
 				DEBUG('t', "UserThreadJoin used by user program.\n");
 				//We retreave to thread (ID) we want to wait for
-				int t = machine->ReadRegister(4);
+				int ID = machine->ReadRegister(4);
 
 				//This should be UserThread object because no one can wait on the mainThread. His is the one who is waiting
 				//for everyone
 				//UserThread* fils = (UserThread*) map_threads[currentThread->getPID()][t];
-				UserThread* fils = (UserThread*) currentThread->space->map_threads[t];
+				UserThread* fils = (UserThread*) currentThread->space->map_threads[ID];
 				if ( fils != NULL ){
 					//We have to remember every thread that is waiting for us, in goal to release him in the future
-					fils->space->map_joins[fils->GetId()]++;
+					fils->space->addJoin(fils->GetId());
 					//if (fils->take_this->getValue())
-						fils->take_this->P();
+					fils->take_this->P();
+				} else {
+					printf("Exception.cc : error the thread id doesn't exist\n");
 				}
 			}
 				break;

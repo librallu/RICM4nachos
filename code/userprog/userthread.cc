@@ -78,15 +78,15 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 	newThread->setPID(newThread->parent->getPID());
 
 	//the space is set after the fork, let use the parent space ref
-	int id =newThread->parent->space->nextThread();
+	int id = newThread->parent->space->nextThread();
 	if (id < 0) {
 		fprintf(stderr,"UserThread.cc : maximum of thread reached !\n");
 		delete newThread;
 		return -1;
 	}
 
-	newThread->setId(id); //Added by malek
-
+	newThread->setId(id);
+	newThread->parent->space->setThread(id, (int) newThread);
 	/*
 	//if the father is not an instanceof Thread class
 	if (newThread->parent->GetId() != -1){
@@ -103,7 +103,7 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 	newThread->Fork(StartUserThread, (int) fun);
 	//We keep a map of all thread for the PID/ID and reference correspondance
 	//map_threads[newThread->getPID()][newThread->GetId()] = (int) newThread;
-	//We need to know if some thread orther than my sons is waiting for me
+	//We need to know if some thread other than my sons is waiting for me
 	//map_joins[newThread->getPID()][newThread->GetId()] = 0;
 
 	currentThread->Yield();
@@ -123,7 +123,7 @@ void do_UserThreadExit() {
 	for(int i=0; i<currentThread->space->map_joins[ID]; i++)
 		((UserThread*) currentThread->space->map_threads[ID])->take_this->V();
 
-	currentThread->space->setThread(ID, (int) NULL);
+	currentThread->space->setThread(ID, (int) NULL); //We might have to set it to 0
 
     // The thread call the finish method.
     currentThread->Finish();
