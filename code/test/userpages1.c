@@ -22,7 +22,8 @@ void f(void *ss) {
 
 int main ()
 {
-	UserThreadCreate(f, (void *) THIS);
+	int id = UserThreadCreate(f, (void *) THIS);
 	f((void*) THAT);
+	UserThreadJoin(id);
 	return 0;
 }

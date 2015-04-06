@@ -64,15 +64,8 @@ class AddrSpace
     	map_joins[ID]++;
     }
 
-    void clearThread(int ID) {
-    	if (ID<0 || ID>= MAX_THREAD) {
-    		fprintf(stderr,"AddrSpace.Cc : clearThread() error : the ID is out of bounds\n");
-    		return;
-    	}
-    	map_threads[ID] = 0;
-    	map_joins[ID] = 0;
-    	next_thread->Clear(ID);
-    }
+    void clearThread(int ID);
+
     //Normally shouldn't be here
     typedef struct threadFunction_ {
 		int f;

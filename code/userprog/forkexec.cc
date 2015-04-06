@@ -100,24 +100,18 @@ void StartForkExec(int arg) {
 void do_ForkExecExit() {
 	DEBUG('p', "ForkExitProcess : %s", currentThread->getName());
 	int PID = currentThread->getPID();
+	//Debugging message
 	if(DEBUG_PROCESS)
 		fprintf(stderr, "do_ForkExecExit is called by %s process\n",currentThread->getName());
-//	((ForkExec*)currentThread)->waitForMySons();
-//	for(int i=0;i < map_joins[currentThread->getPID()][currentThread->GetId()];i++){
-//		((ForkExec*) currentThread)->take_this->V();
-//	}
-//	//Realeasing the main system process
-//	((ForkExec*) currentThread)->take_this->V();
-//
-//	map_threads[currentThread->getPID()][currentThread->GetId()] = 0;
-//    currentThread->Finish();
 
     next_process->Clear(PID);
     if (next_process->NumClear() == MAX_PROCESSUS) {
+    	//Debugging message
     	if(DEBUG_PROCESS)
     		fprintf(stderr, "Process %s is halting\n", currentThread->getName());
         interrupt->Halt();
     }
+    //Debugging message
     if(DEBUG_PROCESS)
     	fprintf(stderr, "Process %s is finished\n", currentThread->getName());
     currentThread->Finish();

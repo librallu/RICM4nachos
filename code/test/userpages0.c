@@ -17,9 +17,9 @@ void f(void *ss) {
 //		puts((char*) ss);
 //		PutChar('\n');
 //	}
-//	char* p;
-//	for(p=ss; *p != '\0'; p++)
-//		PutChar(*p);
+	char* p;
+	for(p=ss; *p != '\0'; p++)
+		PutChar(*p);
 
 }
 

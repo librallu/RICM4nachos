@@ -335,7 +335,18 @@ int AddrSpace::getStack()
 	return res;
 }
 
-
+/**
+ * This function clears the thread with the id == ID, from the structure of threads 
+ */
+void AddrSpace::clearThread(int ID) {
+	if (ID<0 || ID>= MAX_THREAD) {
+		fprintf(stderr,"AddrSpace.h : clearThread() error : the ID %d is out of bounds : %s\n",ID,currentThread->getName());
+		return;
+	}
+	map_threads[ID] = 0;
+	map_joins[ID] = 0;
+	next_thread->Clear(ID);
+}
 
 #endif //CHANGED
 

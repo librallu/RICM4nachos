@@ -69,42 +69,6 @@ char readDirectMem(int from){
 	return (char) to;
 }
 
-/**
- * author malek
- * To be sure that  there is no process to wait for
- * We wait on the processes
- */
-void waitTheThreads() {
-
-//	for (int process=0; process<MAX_PROCESSUS; process++) {
-//		if(map_threads[process][0] != 0) {
-//			for(int i=0; i<MAX_THREAD; i++) {
-
-//				UserThread* fils = (UserThread*) map_threads[process][i];
-
-//				if ( fils != NULL ){
-//					map_joins[process][fils->GetId()]++;
-//					fils->take_this->P();
-//				}
-//			}
-//			map_joins[process][0]++; //Not sure
-//			fprintf(stderr, "Join on main thread %d. I am %d thread\n", process, (int) currentThread);
-//			((ForkExec*) map_threads[process][0])->take_this->P();
-//		}
-//	}
-}
-
-//void waitTheThreads() {
-//	int pid = currentThread->getPID();
-//	for(int i=1; i<MAX_THREAD; i++) { //next_thread[pid]
-//		UserThread* fils = (UserThread*) map_threads[pid][i];
-//		if ( fils != NULL ){
-//			map_joins[pid][fils->GetId()]++;
-//			fils->take_this->P();
-//		}
-//	}
-//
-//}
 #endif //CHANGED
 
 //----------------------------------------------------------------------
@@ -257,15 +221,17 @@ ExceptionHandler (ExceptionType which)
 				//for everyone
 				//UserThread* fils = (UserThread*) map_threads[currentThread->getPID()][t];
 				UserThread* fils = (UserThread*) currentThread->space->map_threads[ID];
-				if ( fils != NULL ){
+				if ( fils != NULL ) {
 					//We have to remember every thread that is waiting for us, in goal to release him in the future
 					fils->space->addJoin(fils->getID());
 					//if (fils->take_this->getValue())
-					fprintf(stderr,"Exception.cc : Joins : %s waiting on thread %d \n", currentThread->getName(), ID);
+					if(DEBUG_THREAD)
+						fprintf(stderr,"\nDEBUG MSG : Exception.cc : Joins : %s waiting on thread %d \n", currentThread->getName(), ID);
 					fils->take_this->P();
-				} else {
-					fprintf(stderr,"Exception.cc : Might be an error : the thread id doesn't exist or the thread has already finished\n");
-				}
+				} 
+//				else {
+//					fprintf(stderr,"Exception.cc : Might be an error : the thread id doesn't exist or the thread has already finished\n");
+//				}
 			}
 				break;
 			case SC_UserThreadExit:
@@ -284,12 +250,6 @@ ExceptionHandler (ExceptionType which)
 				machine->WriteRegister(2,ret); //return the process pid
 			}
 				break;
-
-//			case SC_ForkExit:
-//				DEBUG('t', "ForkExit used by user program.\n");
-//				fprintf(stderr,"NOOOOOOOONNNNNNN\n");
-//				do_ForkExecExit();
-//				break;
 
 			default:
 	  			printf ("Unexpected user mode exception %d %d\n", which, type);

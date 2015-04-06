@@ -11,10 +11,7 @@
 
 UserThread::UserThread(char* namet) : Thread::Thread(namet)
 {
-//	numSons = 0;
 	this->take_this = new Semaphore("UserThread Semaphore",0);
-//	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
-//	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
 }
 
 
@@ -71,9 +68,9 @@ int do_UserThreadCreate(int f, int arg, int ret) {
 	newThread->Fork(StartUserThread, (int) fun);
 
 	//DEBUG
-	fprintf(stderr, "currentThread %s \n", parent->getName());
-	for(int i=0; i<10; i++)
-		fprintf(stderr, "map_thread : %d --> %d\n", i, parent->space->map_threads[i]);
+//	fprintf(stderr, "currentThread %s \n", parent->getName());
+//	for(int i=0; i<10; i++)
+//		fprintf(stderr, "map_thread : %d --> %d\n", i, parent->space->map_threads[i]);
 
 	currentThread->Yield();
 	return newThread->getID();
@@ -89,7 +86,7 @@ void do_UserThreadExit() {
 	for(int i=0; i<currentThread->space->map_joins[ID]; i++) {
 		((UserThread*) currentThread->space->map_threads[ID])->take_this->V();
 		if (DEBUG_THREAD)
-			fprintf(stderr, "Thread %d : releaseing the joins\n", ID);
+			fprintf(stderr, "\nDEBUG_MSG : UserThread.cc : Thread %d : releasing the joins\n", ID);
 	}
 
 	currentThread->space->clearThread(ID);
