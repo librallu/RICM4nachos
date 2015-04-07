@@ -132,7 +132,6 @@ class Thread
       	this->ID = id;
     }
 
-    void setName(char *namet) {this->name = namet;}
     Thread* parent;
 #endif
 

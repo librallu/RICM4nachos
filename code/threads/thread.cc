@@ -67,14 +67,14 @@ Thread::Thread (const char *threadName)
 Thread::~Thread ()
 {
     DEBUG ('t', "Deleting thread \"%s\"\n", name);
-
+    DEBUG ('p', "~thread() is called on %s and currentThread is %s\n", name, currentThread->getName());
     ASSERT (this != currentThread);
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
 #ifdef USER_PROGRAM
 #ifdef CHANGED
     if(space != NULL && this->getID()==-1) { //If this is the main thread
-    	fprintf(stderr,"This %s i'm destroying my addrspace\n", (char*) name);
+    	DEBUG ('p', "~thread() %s has called ~space()\n", (char*) name);
     	delete space;
     }
 #endif
@@ -106,8 +106,6 @@ Thread::Fork (VoidFunctionPtr func, int arg)
 {
     DEBUG ('t', "Forking thread \"%s\" with func = 0x%x, arg = %d\n",
 	   name, (int) func, arg);
-
-    //fprintf(stderr, "Forking thread \"%s\" with address = %d, arg = %d\n", name, (int) currentThread, arg);
 
     StackAllocate (func, arg);
 

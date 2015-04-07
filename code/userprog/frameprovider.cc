@@ -33,8 +33,8 @@ FrameProvider::~FrameProvider() {
  * Returns : Positive value if everything went well
  * 			 NULL if there is no more frame available
  */
-int* FrameProvider::GetEmptyFrame(int n) {
-
+int* FrameProvider::GetEmptyFrame(int n) 
+{
 	this->mutex->P();
 	int frameIndex = 0;
 	if (! bitMap->NumClear()>=n) 

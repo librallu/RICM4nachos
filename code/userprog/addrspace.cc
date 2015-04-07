@@ -141,8 +141,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
     for (i = 0; i < numPages; i++)
       {
 	  #ifdef CHANGED
-	  pageTable[i].virtualPage = i; // step 4 action I.4
-	  pageTable[i].physicalPage = frames[i]; //(i+1)%numPages;
+	  	pageTable[i].virtualPage = i; // step 4 action I.4
+	  	pageTable[i].physicalPage = frames[i]; //(i+1)%numPages;
 	  #else
 		  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
 		  pageTable[i].physicalPage = i;
@@ -210,15 +210,17 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 AddrSpace::~AddrSpace ()
 {
-
-  #ifdef CHANGED
+  DEBUG('p', "~space() is called\n");
+#ifdef CHANGED
   giveBackFrames();
   delete stackBitMap;
-  #endif //CHANGED
+  delete next_thread;
+#endif //CHANGED
   // LB: Missing [] for delete
     // delete pageTable;
     delete [] pageTable;
   // End of modification
+	
 }
 
 //----------------------------------------------------------------------

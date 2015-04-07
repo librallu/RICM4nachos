@@ -124,17 +124,7 @@ ExceptionHandler (ExceptionType which)
 	if ( which == SyscallException ){
 		switch (type){
 			case SC_Exit:
-				/**
-				 * Our conception choices :
-				 *
-				 * - All threads initiated from a same father are inside a same process, so they have the same PID value.
-				 * Now we add an ID value in goal to distinguish the threads of a same process.
-				 * Also in goal to keep a tracability between sons/fathers for future purpuses, each thread keep his reference
-				 * parent in a variable so we could build an ascendent tree from any thread X with a sames PIDs.
-				 */
-				//waitTheThreads();
 				do_ForkExecExit();
-				interrupt->Halt();
 				break;
 			case SC_Halt:
 				DEBUG ('a', "Shutdown, initiated by user program.\n");
@@ -225,8 +215,7 @@ ExceptionHandler (ExceptionType which)
 					//We have to remember every thread that is waiting for us, in goal to release him in the future
 					fils->space->addJoin(fils->getID());
 					//if (fils->take_this->getValue())
-					if(DEBUG_THREAD)
-						fprintf(stderr,"\nDEBUG MSG : Exception.cc : Joins : %s waiting on thread %d \n", currentThread->getName(), ID);
+					DEBUG('p', "thread %s is waiting on thread %s \n", currentThread->getName(), fils->getName());
 					fils->take_this->P();
 				} 
 //				else {

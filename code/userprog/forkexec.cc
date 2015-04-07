@@ -11,17 +11,12 @@
 
 ForkExec::ForkExec(const char* process_name) : Thread::Thread(process_name)
 {
-//	numSons = 0;
 	this->take_this = new Semaphore("Process Semaphore",0);
-//	this->mutex  = new Semaphore("Process Semaphore Mutex",1);
-//	this->waitSons = new Semaphore("Process Semaphore waitSons",0);
 }
 
 ForkExec::~ForkExec() 
 {
 	delete take_this;
-//	delete mutex;
-//	delete waitSons;
 }
 
 
@@ -37,7 +32,7 @@ ForkExec::~ForkExec()
  * Dans le cas present, ForkExec initialise un nouvel espace d'adressage.  
  */
 int do_ForkExec(char* filename, int exit_syscall) {
-
+	DEBUG('p',"do_ForkExec is called by %s process PID %d\n", currentThread->getName(), currentThread->getPID());
 
 	 OpenFile *executable = fileSystem->Open (filename);
 
@@ -66,7 +61,7 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	 }
 
 	 Thread* parent = currentThread;
-	 char name[15];
+	 char* name = new char[20];
 	 sprintf(name, "process %d",pid);
 	 ForkExec* t = new ForkExec(name);
 
@@ -76,16 +71,16 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	 t->space = space; //So at Fork call it dosn't affect the same addrspace as my process father
 	 t->parent = parent;
 
-	 if(DEBUG_PROCESS)
-		fprintf(stderr, "do_ForkExec is called by %s process PID %d\n", parent->getName(), parent->getPID());
+	 	
 
 	 /* il faut voir Thread comme un thread linux (car c'est du c++) qui conceptuellement est un processus MIPS.  
 	  * Ceci s'apparente donc a un lancement de processus, puisque un nouvel espace d'adressage est initialisé
 	  * A la place d'un machine->Run() il est necessaire d'effectuer un Fork pour que le pseudo processus soit schedulé
 	  */
+	 DEBUG('p',"do_ForkExec is forking %s \n", name);
 	 t->Fork(StartForkExec, 0);
-	 currentThread->Yield(); //On ne fait pas de yield car c'est un process en parallele
-
+	 //currentThread->Yield(); //On ne fait pas de yield car c'est un process en parallele sinon on ne renvoie pas le pid
+	 
 	 return pid;
 }
 
@@ -98,22 +93,17 @@ void StartForkExec(int arg) {
 }
 
 void do_ForkExecExit() {
-	DEBUG('p', "ForkExitProcess : %s", currentThread->getName());
+	DEBUG('p', "do_ForkExecExit is called by %s\n",currentThread->getName());
 	int PID = currentThread->getPID();
-	//Debugging message
-	if(DEBUG_PROCESS)
-		fprintf(stderr, "do_ForkExecExit is called by %s process\n",currentThread->getName());
 
     next_process->Clear(PID);
     if (next_process->NumClear() == MAX_PROCESSUS) {
-    	//Debugging message
-    	if(DEBUG_PROCESS)
-    		fprintf(stderr, "Process %s is halting\n", currentThread->getName());
+
+    	DEBUG('p', "%s is halting\n", currentThread->getName());
         interrupt->Halt();
     }
-    //Debugging message
-    if(DEBUG_PROCESS)
-    	fprintf(stderr, "Process %s is finished\n", currentThread->getName());
+
+    DEBUG('p', "%s calls thread->finish()\n", currentThread->getName());
     currentThread->Finish();
 
 }

@@ -85,8 +85,7 @@ void do_UserThreadExit() {
 	int ID = currentThread->getID();
 	for(int i=0; i<currentThread->space->map_joins[ID]; i++) {
 		((UserThread*) currentThread->space->map_threads[ID])->take_this->V();
-		if (DEBUG_THREAD)
-			fprintf(stderr, "\nDEBUG_MSG : UserThread.cc : Thread %d : releasing the joins\n", ID);
+		DEBUG('p', "thread %d : releasing the joins\n", ID);
 	}
 
 	currentThread->space->clearThread(ID);

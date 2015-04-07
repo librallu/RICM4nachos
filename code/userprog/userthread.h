@@ -22,17 +22,7 @@
 
 			Semaphore* take_this;
 
-			//Called by son thread at his creation
-			void waitForMe();
-			//Called by a son thread at his destruction
-			void GoFree();
-			//Called at the father UserThreadExit
-			void waitForMySons();
-
 		private:
-			Semaphore* waitSons;
-			Semaphore* mutex;
-			int numSons;
 	};
 
 	typedef struct threadFunction_ {
