@@ -1,6 +1,6 @@
-******************************
+==============================
 realisation notes about nachos
-******************************
+==============================
 
 Part one
 ########
@@ -649,7 +649,8 @@ makethreads.cc :
 	      return 0;
       }
 
-.. code-block :: C++
+.. code-block : C++
+
       $ ./nachos-step2 -x makethreads
       Hello 0 !
       Thread : 0 launched
@@ -676,7 +677,8 @@ Action II.2 to Action II.5
 When the main thread finishes all his instructions and is about to end by automatically calling Exit() system call, it remains blocked with every Productor/Consumer semaphore->P() thread instance.
 In order to recover the main thread sons with their IDs we used an array structure declared in system.h 
 
-.. code-block :: C++
+.. code-block : C++
+
       #define MAX_PROCESSUS	1
       #define MAX_THREAD 		MAX_USER_THREAD
 
@@ -722,26 +724,26 @@ you can find the code below:
 
 ..codeblock:: C++
 
-for (i = 0; i < numPages; i++)
-      {
-	  #ifdef CHANGED
-	  pageTable[i].virtualPage = i; // step 4 action I.4
-	  pageTable[i].physicalPage = (i+1)%numPages;
-	  #else
-	  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
-	  pageTable[i].physicalPage = i;
-	  #endif
-	  pageTable[i].valid = TRUE;
-	  pageTable[i].use = FALSE;
-	  pageTable[i].dirty = FALSE;
-	  pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
-	  // a separate page, we could set its 
-	  // pages to be read-only
-      }
+	for (i = 0; i < numPages; i++)
+		{
+		#ifdef CHANGED
+		pageTable[i].virtualPage = i; // step 4 action I.4
+		pageTable[i].physicalPage = (i+1)%numPages;
+		#else
+		pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
+		pageTable[i].physicalPage = i;
+		#endif
+		pageTable[i].valid = TRUE;
+		pageTable[i].use = FALSE;
+		pageTable[i].dirty = FALSE;
+		pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
+		// a separate page, we could set its 
+		// pages to be read-only
+		}
       
 and now a part of the trace of an execution of a program with the -d a option:
-``
-Writing VA 0x0, size 1, value 0xffffff86
+
+	Writing VA 0x0, size 1, value 0xffffff86
 	Translate 0x0, write: phys addr = 0x80``
 	
 We can see that the address 0x0 was translated to 0x80 witch is 128 bytes
@@ -753,13 +755,13 @@ Part Five
 
 
 step 1
-======
+******
 
 In this step, we are interested to add subdirectories.
 For this, we add in the directory entry a new field that indicates
 if the file is a directory or a simple file :
 
-.. code-block :: C++
+.. code-block : C++
 
     enum FileType{ DIR, FILE };
     
@@ -780,7 +782,7 @@ table[0] and table[1] refers respectively to . and ..
 
 we create the local function in directory.cc :
 
-.. code-block :: C++
+.. code-block : C++
 
     void initializePageTable(	DirectoryEntry* ptr, 
                                 bool inUse, 
@@ -797,7 +799,7 @@ That helps us to initialize a PageTable.
 
 Now, in the Directory constructor, we add the . and .. gestion :
 
-.. code-block :: C++
+.. code-block : C++
 
 	// add . and ..
 	initializePageTable(&(table[0]), TRUE, FILE, currentSector, ".");
@@ -808,7 +810,7 @@ Now, in the Directory constructor, we add the . and .. gestion :
 
 We also modify Directory::Add with an other parameter : fileType
 
-.. code-block :: C++
+.. code-block : C++
 
     bool
     Directory::Add(const char *name, int newSector, FileType type)
