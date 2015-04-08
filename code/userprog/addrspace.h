@@ -16,7 +16,9 @@
 #include "copyright.h"
 #include "filesys.h"
 #include "bitmap.h"
-
+#ifdef CHANGED
+//#include "system.h"
+#endif
 #define UserStackSize		2048	// increase this as necessary!
 #define MAX_USER_THREAD		divRoundUp(UserStackSize, PageSize)
 
@@ -34,16 +36,35 @@ class AddrSpace
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
-#ifdef CHANGED
+#ifdef CHANGED //--->Malek
     BitMap* stackBitMap;
-    /**
-     * Return a stack for a thread
-     * author malek
-     */
-    int getStack();
+    int getStack(); //returns a stack index
     void threadInitRegisters (int f, int stackIndex);
     bool allFramesAllocated;
     void giveBackFrames();
+
+    //Threads managerial functions
+#define MAX_THREAD MAX_USER_THREAD
+
+    int map_threads[MAX_THREAD];
+    int map_joins[MAX_THREAD];
+    BitMap* next_thread;
+
+
+    int nextThread() {
+    	return next_thread->Find();
+    }
+
+    void setThread(int ID, int thread) {
+    	map_threads[ID] = thread;
+    	map_joins[ID] = 0;
+    }
+
+    void addJoin(int ID) {
+    	map_joins[ID]++;
+    }
+
+    void clearThread(int ID);
 
     //Normally shouldn't be here
     typedef struct threadFunction_ {

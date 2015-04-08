@@ -124,12 +124,14 @@ class Thread
     }
 
     //IDs
-    int GetId(){
-    	return this->id;
+    int getID(){
+    	return this->ID;
     }
-    void setId(int ID) {
-      	this->id = ID;
+
+    void setID(int id) {
+      	this->ID = id;
     }
+
     Thread* parent;
 #endif
 
@@ -162,7 +164,7 @@ class Thread
     /**
      * In case of a process this value should be always 0 because it is the main thread
      */
-    int id;
+    int ID;
 
     //-----------------------------------------------------------------------------------------
 #endif

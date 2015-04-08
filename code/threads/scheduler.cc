@@ -54,7 +54,7 @@ void
 Scheduler::ReadyToRun (Thread * thread)
 {
     DEBUG ('t', "Putting thread %s on ready list.\n", thread->getName ());
-
+    //fprintf(stderr, "scheduler ReadyToRun:: Putting thread %s on ready list.\n", thread->getName ());
     thread->setStatus (READY);
     readyList->Append ((void *) thread);
 }
@@ -91,7 +91,7 @@ void
 Scheduler::Run (Thread * nextThread)
 {
     Thread *oldThread = currentThread;
-
+    //fprintf (stderr, "SCHEDULER::RUN Switching from thread \"%s\" to thread \"%s\"\n", oldThread->getName (), nextThread->getName ());
     // LB: For safety...
     ASSERT (interrupt->getLevel () == IntOff);
     // End of addition
@@ -126,7 +126,7 @@ Scheduler::Run (Thread * nextThread)
     // we need to delete its carcass.  Note we cannot delete the thread
     // before now (for example, in Thread::Finish()), because up to this
     // point, we were still running on the old thread's stack!
-    if (threadToBeDestroyed != NULL)
+    if (threadToBeDestroyed != NULL) //if the thread has called Finish then it is set to be destroyed
       {
 	  delete threadToBeDestroyed;
 	  threadToBeDestroyed = NULL;

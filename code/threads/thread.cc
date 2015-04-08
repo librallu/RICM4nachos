@@ -39,6 +39,10 @@ Thread::Thread (const char *threadName)
     stack = NULL;
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
+#ifdef CHANGED
+    PID = -1;
+    ID = -1;
+#endif
     space = NULL;
     // FBT: Need to initialize special registers of simulator to 0
     // in particular LoadReg or it could crash when switching
@@ -63,14 +67,18 @@ Thread::Thread (const char *threadName)
 Thread::~Thread ()
 {
     DEBUG ('t', "Deleting thread \"%s\"\n", name);
-
+    DEBUG ('p', "~thread() is called on %s and currentThread is %s\n", name, currentThread->getName());
     ASSERT (this != currentThread);
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
-//#ifdef USER_PROGRAM
-//    if(space != NULL)
-//    	delete space;
-//#endif
+#ifdef USER_PROGRAM
+#ifdef CHANGED
+    if(space != NULL && this->getID()==-1) { //If this is the main thread
+    	DEBUG ('p', "~thread() %s has called ~space()\n", (char*) name);
+    	delete space;
+    }
+#endif
+#endif
 }
 
 //----------------------------------------------------------------------
@@ -109,13 +117,15 @@ Thread::Fork (VoidFunctionPtr func, int arg)
     // an already running program, as in the "fork" Unix system call. 
     
     // LB: Observe that currentThread->space may be NULL at that time.
-    this->space = currentThread->space;
+    if (space == NULL) //by malek : If it is null than this is userthread otherwise this is a forkexec address space
+    	this->space = currentThread->space;
 
 #endif // USER_PROGRAM
 
     IntStatus oldLevel = interrupt->SetLevel (IntOff);
     scheduler->ReadyToRun (this);	// ReadyToRun assumes that interrupts 
     // are disabled!
+
     (void) interrupt->SetLevel (oldLevel);
 }
 

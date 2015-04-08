@@ -69,39 +69,6 @@ char readDirectMem(int from){
 	return (char) to;
 }
 
-/**
- * author malek
- * To be sure that everyone there no process to wait for
- * We wait on the processes
- */
-void waitTheThreads() {
-	for (int process=0; process<MAX_PROCESSUS; process++) {
-		if(map_threads[process][0] != 0) {
-//			for(int i=0; i<MAX_THREAD; i++) {
-//				UserThread* fils = (UserThread*) map_threads[0][i];
-//				if ( fils != NULL ){
-//					map_joins[0][fils->GetId()]++;
-//					fils->take_this->P();
-//				}
-//			}
-//			map_joins[process][0]++; //Not sure
-			((ForkExec*) map_threads[process][0])->take_this->P();
-		}
-	}
-
-}
-
-//void waitTheThreads() {
-//	int pid = currentThread->getPID();
-//	for(int i=1; i<MAX_THREAD; i++) { //next_thread[pid]
-//		UserThread* fils = (UserThread*) map_threads[pid][i];
-//		if ( fils != NULL ){
-//			map_joins[pid][fils->GetId()]++;
-//			fils->take_this->P();
-//		}
-//	}
-//
-//}
 #endif //CHANGED
 
 //----------------------------------------------------------------------
@@ -157,27 +124,7 @@ ExceptionHandler (ExceptionType which)
 	if ( which == SyscallException ){
 		switch (type){
 			case SC_Exit:
-				/**
-				 *
-				 * Our conception choices :
-				 *
-				 * - All threads initiated from a same father are inside a same process, so they have the same PID value.
-				 * Now we add an ID value in goal to distinguish the threads of a same process.
-				 * Also in goal to keep a tracability between sons/fathers for future purpuses, each thread keep his reference
-				 * parent in a variable so we could build an ascendent tree from any thread X with a sames PIDs.
-				 *
-				 * For the non terminaison of the main thread while one of his sons at least hasn't finished we chose that
-				 * every son does mainThread->P() when they launch and a mainThread->V() when they die.
-				 *
-				 * Worst case :
-				 * let admit that a son thread becomes at his turn a father by launching a thread. In that case the generated
-				 * thread belong to the same process that his father does.
-				 * And just like we said above, the son does a P() on his father in goal let him know to wait for him.
-				 * And when the son dies (or exits) it does a V() for releasing his father. This works even for more than one
-				 * thread son.
-				 */
-				waitTheThreads();
-				interrupt->Halt();
+				do_ForkExecExit();
 				break;
 			case SC_Halt:
 				DEBUG ('a', "Shutdown, initiated by user program.\n");
@@ -239,8 +186,8 @@ ExceptionHandler (ExceptionType which)
 				int ret = machine->ReadRegister(7);
 
 				//Creates the thread and schedules it
-				int result = do_UserThreadCreate(f, arg, ret); 
-				machine->WriteRegister(2,result); //return the thread id
+				int ID = do_UserThreadCreate(f, arg, ret);
+				machine->WriteRegister(2,ID); //return the thread id
 
 				//machine->WriteRegister(RetAddrReg, ret);				
 				// (author : Luc) the lines commented are made in the
@@ -257,18 +204,23 @@ ExceptionHandler (ExceptionType which)
 				 * a la mort (do_UserThreadExit()) du thread X en faisant autant de V()
 				 */
 				DEBUG('t', "UserThreadJoin used by user program.\n");
-				//We retreave to thread ref we want to wait for
-				int t = machine->ReadRegister(4);
+				//We retreave to thread (ID) we want to wait for
+				int ID = machine->ReadRegister(4);
 
 				//This should be UserThread object because no one can wait on the mainThread. His is the one who is waiting
 				//for everyone
-				UserThread* fils = (UserThread*) map_threads[currentThread->getPID()][t];
-				if ( fils != NULL ){
+				//UserThread* fils = (UserThread*) map_threads[currentThread->getPID()][t];
+				UserThread* fils = (UserThread*) currentThread->space->map_threads[ID];
+				if ( fils != NULL ) {
 					//We have to remember every thread that is waiting for us, in goal to release him in the future
-					map_joins[fils->getPID()][fils->GetId()]++;
+					fils->space->addJoin(fils->getID());
 					//if (fils->take_this->getValue())
-						fils->take_this->P();
-				}
+					DEBUG('p', "thread %s is waiting on thread %s \n", currentThread->getName(), fils->getName());
+					fils->take_this->P();
+				} 
+//				else {
+//					fprintf(stderr,"Exception.cc : Might be an error : the thread id doesn't exist or the thread has already finished\n");
+//				}
 			}
 				break;
 			case SC_UserThreadExit:
@@ -279,26 +231,13 @@ ExceptionHandler (ExceptionType which)
 			case SC_ForkExec:
 			{
 				DEBUG('t', "ForkExec used by user program.\n");
-				fprintf(stderr, "malek : ForkExec used by user program.\n");
 				int from = machine->ReadRegister(4);
-				int exit_fun = machine->ReadRegister(7);
+				int exit_fun = machine->ReadRegister(5);
 				char to[100];
 				copyStringFromMachine(from, to, 100);
 				int ret = do_ForkExec(to, exit_fun);
 				machine->WriteRegister(2,ret); //return the process pid
-//				switch (ret) {
-//				case -1 : printf("ForkExec error : something went wrong with opening the executable file\n"); break;
-//				case -2 : printf("ForkExec error : something went wrong with opening the address space allocation\n"); break;
-//				case -3 : printf("ForkExec error : not enough frame to launch the process\n"); break;
-//				case -4 : printf("ForkExec error : reached the number max of processes\n"); break;
-//				default : printf("Process created with a PID : %d\n", ret); break;
-//				}
 			}
-				break;
-
-			case SC_ForkExit:
-				DEBUG('t', "ForkExit used by user program.\n");
-				do_ForkExecExit();
 				break;
 
 			default:

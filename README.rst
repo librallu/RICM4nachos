@@ -610,13 +610,22 @@ We add the function *do_UserThreadExit*.
 
 .. code-block :: C++
 
-	void do_UserThreadExit() {
-	((UserThread*)currentThread)->take_this->V();
-        // The thread call the finish method.
-        currentThread->Finish();
-        // we need to free the thread memory
-        currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex);
-	}
+    void do_UserThreadExit() {
+      //We release every thread waiting for me
+      int ID = currentThread->getID();
+      for(int i=0; i<currentThread->space->map_joins[ID]; i++) {
+         ((UserThread*) currentThread->space->map_threads[ID])->take_this->V();
+         if (DEBUG_THREAD)
+           fprintf(stderr, "\nDEBUG_MSG : UserThread.cc : Thread %d : releasing the joins\n", ID);
+      }
+
+      currentThread->space->clearThread(ID);
+
+      // The thread call the finish method.
+      currentThread->Finish();
+      // we need to free the thread's stack memory
+      currentThread->space->stackBitMap->Clear(((UserThread*)currentThread)->stackIndex);
+    }
 
 
 =======
@@ -629,25 +638,24 @@ makethreads.cc :
 
 .. code-block :: C++
       
-      void fun(void* arg){
-	      int p = *((int*) arg);
-	      PutString("Hello ");
-	      PutInt(p);
-	      PutString(" !\n");
-      }
+    void fun(void* arg){
+      int p = *((int*) arg);
+      PutString("Hello ");
+      PutInt(p);
+      PutString(" !\n");
+    }
 
-      int main(){
-	      int arg = 0;
-	      int fils = UserThreadCreate(fun,(void*) &arg);
-	      PutString("Thread : ");
-	      PutInt(fils);
-	      PutString(" launched\n");
-	      if ( fils < 0 )
-		      PutString("ERREUR CREATION THREAD !\n");
-	      }
-	      
-	      return 0;
+    int main(){
+      int arg = 0;
+      int fils = UserThreadCreate(fun,(void*) &arg);
+      PutString("Thread : ");
+      PutInt(fils);
+      PutString(" launched\n");
+      if ( fils < 0 )
+          PutString("ERREUR CREATION THREAD !\n");
       }
+      return 0;
+    }
 
 .. code-block :: C++
       $ ./nachos-step2 -x makethreads
@@ -673,14 +681,11 @@ For testing this we just launch a second thread in makethreads.cc
 Action II.2 to Action II.5
 **************************
 
-When the main thread finishes all his instructions and is about to end by automatically calling Exit() system call, it remains blocked with every Productor/Consumer semaphore->P() thread instance.
-In order to recover the main thread sons with their IDs we used an array structure declared in system.h 
+When the main thread executes UserThreadJoin(int ID) system call, it remains blocked on space->map_thread[ID]->take_this->P().
+In order to recover thread reference with an ID we used an array structure declared in addrspace.h 
 
 .. code-block :: C++
-      #define MAX_PROCESSUS	1
-      #define MAX_THREAD 		MAX_USER_THREAD
-
-      extern int map_threads[MAX_PROCESSUS][MAX_THREAD];
+      int map_threads[MAX_THREAD];
 
       
 Action III.1
@@ -720,25 +725,18 @@ Action I.4
 
 We replaced i by i+1 in 
 
-Summary 
-*******
+Summary of step 4
+*****************
 
-In goal to store and manage our processes and thread. We declared somme variables (in system.h) initialize at zero: 
+In goal to store and manage our processes and thread. We declared some variables (in system.h and addrspace.h): 
 
-extern int map_threads[MAX_PROCESSUS][MAX_THREAD];
-extern int map_joins[MAX_PROCESSUS][MAX_THREAD];
-extern int next_thread_id[MAX_PROCESSUS];
-extern int next_process_id;
+In system.h : 
+extern BitMap* next_process(MAX_PROCESSUS); //for pid management
 
-map_thread : is for storing the thread references. map_thread[PID][ID] allows us to find any thread from a PID and ID
-map_joins  : counts the number of join calls made. You will find explanation below
-next_thread_id and next_process_id is just a way to get unique IDs and PIDs
-
-Since a Thread object can be seen as a ForkExec (process) or a userThread we need to distinguish 
-the groups of threads that belongs to a same process. And the PID with the ID are going to help us to achieve that.                                                                             
-We don't need to compare the references of address space of each thread. A PID is simpler to manipulate 
-than a reference to an address space.
-And so every thread with a same PID belongs to a same process. 
+In addrspace.h :
+BitMap* next_thread(MAX_THREAD); //for id management
+int map_thread[MAX_THREAD]; //for storing thread references and acceding to their semaphore with an ID
+int map_join[MAX_THREAD]; //for counting the number of join made on a thread
 
 The files we added : 
 frameprovider.cc and .h
@@ -748,45 +746,126 @@ This file above wasn't asked in the subject but we judged that we had to give hi
 a kernel thread, a MIPS process and the main thread among his sons.
 
 
-Our conception choices :                                                                                     
+Our conception choices : 
+************************
                                                                                                              
-All threads initiated from a same father are inside a same process, so they have the same PID value.       
-Now we chose to add an ID value in goal to distinguish the threads in a same process.                                 
-Also in goal to keep a tracability between sons/fathers for future porpuses, each thread keep his reference  
-parent in a variable so we could build an ascendent tree from any thread X with sames PIDs.                
+All threads initiated from a same father are inside a same process, so they have the same PID value.
+Now we chose to add an ID value in goal to distinguish the threads in a same process. 
+Also in goal to keep a tracability between sons/fathers for future porpuses, each thread keep a reference  
+to his parent in a variable so we could build an ascendent tree from any thread X with sames PIDs.                
 
-For the non terminaison of the main thread while one of his sons at least hasn't finished we chose that      
-every son does father->waitForMe() when they launch and a father->waitSons->V() when they die.
-The waitForMe() function remembers to call waitSons->P() when father finishes.
-We didn't want to use the son semaphore as if the father last longer than the son which will consequently be set the 
-son to destrution, just as his semaphore.
-                                                                                                                                                                                      
-Let admit that a son thread becomes at his turn a father by launching a thread. In that case the generated   
-thread belong to the same process that his father does.                                                      
-And just like we said above, the son does a waitForMe() call on his father in goal let him know to wait for him.          
-And when the son dies (or exits) it does a waitSons->V() call for releasing his father. This works even for more than one   
-thread son. 
+
+For the non terminaison of the main thread while one of his sons at least hasn't finished we chose to do
+as linux systems does, ie we let the responsibility to the programer.
 
 Let see how we implemented the join functionnality:
-Here again xe chose to use semaphores. And so we added a semaphore field to UserThread and ForkExec classes 
+Here again we chose to use semaphores. And so we added a semaphore field (Semaphore* take_this) to UserThread and ForkExec classes 
 Let say X want to wait for Y. X will call Y->semaphore->P() (by UserThreadJoin system call), and from the Y side 
 we need to do a this->V() when Y has finished. If you see the UserThreadExit() function in UserThread.cc you would notice that
-we call Y->V() the number of time P() has been called. Indeed we keep a join counter (map_joins[PID][ID]++) for every thread, 
+we call Y->V() the number of time P() has been called. Indeed we keep a join counter (Y->space->map_joins[ID]++) for every thread, 
 in goal release every one.
 This way to do things has two advantages : 
--> a succession of UserThreadJoin calls from the same thread doesn't affect the program behavior. It is like doing one UserThreadJoin call.
--> beside the fact that sons wait their father, anythread from the same process can wait for another thread. 
-We can even imagine a nasty case where a son does a join on his father which should cause a dead lock. But our system prevent this since we free
-evryone a same number off call to V()
+-> a succession of UserThreadJoin calls for a same thread doesn't affect the program behavior. It is like doing one UserThreadJoin call.
+-> anythread from the same process can wait for another thread. 
 
 UserThreadExit is automacally called when a user thread finishes his work. In StartUserThread we set the LR register 
 to UserThreadExit address function.
 
-To assure a mutual exlcusion with some functions used by multiple threads at a same time possibly, we added a Mutex : 
---> frame allocation 
---> 
+To assure a mutual exlcusion with some functions used by multiple threads at a same time eventually, we added a Mutex : 
+--> for frames allocation : 
 
-To avoid memory leak we make sure to call "delete space" in the Thread destructor if of course space != NULL. The thread 
-destrutor is automatically called when toBeDestroyed is set to true, scheduled for destruction. This way of doing is due 
-to the fact a current thread cannot destro himself.
+.. code-block :: C++
+      int* FrameProvider::GetEmptyFrame(int n) 
+      {
+      this->mutex->P();
+      ....
+      this->mutex->V();
+      return frames;
+      }
+
+To avoid memory leak we make sure to call "delete space" in the Thread destructor if of course space != NULL. 
+.. code-block :: C++
+    Thread::~Thread ()
+    {
+    if (stack != NULL)
+      DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
+    
+    #ifdef USER_PROGRAM
+    #ifdef CHANGED
+      if(space != NULL && this->getID()==-1)  //If this is the main thread then its ID == -1 by convention
+      { 
+      DEBUG ('p', "%s is destroying its addrspace\n", (char*) name);
+      delete space;
+      }
+    #endif
+    #endif
+    }
+
+The thread destrutor is automatically scheduled when thread->Finish() is called. 
+This way of doing is due to the fact a current thread cannot destroy himself so it is scheduled to be destroyed.
+
+Here is how we create a Process :
+
+.. code-block :: C++
+    int do_ForkExec(char* filename, int exit_syscall) {
+      DEBUG('p',"do_ForkExec is called by %s process PID %d\n", parent->getName(), parent->getPID());	
+      OpenFile *executable = fileSystem->Open (filename);
+
+      if (executable == NULL) {
+      fprintf (stderr, "Unable to open file %s\n", filename);
+      return -1;
+      }
+
+      AddrSpace* space = new AddrSpace (executable);
+      if (space == NULL) {
+      fprintf (stderr, "Unable to allocate an address space %s\n", filename);
+      return -2;
+      }
+
+      if (! space->allFramesAllocated) {
+      fprintf (stderr, "Unable to allocate an the frames %s\n", filename);
+      return -3;
+      }
+
+      delete executable;		// close file
+
+      int pid = nextProcess();
+      if (pid < 0) {
+      fprintf (stderr, "The number max of processes is reached\n");
+      return -4;
+      }
+
+      Thread* parent = currentThread;
+      char name[15];
+      sprintf(name, "process %d",pid);
+      ForkExec* t = new ForkExec(name);
+
+      //On ne stock pas la reference du main thread
+      t->setPID(pid);
+      t->setID(-1); //This is how we identify the main thread
+      t->space = space; //So at Fork call it dosn't affect the same addrspace as my process father
+      t->parent = parent;
+
+      t->Fork(StartForkExec, 0);
+      currentThread->Yield(); //On ne fait pas de yield car c'est un process en parallele
+
+      return pid;
+    }
+
+And this is how with exit every process : 
+
+.. code-block :: C++
+    void do_ForkExecExit() {
+      DEBUG('p', "do_ForkExecExit is called by %s\n",currentThread->getName());
+      int PID = currentThread->getPID();
+
+      next_process->Clear(PID);
+      if (next_process->NumClear() == MAX_PROCESSUS) {
+          DEBUG('p', "Process %s is halting\n", currentThread->getName());
+          interrupt->Halt();
+      }
+      DEBUG('p', "Process %s is finished\n", currentThread->getName());
+      currentThread->Finish();
+
+    }
 

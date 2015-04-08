@@ -94,6 +94,15 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 
 AddrSpace::AddrSpace (OpenFile * executable)
 {
+#ifdef CHANGED
+	//Initialisation of the thread structure
+	for(int j=0; j<MAX_THREAD; j++) {
+		map_threads[j]  = 0;
+		map_joins[j]  = 0;
+	}
+	next_thread = new BitMap(MAX_THREAD);
+#endif
+
     NoffHeader noffH;
     unsigned int i, size;
 
@@ -132,8 +141,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
     for (i = 0; i < numPages; i++)
       {
 	  #ifdef CHANGED
-	  pageTable[i].virtualPage = i; // step 4 action I.4
-	  pageTable[i].physicalPage = frames[i]; //(i+1)%numPages;
+	  	pageTable[i].virtualPage = i; // step 4 action I.4
+	  	pageTable[i].physicalPage = frames[i]; //(i+1)%numPages;
 	  #else
 		  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
 		  pageTable[i].physicalPage = i;
@@ -185,7 +194,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		//	       [noffH.initData.virtualAddr]),
 		//	      noffH.initData.size, noffH.initData.inFileAddr);
 // }
-	  fprintf(stderr, "AddrSPace finnished.\n");
       }
 
     //Added by Malek
@@ -202,15 +210,17 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 AddrSpace::~AddrSpace ()
 {
-
-  #ifdef CHANGED
+  DEBUG('p', "~space() is called\n");
+#ifdef CHANGED
   giveBackFrames();
   delete stackBitMap;
-  #endif //CHANGED
+  delete next_thread;
+#endif //CHANGED
   // LB: Missing [] for delete
     // delete pageTable;
     delete [] pageTable;
   // End of modification
+	
 }
 
 //----------------------------------------------------------------------
@@ -277,6 +287,13 @@ AddrSpace::RestoreState ()
 }
 
 #ifdef CHANGED
+
+void AddrSpace::giveBackFrames() {
+	for(unsigned int i=0; i<numPages; i++) {
+		((FrameProvider*) getFrameProvider())->ReleaseFrame(this->pageTable[i].physicalPage);
+	}
+}
+
 void
 AddrSpace::threadInitRegisters (int f, int stackIndex)
 {
@@ -301,6 +318,10 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
 	DEBUG ('a', "Initializing stack register to %d\n", numPages * PageSize - 16);
 }
 
+//void AddrSpace::mainThreadInit() {
+//    currentThread->setZone(this->GetNewZone());
+//    currentThread->setId(this->GetNewThreadId(zone));
+//}
 /**
  * Returns a new stack 
  * author malek
@@ -311,16 +332,22 @@ int AddrSpace::getStack()
 {
 	int res = this->stackBitMap->Find();
 	if ( res < 0 ){
-		printf("No more space in the stack !!!\n");
+		printf("AddrSpace : No more space in the stack !!!\n");
 	}
 	return res;
 }
 
-void
-AddrSpace::giveBackFrames() {
-	for(unsigned int i=0; i<numPages; i++) {
-		//frameprovider->ReleaseFrame(this->pageTable[i].physicalPage);
+/**
+ * This function clears the thread with the id == ID, from the structure of threads 
+ */
+void AddrSpace::clearThread(int ID) {
+	if (ID<0 || ID>= MAX_THREAD) {
+		fprintf(stderr,"AddrSpace.h : clearThread() error : the ID %d is out of bounds : %s\n",ID,currentThread->getName());
+		return;
 	}
+	map_threads[ID] = 0;
+	map_joins[ID] = 0;
+	next_thread->Clear(ID);
 }
 
 #endif //CHANGED

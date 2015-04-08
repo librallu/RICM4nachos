@@ -19,6 +19,7 @@ FrameProvider::FrameProvider(bool addRandom) {
 		RandomInit(0);
 		random = true; 
 	}
+	mutex = new Semaphore("FrameProvider mutex", 1);
 	//bitMap->Mark(0);
 }
 
@@ -27,11 +28,14 @@ FrameProvider::~FrameProvider() {
 }
 
 /**
- * The function returns a frame offset address 
+ * The function returns a frame offset address.
+ * This function might be accessed by several ForkExec at the same time => we use a mutex
  * Returns : Positive value if everything went well
  * 			 NULL if there is no more frame available
  */
-int* FrameProvider::GetEmptyFrame(int n) {
+int* FrameProvider::GetEmptyFrame(int n) 
+{
+	this->mutex->P();
 	int frameIndex = 0;
 	if (! bitMap->NumClear()>=n) 
 		return NULL;
@@ -49,7 +53,7 @@ int* FrameProvider::GetEmptyFrame(int n) {
 	    bzero (machine->mainMemory + frameIndex * PageSize, PageSize);
 	    frames[i] = frameIndex;    
 	}
-	
+	this->mutex->V();
 	return frames;
 }
 

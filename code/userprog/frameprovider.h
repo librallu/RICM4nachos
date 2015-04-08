@@ -8,7 +8,7 @@
 #ifndef USERPROG_FRAMEPROVIDER_H_
 #define USERPROG_FRAMEPROVIDER_H_
 #include "bitmap.h"
-
+#include "synch.h"
 
 class FrameProvider {
 	public:
@@ -20,6 +20,7 @@ class FrameProvider {
 	private:
 		BitMap* bitMap;
 		bool random;
+		Semaphore* mutex;
 };
 
 #endif /* USERPROG_FRAMEPROVIDER_H_ */
