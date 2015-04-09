@@ -635,10 +635,7 @@ We add the function *do_UserThreadExit*.
     }
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> disk
 Action I.7
 **********
 
@@ -669,11 +666,6 @@ makethreads.cc :
 
 .. code-block : C++
 
-<<<<<<< HEAD
-=======
-.. code-block : C++
-
->>>>>>> disk
       $ ./nachos-step2 -x makethreads
       Hello 0 !
       Thread : 0 launched
@@ -701,12 +693,9 @@ When the main thread executes UserThreadJoin(int ID) system call, it remains blo
 In order to recover thread reference with an ID we used an array structure declared in addrspace.h 
 
 .. code-block : C++
-<<<<<<< HEAD
-=======
 
       #define MAX_PROCESSUS	1
       #define MAX_THREAD 		MAX_USER_THREAD
->>>>>>> disk
 
       int map_threads[MAX_THREAD];
 
@@ -751,7 +740,6 @@ We replaced i by i+1 in
 Summary of step 4
 *****************
 
-<<<<<<< HEAD
 In goal to store and manage our processes and thread. We declared some variables (in system.h and addrspace.h): 
 
 In system.h : 
