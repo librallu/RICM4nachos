@@ -187,7 +187,7 @@ Thread::Finish ()
     // End of addition 
 
     threadToBeDestroyed = currentThread;
-    Sleep ();			// invokes SWITCH
+	Sleep ();			// invokes SWITCH
     // not reached
 }
 
@@ -235,7 +235,7 @@ Thread::Yield ()
 //      Eventually, some thread will wake this thread up, and put it
 //      back on the ready queue, so that it can be re-scheduled.
 //
-//      NOTE: if there are no threads on the ready queue, that means
+//      NOTE: if there are no threads on the ready queSWITCHue, that means
 //      we have no thread to run.  "Interrupt::Idle" is called
 //      to signify that we should idle the CPU until the next I/O interrupt
 //      occurs (the only thing that could cause a thread to become
@@ -258,8 +258,9 @@ Thread::Sleep ()
     DEBUG ('t', "Sleeping thread \"%s\"\n", getName ());
 
     status = BLOCKED;
-    while ((nextThread = scheduler->FindNextToRun ()) == NULL)
-	interrupt->Idle ();	// no one to run, wait for an interrupt
+    while ((nextThread = scheduler->FindNextToRun ()) == NULL){
+		interrupt->Idle ();	// no one to run, wait for an interrupt
+	}
 
     scheduler->Run (nextThread);	// returns when we've been signalled
 }

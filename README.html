@@ -340,8 +340,9 @@ ul.auto-toc {
 <body>
 <div class="document" id="realisation-notes-about-nachos">
 <h1 class="title">realisation notes about nachos</h1>
-<h2 class="subtitle" id="part-one">Part one</h2>
 
+<div class="section" id="part-one">
+<h1>Part one</h1>
 <p>for the command <em>./nachos-userprog -d m -x ./halt</em>, we get :</p>
 <pre class="code html literal-block">
 Starting thread &quot;main&quot; at time 10
@@ -479,7 +480,7 @@ all jumps or Loads. We assume that it comes that the processor
 is piplined and executes the next instruction before jumping
 and the memory calls are slow in comparison to cache memory.</p>
 <div class="section" id="nachos-threads">
-<h1>nachos-threads</h1>
+<h2>nachos-threads</h2>
 <p>After adding an another thread, we saw that it's working well. but it
 seems not parallel between the two threads:</p>
 <pre class="code c literal-block">
@@ -602,7 +603,7 @@ we see that there is no more parallelism :</p>
 This is because the system use pseudo-random numbers for interrupting threads. Using different seeds for each execution simulate a real system (non deterministic).</p>
 </div>
 <div class="section" id="scheduler-overview">
-<h1>Scheduler overview</h1>
+<h2>Scheduler overview</h2>
 <p>we save the old level of interrupt and restore it at the end of Yield.
 If there is an another thread to run, we run this thread.</p>
 <p>The Scheduler class implements a simple round robin algorihtm. It keeps a list
@@ -611,9 +612,166 @@ Run method save context of current thread and switch the threads.</p>
 <p>The genuine method for switching context is SWITCH which is a machine-dependent assembly language routine defined in switch.s.</p>
 </div>
 <div class="section" id="exercise">
-<h1>Exercise</h1>
+<h2>Exercise</h2>
 <p>After making modifications in Yield, we see that ./nachos-threads execute
 a thread twice before switching context, which is normal.</p>
+</div>
+</div>
+<div class="section" id="part-two">
+<h1>Part Two</h1>
+<p>For the program &quot;putchar.c&quot;, we expect the output &quot;abcd&quot;.</p>
+<p>It's an error that writing a character before be warned of its presence
+because it can pass ahead of an another request.</p>
+<div class="section" id="strings">
+<h2>Strings</h2>
+<p>We have implemented system calls for printing strings.</p>
+<p>Case with a simple hello world :</p>
+<pre class="code c literal-block">
+<span class="name">hello</span> <span class="name">world</span> <span class="operator">!</span>
+<span class="name">Machine</span> <span class="name">halting</span><span class="operator">!</span>
+
+<span class="name label">Ticks</span><span class="punctuation">:</span> <span class="name">total</span> <span class="literal number integer">1568</span><span class="punctuation">,</span> <span class="name">idle</span> <span class="literal number integer">1400</span><span class="punctuation">,</span> <span class="name">system</span> <span class="literal number integer">150</span><span class="punctuation">,</span> <span class="name">user</span> <span class="literal number integer">18</span>
+<span class="name">Disk</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">0</span>
+<span class="name">Console</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">14</span>
+<span class="name label">Paging</span><span class="punctuation">:</span> <span class="name">faults</span> <span class="literal number integer">0</span>
+<span class="name">Network</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">packets</span> <span class="name">received</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">sent</span> <span class="literal number integer">0</span>
+
+<span class="name">Cleaning</span> <span class="name">up</span><span class="punctuation">...</span>
+</pre>
+<p>Case with a too long string :</p>
+<pre class="code c literal-block">
+<span class="literal number oct">01234567</span><span class="literal number integer">890123456789012345678901234567890123456789012345678901234567890</span>
+<span class="literal number integer">12345678901234567890123456789012345678901234567890123456789012345678901</span>
+<span class="literal number integer">23456789012345678901234567890123456789012345678901234567890123456789012</span>
+<span class="literal number integer">34567890123456789012345678901234567890123456789012345678901234567890123</span>
+<span class="literal number integer">456789012345678</span><span class="operator">***</span> <span class="name">stack</span> <span class="name">smashing</span> <span class="name">detected</span> <span class="operator">***:</span> <span class="punctuation">.</span><span class="operator">/</span><span class="name">nachos</span><span class="operator">-</span><span class="name">step2</span> <span class="name">terminated</span>
+<span class="name">Aborted</span>
+</pre>
+<div class="section" id="halt-problem">
+<h3>Halt Problem</h3>
+<p>If we remove the Halt call, we have the following error message :</p>
+<pre class="code c literal-block">
+<span class="name">abcd</span>
+<span class="name">Unexpected</span> <span class="name">user</span> <span class="name">mode</span> <span class="name">exception</span> <span class="literal number integer">1</span> <span class="literal number integer">1</span>
+<span class="name">Assertion</span> <span class="name label">failed</span><span class="punctuation">:</span> <span class="name">line</span> <span class="literal number integer">111</span><span class="punctuation">,</span> <span class="name">file</span> <span class="literal string">&quot;../userprog/exception.cc&quot;</span>
+<span class="name">Aborted</span>
+</pre>
+<p>We see when we are looking at the source code of Halt that Exit is not
+implemented in the exception handler. We have just to add it.</p>
+<div class="section" id="synchgetchar">
+<h4>SynchGetChar</h4>
+<p>we have the following execution :</p>
+<pre class="code c literal-block">
+<span class="name">a</span>
+<span class="name label">caractere</span><span class="punctuation">:</span><span class="name">a</span>
+<span class="name">Machine</span> <span class="name">halting</span><span class="operator">!</span>
+
+<span class="name label">Ticks</span><span class="punctuation">:</span> <span class="name">total</span> <span class="literal number integer">67287879</span><span class="punctuation">,</span> <span class="name">idle</span> <span class="literal number integer">67287691</span><span class="punctuation">,</span> <span class="name">system</span> <span class="literal number integer">140</span><span class="punctuation">,</span> <span class="name">user</span> <span class="literal number integer">48</span>
+<span class="name">Disk</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">0</span>
+<span class="name">Console</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">2</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">12</span>
+<span class="name label">Paging</span><span class="punctuation">:</span> <span class="name">faults</span> <span class="literal number integer">0</span>
+<span class="name">Network</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">packets</span> <span class="name">received</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">sent</span> <span class="literal number integer">0</span>
+
+<span class="name">Cleaning</span> <span class="name">up</span><span class="punctuation">...</span>
+</pre>
+</div>
+<div class="section" id="synchgetstring">
+<h4>SynchGetString</h4>
+<p>We have the following execution for string size = 5 :</p>
+<pre class="code c literal-block">
+<span class="name">abcdef</span>
+<span class="name">abcd</span>
+<span class="name">ef</span>
+
+<span class="name">Machine</span> <span class="name">halting</span><span class="operator">!</span>
+
+<span class="name label">Ticks</span><span class="punctuation">:</span> <span class="name">total</span> <span class="literal number integer">162744489</span><span class="punctuation">,</span> <span class="name">idle</span> <span class="literal number integer">162744253</span><span class="punctuation">,</span> <span class="name">system</span> <span class="literal number integer">170</span><span class="punctuation">,</span> <span class="name">user</span> <span class="literal number integer">66</span>
+<span class="name">Disk</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">0</span>
+<span class="name">Console</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">7</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">9</span>
+<span class="name label">Paging</span><span class="punctuation">:</span> <span class="name">faults</span> <span class="literal number integer">0</span>
+<span class="name">Network</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">packets</span> <span class="name">received</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">sent</span> <span class="literal number integer">0</span>
+
+<span class="name">Cleaning</span> <span class="name">up</span><span class="punctuation">...</span>
+</pre>
+<p>The output is correct.</p>
+<p>If we want to make multithread programs that uses getString, we must
+get sure that there is no conflict. For this, we can add a mutex that
+blocks other threads if they want to read the standard input.</p>
+</div>
+<div class="section" id="synchputint">
+<h4>SynchPutInt</h4>
+<p>For the design of the put/get integers, we make a specific system call
+and call sprintf and sscanf functions.</p>
+<pre class="code c literal-block">
+<span class="literal number integer">42</span>
+<span class="name">Machine</span> <span class="name">halting</span><span class="operator">!</span>
+
+<span class="name label">Ticks</span><span class="punctuation">:</span> <span class="name">total</span> <span class="literal number integer">370</span><span class="punctuation">,</span> <span class="name">idle</span> <span class="literal number integer">300</span><span class="punctuation">,</span> <span class="name">system</span> <span class="literal number integer">40</span><span class="punctuation">,</span> <span class="name">user</span> <span class="literal number integer">30</span>
+<span class="name">Disk</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">0</span>
+<span class="name">Console</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">3</span>
+<span class="name label">Paging</span><span class="punctuation">:</span> <span class="name">faults</span> <span class="literal number integer">0</span>
+<span class="name">Network</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">packets</span> <span class="name">received</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">sent</span> <span class="literal number integer">0</span>
+
+<span class="name">Cleaning</span> <span class="name">up</span><span class="punctuation">...</span>
+</pre>
+</div>
+<div class="section" id="synchgetint">
+<h4>SynchGetInt</h4>
+<pre class="code c literal-block">
+<span class="literal number integer">1337</span>
+<span class="literal number integer">1337</span>
+<span class="name">Machine</span> <span class="name">halting</span><span class="operator">!</span>
+
+<span class="name label">Ticks</span><span class="punctuation">:</span> <span class="name">total</span> <span class="literal number integer">133371198</span><span class="punctuation">,</span> <span class="name">idle</span> <span class="literal number integer">133371051</span><span class="punctuation">,</span> <span class="name">system</span> <span class="literal number integer">110</span><span class="punctuation">,</span> <span class="name">user</span> <span class="literal number integer">37</span>
+<span class="name">Disk</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">0</span>
+<span class="name">Console</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">reads</span> <span class="literal number integer">5</span><span class="punctuation">,</span> <span class="name">writes</span> <span class="literal number integer">5</span>
+<span class="name label">Paging</span><span class="punctuation">:</span> <span class="name">faults</span> <span class="literal number integer">0</span>
+<span class="name">Network</span> <span class="name">I</span><span class="operator">/</span><span class="name label">O</span><span class="punctuation">:</span> <span class="name">packets</span> <span class="name">received</span> <span class="literal number integer">0</span><span class="punctuation">,</span> <span class="name">sent</span> <span class="literal number integer">0</span>
+
+<span class="name">Cleaning</span> <span class="name">up</span><span class="punctuation">...</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="part-three">
+<h1>Part Three</h1>
+<div class="section" id="action-i-1">
+<h2>Action I 1</h2>
+<blockquote>
+<ul>
+<li><p class="first">The stack of a kernel thread is allocated in the function <em>Thread::StackAllocate</em>
+by the method <em>AllocBoundedArray</em> which is in the file <em>machine/sysdep.cc</em></p>
+</li>
+<li><p class="first">Threads are created in the fork function (Thread::fork). In threads/thread.h,
+we can find an enum that is thread status.</p>
+<p><em>SaveState</em> saves the machine state and <em>RestoreState</em> restores the machine
+state.</p>
+</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="action-i-3">
+<h2>Action I.3</h2>
+<p>In the case we have no more space in the processus memory, we cannot
+create a new Thread because it requires some space to store it's
+state. We can modify the behaviour of thread creating for returning -1
+if it's impossible to create the thread.</p>
+</div>
+<div class="section" id="action-i-6">
+<h2>Action I.6</h2>
+<p>When the thread is destroyed, we can recover it's allocated space in the
+AddrSpace</p>
+<p>We add the function <em>do_UserThreadExit</em>.</p>
+<pre class="code C++ literal-block">
+<span class="keyword type">void</span> <span class="name function">do_UserThreadExit</span><span class="punctuation">()</span> <span class="punctuation">{</span>
+<span class="comment single">// The thread call the finish method.
+</span><span class="keyword">this</span><span class="operator">-&gt;</span><span class="name">Finish</span><span class="punctuation">();</span>
+<span class="comment single">// we need to free the thread memory
+</span><span class="name">space</span><span class="operator">-&gt;</span><span class="name">stackBitMap</span><span class="operator">-&gt;</span><span class="name">Clear</span><span class="punctuation">(</span><span class="name">stackIndex</span><span class="punctuation">);</span>
+<span class="punctuation">}</span>
+</pre>
+</div>
 </div>
 </div>
 </body>
