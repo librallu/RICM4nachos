@@ -44,14 +44,42 @@
 	<h3>Step 2: Synchronous Console </h3>
 	Time spent on this step: 2 sessions.
 		<section>
-		Started from asynchronous console
+		<p>Improving tests on asynchronous console.
+		  <ul>
+		    <li>Stopping test on EOF.</li>
+		    <li>Adding &lt; and &gt; before and after output.</li>
+		  </ul>
+		</p>
 		</section>
 		
 		<section>
-		<p>implementing SynchConsole</p>
-		<ul>
-			<li>system calls</li>
-		</ul>
+
+		<p>Implementing SynchConsole by encapsulation of Console.
+		  <ul>
+		    <li>Reading and writing are now blocking operations.</li>
+		    <li>Use of semaphore</li>
+		    <li>Declaring SynchConsole in system.cc</li>
+		  </ul>
+		</p>
+		</section>
+
+		<section>
+		<p>Manipulation of strings.
+		  <ul>
+		    <li>Copy to/from Machine memory</li>
+		    <li>Passing pointers instead of characters</li>
+		  </ul>
+		</p>
+		</section>
+
+		<section>
+		<p>Implementing system call
+		  <ul>
+		    <li>Syscalls are programmed in MIPS assembly code</li>
+		    <li>Exception handling is done by C++ code</li>
+		    <li>Handler read/write arguments from/to MIPS machine registers</li>
+		  </ul>
+		</p>
 		</section>
 	
 	</section>
