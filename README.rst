@@ -1,6 +1,7 @@
 ==============================
 realisation notes about nachos
 ==============================
+<<<<<<< HEAD
 
 -----------------------------------------------------------------------------------
 Jérémy Hammerer - Anthony Léonard - Luc Libralesso - Malek Mammar - Olivier Soldano
@@ -8,6 +9,8 @@ Jérémy Hammerer - Anthony Léonard - Luc Libralesso - Malek Mammar - Olivier S
 
 .. contents:: Table of Contents
 	:depth: 2
+=======
+>>>>>>> disk
 
 Part one
 ########
@@ -635,6 +638,10 @@ We add the function *do_UserThreadExit*.
     }
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> disk
 Action I.7
 **********
 
@@ -665,6 +672,11 @@ makethreads.cc :
 
 .. code-block : C++
 
+<<<<<<< HEAD
+=======
+.. code-block : C++
+
+>>>>>>> disk
       $ ./nachos-step2 -x makethreads
       Hello 0 !
       Thread : 0 launched
@@ -692,6 +704,12 @@ When the main thread executes UserThreadJoin(int ID) system call, it remains blo
 In order to recover thread reference with an ID we used an array structure declared in addrspace.h 
 
 .. code-block : C++
+<<<<<<< HEAD
+=======
+
+      #define MAX_PROCESSUS	1
+      #define MAX_THREAD 		MAX_USER_THREAD
+>>>>>>> disk
 
       int map_threads[MAX_THREAD];
 
@@ -736,6 +754,7 @@ We replaced i by i+1 in
 Summary of step 4
 *****************
 
+<<<<<<< HEAD
 In goal to store and manage our processes and thread. We declared some variables (in system.h and addrspace.h): 
 
 In system.h : 
@@ -897,4 +916,103 @@ want to have, we have a root directory that can contain files or directories.
 
 .. code-block : C
 
+	for (i = 0; i < numPages; i++)
+		{
+		#ifdef CHANGED
+		pageTable[i].virtualPage = i; // step 4 action I.4
+		pageTable[i].physicalPage = (i+1)%numPages;
+		#else
+		pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
+		pageTable[i].physicalPage = i;
+		#endif
+		pageTable[i].valid = TRUE;
+		pageTable[i].use = FALSE;
+		pageTable[i].dirty = FALSE;
+		pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
+		// a separate page, we could set its 
+		// pages to be read-only
+		}
+      
+and now a part of the trace of an execution of a program with the -d a option:
 
+	Writing VA 0x0, size 1, value 0xffffff86
+	Translate 0x0, write: phys addr = 0x80``
+	
+We can see that the address 0x0 was translated to 0x80 witch is 128 bytes
+appart, thus corresponding to the current definition of the pagesize.
+We conclude that the address translation is effectively working.
+
+
+
+step 1
+******
+
+In this step, we are interested to add subdirectories.
+For this, we add in the directory entry a new field that indicates
+if the file is a directory or a simple file :
+
+.. code-block : C++
+
+    enum FileType{ DIR, FILE };
+    
+    class DirectoryEntry {
+      public:
+        FileType type;
+        bool inUse;				// Is this directory entry in use?
+        int sector;				// Location on disk to find the 
+                        //   FileHeader for this file 
+        char name[FileNameMaxLen + 1];	// Text name for file, with +1 for 
+                        // the trailing '\0'
+    };
+
+
+Then, in the Directory::table, we consider that the two first entries,
+table[0] and table[1] refers respectively to . and ..
+
+
+we create the local function in directory.cc :
+
+.. code-block : C++
+
+    void initializePageTable(	DirectoryEntry* ptr, 
+                                bool inUse, 
+                                FileType type, 
+                                int sector,
+                                const char* name){
+        ptr->inUse = inUse;
+        ptr->type = type;
+        ptr->sector = sector;
+        strncpy(ptr->name, name , FileNameMaxLen);
+    }
+    
+That helps us to initialize a PageTable.
+
+Now, in the Directory constructor, we add the . and .. gestion :
+
+.. code-block : C++
+
+	// add . and ..
+	initializePageTable(&(table[0]), TRUE, FILE, currentSector, ".");
+	if ( parentSector >= 0 ){
+		initializePageTable(&(table[1]), TRUE, FILE, parentSector, "..");
+	}
+
+
+We also modify Directory::Add with an other parameter : fileType
+
+.. code-block : C++
+
+    bool
+    Directory::Add(const char *name, int newSector, FileType type)
+    { 
+        if (FindIndex(name) != -1)
+        return FALSE;
+
+        for (int i = 0; i < tableSize; i++)
+            if (!table[i].inUse) {
+                initializePageTable(&(table[i]), TRUE, type, newSector, name);
+                return TRUE;
+            }
+        }
+        return FALSE;	// no space.  Fix when we have extensible files.
+    }

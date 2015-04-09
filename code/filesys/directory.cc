@@ -25,6 +25,18 @@
 #include "filehdr.h"
 #include "directory.h"
 
+#define DEFAULT_SIZE 10
+
+
+void initializePageTable(	DirectoryEntry* ptr, 
+							bool inUse, 
+							int sector,
+							const char* name){
+	ptr->inUse = inUse;
+	ptr->sector = sector;
+	strncpy(ptr->name, name , FileNameMaxLen);
+}
+
 //----------------------------------------------------------------------
 // Directory::Directory
 // 	Initialize a directory; initially, the directory is completely
@@ -34,13 +46,36 @@
 //
 //	"size" is the number of entries in the directory
 //----------------------------------------------------------------------
+Directory::Directory(){
+	Directory(DEFAULT_SIZE);
+}
 
 Directory::Directory(int size)
+{
+	//Directory(size,0,0);
+	
+    table = new DirectoryEntry[size];
+    tableSize = size;
+    for (int i = 0; i < tableSize; i++)
+		table[i].inUse = FALSE;
+
+	// add . and ..
+	initializePageTable(&(table[0]), TRUE, 0, ".");
+	initializePageTable(&(table[1]), TRUE, 0, "..");
+}
+
+
+Directory::Directory(int size, int currentSector, int parentSector)
 {
     table = new DirectoryEntry[size];
     tableSize = size;
     for (int i = 0; i < tableSize; i++)
-	table[i].inUse = FALSE;
+		table[i].inUse = FALSE;
+	
+	// add . and ..
+	initializePageTable(&(table[0]), TRUE, currentSector, ".");
+	initializePageTable(&(table[1]), TRUE, currentSector==0?currentSector:parentSector, "..");
+
 }
 
 //----------------------------------------------------------------------
@@ -115,6 +150,8 @@ Directory::Find(const char *name)
     return -1;
 }
 
+
+
 //----------------------------------------------------------------------
 // Directory::Add
 // 	Add a file into the directory.  Return TRUE if successful;
@@ -126,18 +163,18 @@ Directory::Find(const char *name)
 //	"newSector" -- the disk sector containing the added file's header
 //----------------------------------------------------------------------
 
+
 bool
 Directory::Add(const char *name, int newSector)
 { 
     if (FindIndex(name) != -1)
-	return FALSE;
+		return FALSE;
 
-    for (int i = 0; i < tableSize; i++)
+    for (int i = 0; i < tableSize; i++){
         if (!table[i].inUse) {
-            table[i].inUse = TRUE;
-            strncpy(table[i].name, name, FileNameMaxLen); 
-            table[i].sector = newSector;
-        return TRUE;
+			initializePageTable(&(table[i]), TRUE, newSector, name);
+        	return TRUE;
+		}
 	}
     return FALSE;	// no space.  Fix when we have extensible files.
 }
@@ -154,12 +191,39 @@ bool
 Directory::Remove(const char *name)
 { 
     int i = FindIndex(name);
+	FileHeader* hdr = new FileHeader;
+	hdr->FetchFrom(i);
 
-    if (i == -1)
-	return FALSE; 		// name not in directory
-    table[i].inUse = FALSE;
-    return TRUE;	
+    if ( hdr->IsDirectory() ){ // if it's a directory
+        Directory* d = new Directory();
+        d->FetchFrom(new OpenFile(table[i].sector));
+        if ( d->IsEmpty() ){
+            table[i].inUse = FALSE;
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+
+    } else {
+        if (i == -1)
+            return FALSE; 		// name not in directory
+        table[i].inUse = FALSE;
+        return TRUE;
+    }
 }
+
+//----------------------------------------------------------------------
+// Directory::IsEmpty
+//  Return true if the directory is empty, false elsewhere
+//----------------------------------------------------------------------
+bool Directory::IsEmpty(){
+    for ( int i = 2 ; i < tableSize ; i++ )
+        if ( table[i].inUse == FALSE )
+            return TRUE;
+    return FALSE;
+}
+
+
 
 //----------------------------------------------------------------------
 // Directory::List
@@ -171,7 +235,7 @@ Directory::List()
 {
    for (int i = 0; i < tableSize; i++)
 	if (table[i].inUse)
-	    printf("%s\n", table[i].name);
+	    printf("%d : %s\n", i, table[i].name);
 }
 
 //----------------------------------------------------------------------
