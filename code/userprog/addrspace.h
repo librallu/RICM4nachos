@@ -38,7 +38,9 @@ class AddrSpace
 
 #ifdef CHANGED //--->Malek
     BitMap* stackBitMap;
+//    Semaphore* stack_mutex;
     int getStack(); //returns a stack index
+    void clearStack(int index);
     void threadInitRegisters (int f, int stackIndex);
     bool allFramesAllocated;
     void giveBackFrames();

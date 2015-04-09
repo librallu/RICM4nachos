@@ -40,8 +40,10 @@ Thread::Thread (const char *threadName)
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
 #ifdef CHANGED
+//	stackIndex = -1;
     PID = -1;
     ID = -1;
+    sons=0;//TO DELETE
 #endif
     space = NULL;
     // FBT: Need to initialize special registers of simulator to 0

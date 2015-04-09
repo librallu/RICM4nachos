@@ -72,6 +72,62 @@ void StartProcess (char *filename) {
     ASSERT (FALSE);		// machine->Run never returns;
     // the address space exits
     // by doing the syscall "exit"
+    
+    
+    /*
+     ********************* ORIGIN**************
+     
+    OpenFile *executable = fileSystem->Open (filename);
+    AddrSpace *space;
+
+
+    if (executable == NULL) {
+	    printf ("Unable to open file %s\n", filename);
+	    return;
+    }
+
+	 space = new AddrSpace (executable);
+	 
+#ifdef CHANGED
+	 if (space == NULL) {
+		 fprintf (stderr, "Progtest : Unable to allocate an address space %s\n", filename);
+		 return;
+	 }
+
+	 if (! space->allFramesAllocated) {
+		 fprintf (stderr, "Progtest : Unable to allocate an the frames %s\n", filename);
+		 return;
+	 }
+	 
+    currentThread->space = space;
+    
+    //------------------------------------------
+    //The process launched by the system is saved in the table of processes 
+
+
+	 Thread* t = currentThread;
+     int pid = nextProcess();
+	 if (pid < 0) {
+		 fprintf (stderr, "The number max of processes is reached\n");
+		 return;
+	 }
+	 
+	 t->setPID(pid);
+	 t->setID(-1); 
+	 
+	DEBUG('p', "ProgTest : Initilizing user program main thread with pid %d\n", pid);
+#endif    
+    delete executable;		// close file
+
+    space->InitRegisters ();	// set the initial register values
+    space->RestoreState ();	// load page table register
+
+    machine->Run ();		// jump to the user progam
+    ASSERT (FALSE);		// machine->Run never returns;
+    // the address space exits
+    // by doing the syscall "exit"
+     */
+    
 }
 
 // Data structures needed for the console test.  Threads making

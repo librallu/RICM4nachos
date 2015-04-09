@@ -94,6 +94,7 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 
 AddrSpace::AddrSpace (OpenFile * executable)
 {
+
 #ifdef CHANGED
 	//Initialisation of the thread structure
 	for(int j=0; j<MAX_THREAD; j++) {
@@ -101,6 +102,10 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		map_joins[j]  = 0;
 	}
 	next_thread = new BitMap(MAX_THREAD);
+	
+    stackBitMap = new BitMap(MAX_USER_THREAD);
+    stackBitMap->Mark(0); //The stack 0 is already used by the main thread
+//    stack_mutex = new Semaphore("mutex stack", 1);
 #endif
 
     NoffHeader noffH;
@@ -126,8 +131,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
     DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 	   numPages, size);
-    
-    
     
     // first, set up the translation 
     pageTable = new TranslationEntry[numPages];
@@ -195,12 +198,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		//	      noffH.initData.size, noffH.initData.inFileAddr);
 // }
       }
-
-    //Added by Malek
-    #ifdef CHANGED
-    stackBitMap = new BitMap(MAX_USER_THREAD);
-    stackBitMap->Mark(0); //The stack 0 is already used by the main thread
-    #endif //CHANGED
 }
 
 //----------------------------------------------------------------------
@@ -220,7 +217,7 @@ AddrSpace::~AddrSpace ()
     // delete pageTable;
     delete [] pageTable;
   // End of modification
-	
+	DEBUG('t', "~space() is finished\n");
 }
 
 //----------------------------------------------------------------------
@@ -330,12 +327,28 @@ AddrSpace::threadInitRegisters (int f, int stackIndex)
 
 int AddrSpace::getStack()
 {
+//	stack_mutex->P();
 	int res = this->stackBitMap->Find();
 	if ( res < 0 ){
 		printf("AddrSpace : No more space in the stack !!!\n");
 	}
+//	stack_mutex->V();
 	return res;
 }
+
+/**
+ * author malek
+ */
+
+void AddrSpace::clearStack(int index)
+{
+//	stack_mutex->P();
+	if (index < 0 || index > MAX_USER_THREAD)
+		printf("AddrSpace : No more space in the stack !!!\n");
+	stackBitMap->Clear(index);
+//	stack_mutex->V();
+}
+
 
 /**
  * This function clears the thread with the id == ID, from the structure of threads 
