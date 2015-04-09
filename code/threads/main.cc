@@ -82,24 +82,35 @@ main (int argc, char **argv)
 
     DEBUG ('t', "Entering main");
     (void) Initialize (argc, argv);
-
+/*
 #ifdef THREADS
     ThreadTest ();
 #endif
-
+*/
     for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount)
       {
 	  argCount = 1;
 	  if (!strcmp (*argv, "-z"))	// print copyright
-	      printf ("%s", copyright);
+	    printf ("%s", copyright);
 #ifdef USER_PROGRAM
 #ifdef CHANGED
-	if (!strcmp(*argv, "-sc"))
-		SynchConsoleTest(NULL, NULL);
+	  if (!strcmp(*argv, "-sc"))
+	    SynchConsoleTest(NULL, NULL);
+#ifdef FILESYS
+	  if (!strcmp(*argv, "-mkd")){ // creating a new directory in the root one
+		ASSERT (argc > 1);
+			
+		printf("création du dossier %s\n",*(argv+1));
+		fileSystem->CreateDir(*(argv+1));
+
+		argCount = 2;
+	  }
+#endif
 #endif
 	  if (!strcmp (*argv, "-x"))
 	    {			// run a user program
 		ASSERT (argc > 1);
+//~ <<<<<<< HEAD
 //		StartProcess (*(argv + 1)); //TO DECOMMENT 
 		//TO DELETE
 		#ifdef CHANGED
@@ -107,6 +118,13 @@ main (int argc, char **argv)
 			do_ForkExec (*(argv + 1), 0);
 		#endif
 		//TO DELETE
+//~ =======
+//~ 
+		//~ StartProcess (*(argv + 1));
+//~ #ifdef CHANGED
+		//~ synchconsole = new SynchConsole(NULL,NULL);
+//~ #endif //CHANGED
+//~ >>>>>>> disk
 		argCount = 2;
 	    }
 	  else if (!strcmp (*argv, "-c"))
@@ -168,7 +186,7 @@ main (int argc, char **argv)
 	    }
 #endif // NETWORK
       }
-
+	//interrupt->Halt();
     currentThread->Finish ();	// NOTE: if the procedure "main" 
     // returns, then the program "nachos"
     // will exit (as any other normal program

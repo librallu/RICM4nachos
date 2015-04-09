@@ -29,9 +29,14 @@
 // Internal data structures kept public so that Directory operations can
 // access them directly.
 
+
+
+
+
+
 class DirectoryEntry {
   public:
-    bool inUse;				// Is this directory entry in use?
+	bool inUse;				// Is this directory entry in use?
     int sector;				// Location on disk to find the 
 					//   FileHeader for this file 
     char name[FileNameMaxLen + 1];	// Text name for file, with +1 for 
@@ -50,7 +55,9 @@ class DirectoryEntry {
 
 class Directory {
   public:
-    Directory(int size); 		// Initialize an empty directory
+	Directory();
+    Directory(int size);
+    Directory(int size, int currentSector, int parentSector); 		// Initialize an empty directory
 					// with space for "size" files
     ~Directory();			// De-allocate the directory
 
@@ -64,6 +71,8 @@ class Directory {
     bool Add(const char *name, int newSector);  // Add a file name into the directory
 
     bool Remove(const char *name);	// Remove a file from the directory
+
+    bool IsEmpty(); // return true if the directory is empty
 
     void List();			// Print the names of all the files
 					//  in the directory

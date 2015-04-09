@@ -1,13 +1,20 @@
-******************************
+==============================
 realisation notes about nachos
-******************************
+==============================
+
+-----------------------------------------------------------------------------------
+Jérémy Hammerer - Anthony Léonard - Luc Libralesso - Malek Mammar - Olivier Soldano
+-----------------------------------------------------------------------------------
+
+.. contents:: Table of Contents
+	:depth: 2
 
 Part one
 ########
 
 for the command *./nachos-userprog -d m -x ./halt*, we get :
 
-.. code-block:: html
+.. code-block: C
 
     Starting thread "main" at time 10
     At PC = 0x0: JAL 52
@@ -35,7 +42,7 @@ for the command *./nachos-userprog -d m -x ./halt*, we get :
 
 for the command *./nachos-userprog -rs 0 -d m -x ./halt*
 
-.. code-block:: html
+.. code-block: C
 
     Starting thread "main" at time 10
     At PC = 0x0: JAL 52
@@ -64,7 +71,7 @@ for the command *./nachos-userprog -rs 0 -d m -x ./halt*
 with step by step instructions, (*./nachos-userprog -s -d m -x ./halt*), 
 we get :
 
-.. code-block:: html
+.. code-block: C
 
     Starting thread "main" at time 10
     At PC = 0x0: JAL 52
@@ -106,7 +113,7 @@ we get :
 
 we add the following lines in halt.c :
 
-.. code-block:: c
+.. code-block: C
 
 	int a = 30;
 	int b = 12;
@@ -114,7 +121,7 @@ we add the following lines in halt.c :
 
 we obtain the following instructions :
 
-.. code-block:: c
+.. code-block: C
 
     Starting thread "main" at time 10
     At PC = 0x0: JAL 52
@@ -166,7 +173,7 @@ nachos-threads
 After adding an another thread, we saw that it's working well. but it 
 seems not parallel between the two threads:
 
-.. code-block:: c
+.. code-block: C
 
     *** thread 0 looped 0 times
     *** thread 1 looped 0 times
@@ -205,7 +212,7 @@ When removing currentThread->Yield();
 we see that there is no more parallelism :
 
 
-.. code-block:: c
+.. code-block: C
 
     *** thread 0 looped 0 times
     *** thread 0 looped 1 times
@@ -242,7 +249,7 @@ we see that there is no more parallelism :
 
 We use the option -rs n :
 
-.. code-block :: c
+.. code-block: C
 
     ./nachos-threads -rs 5
     *** thread 0 looped 0 times
@@ -336,7 +343,7 @@ We have implemented system calls for printing strings.
 
 Case with a simple hello world :
 
-.. code-block :: c
+.. code-block : c
 
     hello world !
     Machine halting!
@@ -352,7 +359,7 @@ Case with a simple hello world :
     
 Case with a too long string :
 
-.. code-block :: c
+.. code-block : c
 
     01234567890123456789012345678901234567890123456789012345678901234567890
     12345678901234567890123456789012345678901234567890123456789012345678901
@@ -369,7 +376,7 @@ Halt Problem
 
 If we remove the Halt call, we have the following error message : 
 
-.. code-block :: c
+.. code-block : c
 
     abcd
     Unexpected user mode exception 1 1
@@ -386,7 +393,7 @@ SynchGetChar
 
 We use the following code in exception.cc :
 
-.. code-block :: c
+.. code-block : c
 
     case SC_PutChar:
         DEBUG('a', "Putchar used by user program.\n");
@@ -395,7 +402,7 @@ We use the following code in exception.cc :
 
 we have the following execution :
 
-.. code-block :: c
+.. code-block : c
 
     a
     caractere:a
@@ -419,7 +426,7 @@ copying string from/to machine.
 The readDirectMem function is used to wrap the machine->ReadMem function
 and returns the char value instead of using a side effect.
 
-.. code-block :: c
+.. code-block : c
 
     void copyStringFromMachine(int from, char *to, unsigned size){
         unsigned int i;
@@ -451,7 +458,7 @@ In the while, we compute the size of the string (to not pass it in
 parameter of the syscall). Then, if the size is too big, we raise an error.
 Next, we put the string.
 
-.. code-block :: c
+.. code-block : c
 
     case SC_PutString:
         from = machine->ReadRegister(4);
@@ -474,7 +481,7 @@ SynchGetString
 
 We use the following code : 
 
-.. code-block :: c
+.. code-block : c
 
     case SC_GetString:
         from = machine->ReadRegister(4);
@@ -486,7 +493,7 @@ We use the following code :
 
 We have the following execution for string size = 5 :
 
-.. code-block :: c
+.. code-block : c
 
     abcdef
     abcd
@@ -518,7 +525,7 @@ and call sprintf and sscanf functions.
 
 The following code make translation of strings from/to integers. 
 
-.. code-block :: c
+.. code-block : c
 
     void SynchConsole::SynchPutInt(int n){
         char buff[MAX_STRING_SIZE];
@@ -533,7 +540,7 @@ The following code make translation of strings from/to integers.
         ASSERT(sscanf(buff,"%d",n) != EOF );
     }
 
-.. code-block :: c
+.. code-block : c
 
     42
     Machine halting!
@@ -550,7 +557,7 @@ The following code make translation of strings from/to integers.
 SynchGetInt
 -----------
 
-.. code-block :: c
+.. code-block : c
 
     1337
     1337
@@ -608,7 +615,7 @@ AddrSpace, by calling the function BitMap->Clear() at the stack index thread
 
 We add the function *do_UserThreadExit*.
 
-.. code-block :: C++
+.. code-block : C++
 
     void do_UserThreadExit() {
       //We release every thread waiting for me
@@ -628,7 +635,10 @@ We add the function *do_UserThreadExit*.
     }
 
 
+<<<<<<< HEAD
 =======
+
+>>>>>>> disk
 Action I.7
 **********
 
@@ -636,7 +646,7 @@ We test a simple thread launch :
 
 makethreads.cc : 
 
-.. code-block :: C++
+.. code-block : C++
       
     void fun(void* arg){
       int p = *((int*) arg);
@@ -657,7 +667,13 @@ makethreads.cc :
       return 0;
     }
 
-.. code-block :: C++
+.. code-block : C++
+
+<<<<<<< HEAD
+=======
+.. code-block : C++
+
+>>>>>>> disk
       $ ./nachos-step2 -x makethreads
       Hello 0 !
       Thread : 0 launched
@@ -684,7 +700,14 @@ Action II.2 to Action II.5
 When the main thread executes UserThreadJoin(int ID) system call, it remains blocked on space->map_thread[ID]->take_this->P().
 In order to recover thread reference with an ID we used an array structure declared in addrspace.h 
 
-.. code-block :: C++
+.. code-block : C++
+<<<<<<< HEAD
+=======
+
+      #define MAX_PROCESSUS	1
+      #define MAX_THREAD 		MAX_USER_THREAD
+>>>>>>> disk
+
       int map_threads[MAX_THREAD];
 
       
@@ -728,6 +751,7 @@ We replaced i by i+1 in
 Summary of step 4
 *****************
 
+<<<<<<< HEAD
 In goal to store and manage our processes and thread. We declared some variables (in system.h and addrspace.h): 
 
 In system.h : 
@@ -774,7 +798,8 @@ to UserThreadExit address function.
 To assure a mutual exlcusion with some functions used by multiple threads at a same time eventually, we added a Mutex : 
 --> for frames allocation : 
 
-.. code-block :: C++
+.. code-block : C++
+
       int* FrameProvider::GetEmptyFrame(int n) 
       {
       this->mutex->P();
@@ -784,29 +809,32 @@ To assure a mutual exlcusion with some functions used by multiple threads at a s
       }
 
 To avoid memory leak we make sure to call "delete space" in the Thread destructor if of course space != NULL. 
-.. code-block :: C++
-    Thread::~Thread ()
-    {
-    if (stack != NULL)
-      DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
-    
-    #ifdef USER_PROGRAM
-    #ifdef CHANGED
-      if(space != NULL && this->getID()==-1)  //If this is the main thread then its ID == -1 by convention
-      { 
-      DEBUG ('p', "%s is destroying its addrspace\n", (char*) name);
-      delete space;
-      }
-    #endif
-    #endif
-    }
+
+.. code-block : C++
+
+	Thread::~Thread ()
+		{
+		if (stack != NULL)
+		  DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
+		
+		#ifdef USER_PROGRAM
+		#ifdef CHANGED
+		  if(space != NULL && this->getID()==-1)  //If this is the main thread then its ID == -1 by convention
+		  { 
+		  DEBUG ('p', "%s is destroying its addrspace\n", (char*) name);
+		  delete space;
+		  }
+		#endif
+		#endif
+	}
 
 The thread destrutor is automatically scheduled when thread->Finish() is called. 
 This way of doing is due to the fact a current thread cannot destroy himself so it is scheduled to be destroyed.
 
 Here is how we create a Process :
 
-.. code-block :: C++
+.. code-block : C++
+
     int do_ForkExec(char* filename, int exit_syscall) {
       DEBUG('p',"do_ForkExec is called by %s process PID %d\n", parent->getName(), parent->getPID());	
       OpenFile *executable = fileSystem->Open (filename);
@@ -855,6 +883,7 @@ Here is how we create a Process :
 And this is how with exit every process : 
 
 .. code-block :: C++
+
     void do_ForkExecExit() {
       DEBUG('p', "do_ForkExecExit is called by %s\n",currentThread->getName());
       int PID = currentThread->getPID();
@@ -869,3 +898,118 @@ And this is how with exit every process :
 
     }
 
+
+
+Part Five: Disk Management
+##########################
+
+
+recursive directories
+*********************
+
+In this part, we want to implement recursive directories in nachOS.
+In the default system, we have only one directory. In the version we
+want to have, we have a root directory that can contain files or directories.
+
+.. code-block : C
+
+	for (i = 0; i < numPages; i++)
+		{
+		#ifdef CHANGED
+		pageTable[i].virtualPage = i; // step 4 action I.4
+		pageTable[i].physicalPage = (i+1)%numPages;
+		#else
+		pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
+		pageTable[i].physicalPage = i;
+		#endif
+		pageTable[i].valid = TRUE;
+		pageTable[i].use = FALSE;
+		pageTable[i].dirty = FALSE;
+		pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
+		// a separate page, we could set its 
+		// pages to be read-only
+		}
+      
+and now a part of the trace of an execution of a program with the -d a option:
+
+	Writing VA 0x0, size 1, value 0xffffff86
+	Translate 0x0, write: phys addr = 0x80``
+	
+We can see that the address 0x0 was translated to 0x80 witch is 128 bytes
+appart, thus corresponding to the current definition of the pagesize.
+We conclude that the address translation is effectively working.
+
+
+
+step 1
+******
+
+In this step, we are interested to add subdirectories.
+For this, we add in the directory entry a new field that indicates
+if the file is a directory or a simple file :
+
+.. code-block : C++
+
+    enum FileType{ DIR, FILE };
+    
+    class DirectoryEntry {
+      public:
+        FileType type;
+        bool inUse;				// Is this directory entry in use?
+        int sector;				// Location on disk to find the 
+                        //   FileHeader for this file 
+        char name[FileNameMaxLen + 1];	// Text name for file, with +1 for 
+                        // the trailing '\0'
+    };
+
+
+Then, in the Directory::table, we consider that the two first entries,
+table[0] and table[1] refers respectively to . and ..
+
+
+we create the local function in directory.cc :
+
+.. code-block : C++
+
+    void initializePageTable(	DirectoryEntry* ptr, 
+                                bool inUse, 
+                                FileType type, 
+                                int sector,
+                                const char* name){
+        ptr->inUse = inUse;
+        ptr->type = type;
+        ptr->sector = sector;
+        strncpy(ptr->name, name , FileNameMaxLen);
+    }
+    
+That helps us to initialize a PageTable.
+
+Now, in the Directory constructor, we add the . and .. gestion :
+
+.. code-block : C++
+
+	// add . and ..
+	initializePageTable(&(table[0]), TRUE, FILE, currentSector, ".");
+	if ( parentSector >= 0 ){
+		initializePageTable(&(table[1]), TRUE, FILE, parentSector, "..");
+	}
+
+
+We also modify Directory::Add with an other parameter : fileType
+
+.. code-block : C++
+
+    bool
+    Directory::Add(const char *name, int newSector, FileType type)
+    { 
+        if (FindIndex(name) != -1)
+        return FALSE;
+
+        for (int i = 0; i < tableSize; i++)
+            if (!table[i].inUse) {
+                initializePageTable(&(table[i]), TRUE, type, newSector, name);
+                return TRUE;
+            }
+        }
+        return FALSE;	// no space.  Fix when we have extensible files.
+    }

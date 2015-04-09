@@ -47,9 +47,7 @@ PostOffice *postOffice;
 #endif
 
 #ifdef CHANGED
-#ifdef USER_PROGRAM
 SynchConsole *synchconsole;
-#endif // USER_PROGRAM
 #endif // CHANGED
 
 // External definition, to allow us to take a pointer to this function
@@ -190,9 +188,7 @@ Initialize (int argc, char **argv)
     postOffice = new PostOffice (netname, rely, 10);
 #endif
 
-#ifdef CHANGED
-	synchconsole = new SynchConsole(NULL,NULL);
-#endif //CHANGED
+
 }
 
 //----------------------------------------------------------------------
@@ -209,9 +205,10 @@ Cleanup ()
 
 #ifdef USER_PROGRAM
     delete machine;
-	#ifdef CHANGED
+#endif
+
+#ifdef CHANGED
 	delete synchconsole;
-	#endif
 #endif
 
 #ifdef FILESYS_NEEDED
