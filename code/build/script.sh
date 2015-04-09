@@ -1,5 +1,5 @@
 #!/bin/bash
-declare -a tests=("putchar" "getchar" "putint" "getint" "putstring" "getstring"  "userpages0" "userpages1"  "userpages1")
+declare -a tests=("putchar" "getchar" "putint" "getint" "putstring" "getstring" "userpages0" "userpages1" "userpages2")
 for i in "${tests[@]}"
 do
     echo ""

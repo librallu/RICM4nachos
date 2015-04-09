@@ -44,6 +44,101 @@
 	
 	<section>
 	<h2>Step 4</h2>
+	
+	  </section>
+		<h3>Structure of management</h3>
+		In system.h : 
+		extern BitMap* next_process(MAX_PROCESSUS); //for pid management
+
+		In addrspace.h :
+		BitMap* next_thread(MAX_THREAD); //for id management
+		int map_thread[MAX_THREAD]; //for storing thread references and acceding to their semaphore with an ID
+		int map_join[MAX_THREAD]; //for counting the number of join made on a thread	    
+	  </section>
+	  
+	  </section>
+		<h3>Frame provider</h3>
+		Declared in system.h :
+		
+		int* FrameProvider::GetEmptyFrame(int n) 
+		{
+		this->mutex->P();
+		....
+		this->mutex->V();
+		return frames;
+		}
+		
+	  </section>
+	  
+	  
+	  <section>
+		<h3>Other changes</h3>
+		To avoid memory leak we make sure to call "delete space" in the Thread destructor if of course space != NULL. 
+
+		Thread::~Thread ()
+			{
+			if (stack != NULL)
+			  DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
+			
+			#ifdef USER_PROGRAM
+			#ifdef CHANGED
+			  if(space != NULL && this->getID()==-1)  //If this is the main thread then its ID == -1 by convention
+			  { 
+			  DEBUG ('p', "%s is destroying its addrspace\n", (char*) name);
+			  delete space;
+			  }
+			#endif
+			#endif
+		}
+	  </section>  
+	  
+	  <section>
+		  <h3>Fork Exec</h3>
+		  int do_ForkExec(char* filename, int exit_syscall) {
+		  DEBUG('p',"do_ForkExec is called by %s process PID %d\n", parent->getName(), parent->getPID());	
+		  OpenFile *executable = fileSystem->Open (filename);
+
+		  if (executable == NULL) {
+		  fprintf (stderr, "Unable to open file %s\n", filename);
+		  return -1;
+		  }
+
+		  AddrSpace* space = new AddrSpace (executable);
+		  if (space == NULL) {
+		  fprintf (stderr, "Unable to allocate an address space %s\n", filename);
+		  return -2;
+		  }
+
+		  if (! space->allFramesAllocated) {
+		  fprintf (stderr, "Unable to allocate an the frames %s\n", filename);
+		  return -3;
+		  }
+
+		  delete executable;		// close file
+
+		  int pid = nextProcess();
+		  if (pid < 0) {
+		  fprintf (stderr, "The number max of processes is reached\n");
+		  return -4;
+		  }
+
+		  Thread* parent = currentThread;
+		  char name[15];
+		  sprintf(name, "process %d",pid);
+		  ForkExec* t = new ForkExec(name);
+
+		  //On ne stock pas la reference du main thread
+		  t->setPID(pid);
+		  t->setID(-1); //This is how we identify the main thread
+		  t->space = space; //So at Fork call it dosn't affect the same addrspace as my process father
+		  t->parent = parent;
+
+		  t->Fork(StartForkExec, 0);
+
+		  return pid;
+		}
+
+	  </section>
 	</section>
 	
 	<section>
