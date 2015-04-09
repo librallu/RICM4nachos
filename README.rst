@@ -14,7 +14,7 @@ Part one
 
 for the command *./nachos-userprog -d m -x ./halt*, we get :
 
-.. code-block: html
+.. code-block: C
 
     Starting thread "main" at time 10
     At PC = 0x0: JAL 52
@@ -42,7 +42,7 @@ for the command *./nachos-userprog -d m -x ./halt*, we get :
 
 for the command *./nachos-userprog -rs 0 -d m -x ./halt*
 
-.. code-block: html
+.. code-block: C
 
     Starting thread "main" at time 10
     At PC = 0x0: JAL 52
@@ -71,7 +71,7 @@ for the command *./nachos-userprog -rs 0 -d m -x ./halt*
 with step by step instructions, (*./nachos-userprog -s -d m -x ./halt*), 
 we get :
 
-.. code-block: html
+.. code-block: C
 
     Starting thread "main" at time 10
     At PC = 0x0: JAL 52
@@ -113,7 +113,7 @@ we get :
 
 we add the following lines in halt.c :
 
-.. code-block: c
+.. code-block: C
 
 	int a = 30;
 	int b = 12;
@@ -121,7 +121,7 @@ we add the following lines in halt.c :
 
 we obtain the following instructions :
 
-.. code-block: c
+.. code-block: C
 
     Starting thread "main" at time 10
     At PC = 0x0: JAL 52
@@ -173,7 +173,7 @@ nachos-threads
 After adding an another thread, we saw that it's working well. but it 
 seems not parallel between the two threads:
 
-.. code-block: c
+.. code-block: C
 
     *** thread 0 looped 0 times
     *** thread 1 looped 0 times
@@ -212,7 +212,7 @@ When removing currentThread->Yield();
 we see that there is no more parallelism :
 
 
-.. code-block: c
+.. code-block: C
 
     *** thread 0 looped 0 times
     *** thread 0 looped 1 times
@@ -249,7 +249,7 @@ we see that there is no more parallelism :
 
 We use the option -rs n :
 
-.. code-block: c
+.. code-block: C
 
     ./nachos-threads -rs 5
     *** thread 0 looped 0 times
