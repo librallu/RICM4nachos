@@ -94,6 +94,7 @@
 	  
 	  <section>
 		  <h3>Fork Exec</h3>
+		  <pre><code data-trim>
 		  int do_ForkExec(char* filename, int exit_syscall) {
 		  DEBUG('p',"do_ForkExec is called by %s process PID %d\n", parent->getName(), parent->getPID());	
 		  OpenFile *executable = fileSystem->Open (filename);
