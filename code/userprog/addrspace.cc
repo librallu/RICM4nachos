@@ -104,7 +104,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	next_thread = new BitMap(MAX_THREAD);
 	
     stackBitMap = new BitMap(MAX_USER_THREAD);
-    stackBitMap->Mark(0); //The stack 0 is already used by the main thread
+//    stackBitMap->Mark(0	); //The stack 0 is already used by the main thread / This is done in ForkExec from now on
 //    stack_mutex = new Semaphore("mutex stack", 1);
 #endif
 

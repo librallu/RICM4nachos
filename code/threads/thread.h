@@ -114,7 +114,7 @@ class Thread
     }
 
 #ifdef CHANGED
-//    int stackIndex;
+    int stackIndex;
     //PIDs
     int getPID() {
     	return this->PID;

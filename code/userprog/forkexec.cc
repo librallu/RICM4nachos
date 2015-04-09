@@ -76,8 +76,9 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	 t->setID(-1); //This is how we identify the main thread
 	 t->space = space; //So at Fork call it dosn't affect the same addrspace as my process father
 	 t->parent = parent;
-//	 t->stackIndex  = 0; currentThread->space->stackBitMap->Mark(0); 
-	 //t->stackIndex  = currentThread->space->getStack();
+	 t->stackIndex  = 0; 
+	 t->space->stackBitMap->Mark(0); 
+	 //t->stackIndex  = t->space->getStack();
 	 //TO DELETE
 	 parent->waitForMe();
 	 
@@ -97,7 +98,7 @@ int do_ForkExec(char* filename, int exit_syscall) {
 void StartForkExec(int arg) {
 	currentThread->space->RestoreState ();	
 	currentThread->space->InitRegisters ();	
-	//currentThread->space->threadInitRegisters (0, 0);
+	currentThread->space->threadInitRegisters (0, 0);
 
 	machine->Run ();		// jump to the user progam
 	//ASSERT (FALSE);		// machine->Run never returns;
@@ -108,15 +109,15 @@ void do_ForkExecExit() {
 	int PID = currentThread->getPID();
 
 	//TO DELETE
-	for(int i=0; i<currentThread->sons; i++) {
-		DEBUG('p',"%s waiting for his sons\n",currentThread->getName());
-		fprintf(stderr,"do_ForkExecExit is called by %s\n",currentThread->getName());
-		((ForkExec*)currentThread)->waitForMySons->P();
-	}
+//	for(int i=0; i<currentThread->sons; i++) {
+//		DEBUG('p',"%s waiting for his sons\n",currentThread->getName());
+//		fprintf(stderr,"do_ForkExecExit is called by %s\n",currentThread->getName());
+//		((ForkExec*)currentThread)->waitForMySons->P();
+//	}
 	
 	//TO DELETE
 	
-//	currentThread->space->clearStack(currentThread->stackIndex);
+	currentThread->space->clearStack(currentThread->stackIndex);
 	
     next_process->Clear(PID);
     if (next_process->NumClear() == MAX_PROCESSUS) {
