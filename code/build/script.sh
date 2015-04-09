@@ -1,9 +1,10 @@
 #!/bin/bash
-declare -a tests=("putchar" "putstring" "putint" "userpages0" "userpages1")
+declare -a tests=("putchar" "getchar" "putint" "getint" "putstring" "getstring"  "userpages0" "userpages1"  "userpages1")
 for i in "${tests[@]}"
 do
     echo ""
     echo "################ Running test : " ${i} "##################";
+    read -p "Press enter to continue ..."
     echo ""
     ./nachos-step2 -x $i ;
 done

@@ -79,6 +79,7 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	 t->stackIndex  = 0; 
 	 t->space->stackBitMap->Mark(0); 
 	 //t->stackIndex  = t->space->getStack();
+	 
 	 //TO DELETE
 	 parent->waitForMe();
 	 
@@ -96,12 +97,13 @@ int do_ForkExec(char* filename, int exit_syscall) {
 }
 
 void StartForkExec(int arg) {
+	currentThread->space->InitRegisters ();
 	currentThread->space->RestoreState ();	
-	currentThread->space->InitRegisters ();	
-	currentThread->space->threadInitRegisters (0, 0);
+		
+	//currentThread->space->threadInitRegisters (0, 0);
 
 	machine->Run ();		// jump to the user progam
-	//ASSERT (FALSE);		// machine->Run never returns;
+	ASSERT (FALSE);		// machine->Run never returns;
 }
 
 void do_ForkExecExit() {
