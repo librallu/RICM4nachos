@@ -1,7 +1,6 @@
 ==============================
 realisation notes about nachos
 ==============================
-<<<<<<< HEAD
 
 -----------------------------------------------------------------------------------
 Jérémy Hammerer - Anthony Léonard - Luc Libralesso - Malek Mammar - Olivier Soldano
@@ -9,8 +8,6 @@ Jérémy Hammerer - Anthony Léonard - Luc Libralesso - Malek Mammar - Olivier S
 
 .. contents:: Table of Contents
 	:depth: 2
-=======
->>>>>>> disk
 
 Part one
 ########
