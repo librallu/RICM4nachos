@@ -20,7 +20,7 @@ void f(void *ss) {
 //	char* p;
 //	for(p=ss; *p != '\0'; p++)
 //		PutChar(*p);
-	PutString("Thread aaa\n");
+	//PutString("Thread aaa\n");
 }
 
 int main ()

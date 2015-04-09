@@ -18,6 +18,7 @@
 
 			//This a semaphore is used for joins in inherited class UserThread and ForkExec
 		    Semaphore* take_this;
+		    Semaphore* waitForMySons;
 
 		private:
 	};

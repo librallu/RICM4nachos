@@ -14,6 +14,7 @@
 //#include <ctime>       /* time */
 
 FrameProvider::FrameProvider(bool addRandom) {
+	random = false;
 	bitMap = new BitMap(NumPhysPages);
 	if (addRandom) {
 		RandomInit(0);
@@ -35,22 +36,27 @@ FrameProvider::~FrameProvider() {
  */
 int* FrameProvider::GetEmptyFrame(int n) 
 {
+	RandomInit(0);
 	this->mutex->P();
 	int frameIndex = 0;
-	if (! bitMap->NumClear()>=n) 
+	if (bitMap->NumClear() <= n) {
+		fprintf(stderr,"Erreur plus de frame de disponible\n");
 		return NULL;
+	}
 	
 	int* frames = new int[n];
 	for(int i=0; i<n; i++) {
 		if (! random) {
-			frameIndex = bitMap->Find();	
+			frameIndex = this->bitMap->Find();	
 		} else {
-			do {
+			frameIndex = Random() % NumPhysPages;
+			while (bitMap->Test(frameIndex)) {
 				frameIndex = Random() % NumPhysPages;	
-			} while (bitMap->Test(frameIndex));
+			}
+			this->bitMap->Mark(frameIndex);
 		}
 		
-	    bzero (machine->mainMemory + frameIndex * PageSize, PageSize);
+	    bzero (&(machine->mainMemory [ frameIndex * PageSize ]), PageSize);
 	    frames[i] = frameIndex;    
 	}
 	this->mutex->V();

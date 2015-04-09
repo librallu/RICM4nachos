@@ -114,6 +114,7 @@ class Thread
     }
 
 #ifdef CHANGED
+    int stackIndex;
     //PIDs
     int getPID() {
     	return this->PID;
@@ -133,6 +134,14 @@ class Thread
     }
 
     Thread* parent;
+
+    //TO DELETE
+    int sons;
+    void waitForMe() {
+    	sons++;
+    }
+    //TO DELETE
+
 #endif
 
   protected:

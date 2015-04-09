@@ -8,7 +8,10 @@
 #ifndef USERPROG_FRAMEPROVIDER_H_
 #define USERPROG_FRAMEPROVIDER_H_
 #include "bitmap.h"
+//#include "filesys.h"
 #include "synch.h"
+//#include "addrspace.h"
+#include "thread.h"
 
 class FrameProvider {
 	public:

@@ -7,10 +7,10 @@ int main()
 //	int PID=-2;
 //	PID +=1;
 	//ForkExec("../build/userpages0");
-	ForkExec("../build/putstring");
+	ForkExec("../build/putchar");
 
 //	int pid = ForkExec("../build/putstring");
-
+//
 //	PutString("PID is ");
 //	PutInt(pid);
 //	ForkExec("../build/userpages1");

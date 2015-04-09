@@ -12,6 +12,8 @@
 ForkExec::ForkExec(const char* process_name) : Thread::Thread(process_name)
 {
 	this->take_this = new Semaphore("Process Semaphore",0);
+	this->waitForMySons = new Semaphore("Sons", 0);
+    this->sons = 0;
 }
 
 ForkExec::~ForkExec() 
@@ -38,22 +40,26 @@ int do_ForkExec(char* filename, int exit_syscall) {
 
 	 if (executable == NULL) {
 	    fprintf (stderr, "Unable to open file %s\n", filename);
+	    delete [] filename;
 	    return -1;
 	 }
 
 	 AddrSpace* space = new AddrSpace (executable);
 	 if (space == NULL) {
 		 fprintf (stderr, "Unable to allocate an address space %s\n", filename);
+		 delete [] filename;
 		 return -2;
 	 }
 
 	 if (! space->allFramesAllocated) {
 		 fprintf (stderr, "Unable to allocate an the frames %s\n", filename);
+		 delete [] filename;
 		 return -3;
 	 }
 	 
 	 delete executable;		// close file
-
+	 
+	 
 	 int pid = nextProcess();
 	 if (pid < 0) {
 		 fprintf (stderr, "The number max of processes is reached\n");
@@ -70,8 +76,13 @@ int do_ForkExec(char* filename, int exit_syscall) {
 	 t->setID(-1); //This is how we identify the main thread
 	 t->space = space; //So at Fork call it dosn't affect the same addrspace as my process father
 	 t->parent = parent;
-
-	 	
+	 t->stackIndex  = 0; 
+	 t->space->stackBitMap->Mark(0); 
+	 //t->stackIndex  = t->space->getStack();
+	 //TO DELETE
+	 parent->waitForMe();
+	 
+	//TO DELETE
 
 	 /* il faut voir Thread comme un thread linux (car c'est du c++) qui conceptuellement est un processus MIPS.  
 	  * Ceci s'apparente donc a un lancement de processus, puisque un nouvel espace d'adressage est initialisé
@@ -85,20 +96,31 @@ int do_ForkExec(char* filename, int exit_syscall) {
 }
 
 void StartForkExec(int arg) {
-	currentThread->space->RestoreState ();	// load page table register
-	currentThread->space->InitRegisters ();	// set the initial register values
+	currentThread->space->RestoreState ();	
+	currentThread->space->InitRegisters ();	
+	currentThread->space->threadInitRegisters (0, 0);
 
 	machine->Run ();		// jump to the user progam
-	ASSERT (FALSE);		// machine->Run never returns;
+	//ASSERT (FALSE);		// machine->Run never returns;
 }
 
 void do_ForkExecExit() {
 	DEBUG('p', "do_ForkExecExit is called by %s\n",currentThread->getName());
 	int PID = currentThread->getPID();
 
+	//TO DELETE
+//	for(int i=0; i<currentThread->sons; i++) {
+//		DEBUG('p',"%s waiting for his sons\n",currentThread->getName());
+//		fprintf(stderr,"do_ForkExecExit is called by %s\n",currentThread->getName());
+//		((ForkExec*)currentThread)->waitForMySons->P();
+//	}
+	
+	//TO DELETE
+	
+	currentThread->space->clearStack(currentThread->stackIndex);
+	
     next_process->Clear(PID);
     if (next_process->NumClear() == MAX_PROCESSUS) {
-
     	DEBUG('p', "%s is halting\n", currentThread->getName());
         interrupt->Halt();
     }

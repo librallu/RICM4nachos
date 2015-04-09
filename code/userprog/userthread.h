@@ -18,7 +18,7 @@
 		public:
 			UserThread(char* namet);
 			~UserThread();
-			int stackIndex;
+//			int stackIndex;
 
 			Semaphore* take_this;
 

@@ -100,7 +100,13 @@ main (int argc, char **argv)
 	  if (!strcmp (*argv, "-x"))
 	    {			// run a user program
 		ASSERT (argc > 1);
-		StartProcess (*(argv + 1));
+//		StartProcess (*(argv + 1)); //TO DECOMMENT 
+		//TO DELETE
+		#ifdef CHANGED
+			#include "forkexec.h"
+			do_ForkExec (*(argv + 1), 0);
+		#endif
+		//TO DELETE
 		argCount = 2;
 	    }
 	  else if (!strcmp (*argv, "-c"))
