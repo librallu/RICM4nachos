@@ -1,13 +1,12 @@
 #include "syscall.h"
 
 int main() {
-	char str[5];
-	GetString(str,5);
+	PutString("Enter a string of 10 characters long at max please \n");
+	char str[10];
+	GetString(str,10);
+	PutString("Here is your string \n");
 	PutString(str);
 	PutChar('\n');
 	
-	GetString(str,5);
-	PutString(str);
-	PutChar('\n');
 	return 0;
 }
